@@ -25,7 +25,7 @@ class _myHomePageState extends State<myHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Center(
-                child: CustomTextField(
+                child: ZCustomTextField(
                   labelText: "zesty",
                   onButtonPressed: () {},
                   controller: controller,
@@ -34,7 +34,7 @@ class _myHomePageState extends State<myHomePage> {
                 ),
               ),
               SizedBox(height: 15,),
-              CustomTextField(
+              ZCustomTextField(
                 labelText: "hello",
                 onButtonPressed: () {},
                 controller: controller2,

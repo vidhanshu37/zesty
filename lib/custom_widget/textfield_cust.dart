@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomTextField extends StatelessWidget {
+class ZCustomTextField extends StatelessWidget {
   final String? labelText;
   final String? hintText;
   final IconData? prefixIcon;
@@ -15,8 +15,8 @@ class CustomTextField extends StatelessWidget {
   final double borderRadius;
   final Color? prefixIconColor;
 
-  const CustomTextField({
-    required this.onButtonPressed,
+  const ZCustomTextField({
+    this.onButtonPressed,
     required this.controller,
     required this.hintText,
     this.labelText,
