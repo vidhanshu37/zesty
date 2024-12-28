@@ -11,7 +11,7 @@ class TTextFormFieldTheme {
 
 // constraints: const BoxConstraints.expand(height: 14.inputFieldHeight),
     labelStyle: const TextStyle().copyWith(fontSize: 14, color: TColors.darkerGrey),
-    hintStyle: const TextStyle().copyWith(fontSize: 14, color: TColors.prefixLight),
+    hintStyle: const TextStyle().copyWith(fontSize: 14, color: TColors.darkGrey),
     errorStyle: const TextStyle().copyWith(fontStyle: FontStyle.normal),
     // floatingLabelStyle:
     //     const TextStyle().copyWith(color: Colors.black.withOpacity(0.8)),
