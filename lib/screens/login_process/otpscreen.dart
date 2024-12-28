@@ -32,6 +32,7 @@ class _otpverifyState extends State<otpverify> {
     Future.delayed(Duration(seconds: 1),(){
       if(_timer > 0){
         setState(() {
+
           _timer--;
         });
         _startTimer();
@@ -46,6 +47,7 @@ class _otpverifyState extends State<otpverify> {
   void _resendOTP() {
     setState(() {
       _timer = 0030;
+
       _isResendAvailable = false;
       _startTimer();
     });
@@ -54,6 +56,7 @@ class _otpverifyState extends State<otpverify> {
   void _handleotpinput(String value,int index){
     if(value.isNotEmpty){
       if(index < _otpcontroller.length - 1){
+
         FocusScope.of(context).requestFocus(focusnode[index+1]);
       } else{
         FocusScope.of(context).unfocus();

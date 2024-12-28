@@ -32,16 +32,19 @@ class signin extends StatelessWidget{
                 SizedBox(height: 150,),
                 Text(ZText.startApp,style: Theme.of(context).textTheme.headlineLarge,),
                 const SizedBox(height: 10,),
-                Text(ZText.loginOrSignup,style: Theme.of(context).textTheme.bodyLarge),
+                Text(ZText.loginOrSignup,style:
+                Theme.of(context).textTheme.bodyLarge),
                 const SizedBox(height: 40,),
                 IntlPhoneField(
                   decoration: InputDecoration(
                     labelText: 'Phone Number',
                     border: OutlineInputBorder(
+
                       borderSide: BorderSide(),
                     ),
                   ),
                   initialCountryCode: 'IN',
+
                   onChanged: (phone) {
 
                     print(phone.completeNumber);
