@@ -15,20 +15,20 @@ class ZCustomTextField extends StatelessWidget {
   final double borderRadius;
   final Color? prefixIconColor;
 
-  const ZCustomTextField({
-    this.onButtonPressed,
-    required this.controller,
-    required this.hintText,
-    this.labelText,
-    this.prefixIcon,
-    this.suffixIcon,
-    this.onSuffixIconPressed,
-    this.hideText = false,
-    this.keyboardType,
-    this.onChanged,
-    this.validator,
-    this.borderRadius = 8.0,
-    this.prefixIconColor});
+  const ZCustomTextField(
+      {this.onButtonPressed,
+      required this.controller,
+      required this.hintText,
+      this.labelText,
+      this.prefixIcon,
+      this.suffixIcon,
+      this.onSuffixIconPressed,
+      this.hideText = false,
+      this.keyboardType,
+      this.onChanged,
+      this.validator,
+      this.borderRadius = 8.0,
+      this.prefixIconColor});
 
   @override
   Widget build(BuildContext context) {
@@ -40,16 +40,20 @@ class ZCustomTextField extends StatelessWidget {
       onChanged: onChanged,
       validator: validator,
       decoration: InputDecoration(
-          labelText: labelText,
-          hintText: hintText,
-          prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: prefixIconColor,) : null,
-          suffixIcon: suffixIcon != null ? Icon(suffixIcon) : null,
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
+        labelText: labelText,
+        hintText: hintText,
+        prefixIcon: prefixIcon != null
+            ? Icon(
+                prefixIcon,
+                color: prefixIconColor,
+              )
+            : null,
+        suffixIcon: suffixIcon != null ? Icon(suffixIcon) : null,
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
             borderSide: BorderSide(
               width: 5,
-            )
-          ),
+            )),
         contentPadding: EdgeInsets.symmetric(
           vertical: 17.0, // Adjust height here
           horizontal: 12.0, // Adjust horizontal padding

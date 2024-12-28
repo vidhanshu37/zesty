@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
 import 'package:zesty/custom_widget/textfield_cust.dart';
+import 'package:zesty/screens/location_access/showFloatingManualLocation.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:zesty/utils/constants/media_query.dart';
 import 'package:zesty/utils/constants/text_string.dart';
@@ -44,7 +45,7 @@ class _LocationAccessState extends State<LocationAccess> {
                   btnTextColor: ZMediaQuery(context).isDarkMode ? TColors.bgLight : TColors.black,
                   title: "Enter manually",
                   onPress: () {
-                    _showFloatingSheet(context, controller);
+                    showFloatingSheet(context);
                   },
                 )),
 
