@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
 import 'package:zesty/screens/login_process/otpscreen.dart';
 import 'package:zesty/utils/constants/text_string.dart';
@@ -20,19 +21,31 @@ class signin extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
+      body: Stack(
+        children:[ Padding(
           padding: const EdgeInsets.all(10.0),
           child: Form(
             key: formkey,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              //mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(height: 150,),
                 Text(ZText.startApp,style: Theme.of(context).textTheme.headlineLarge,),
                 const SizedBox(height: 10,),
-                Text(ZText.loginOrSignup,style: Theme.of(context).textTheme.headlineSmall),
+                Text(ZText.loginOrSignup,style: Theme.of(context).textTheme.bodyLarge),
                 const SizedBox(height: 40,),
+                IntlPhoneField(
+                  decoration: InputDecoration(
+                    labelText: 'Phone Number',
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(),
+                    ),
+                  ),
+                  initialCountryCode: 'IN',
+                  onChanged: (phone) {
+                    print(phone.completeNumber);
+                  },
+                ),
                 // InternationalPhoneNumberInput(onInputChanged: (PhoneNumber number){
                 //   phone = number.phoneNumber ?? '' ;
                 //   print(number.phoneNumber);
@@ -71,15 +84,14 @@ class signin extends StatelessWidget{
 
                 const SizedBox(height: 100,),
                 ZElevatedButton(title: "Continue", onPress: (){
-                     // Navigator.push(context, MaterialPageRoute(builder: (context) => ,));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => otpverify(phone: phone,),));
                 }),
-
                 const SizedBox(height: 10,),
                 Text(ZText.termsConditions,style: Theme.of(context).textTheme.labelMedium),
               ],
             ),
           ),
-        ),
+        ),]
       ),
     );
   }
