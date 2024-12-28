@@ -43,6 +43,7 @@ class signin extends StatelessWidget{
                   ),
                   initialCountryCode: 'IN',
                   onChanged: (phone) {
+
                     print(phone.completeNumber);
                   },
                 ),

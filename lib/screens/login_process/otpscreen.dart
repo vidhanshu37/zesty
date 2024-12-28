@@ -15,6 +15,7 @@ class otpverify extends StatefulWidget{
 
 class _otpverifyState extends State<otpverify> {
 
+
   List<TextEditingController> _otpcontroller = List.generate(4, (_) => TextEditingController());
   final List<FocusNode> focusnode = List.generate(4, (_) => FocusNode());
   bool _isResendAvailable = false;
