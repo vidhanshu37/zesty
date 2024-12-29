@@ -36,6 +36,10 @@ dependencies:
   cupertino_icons: ^1.0.8
   intl_phone_field: ^3.2.0
   http: ^1.2.2
+  shimmer: ^3.0.0 # Loading effect
+  geolocator: ^13.0.2 # For user's current location
+  permission_handler: ^11.3.1 # Ask for access location permission
+  google_maps_flutter: ^2.10.0
 
 dev_dependencies:
   flutter_test:
