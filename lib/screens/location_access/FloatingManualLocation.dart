@@ -117,7 +117,7 @@ class _ManualLocationState extends State<ManualLocation> {
             ),
             InkWell(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => Confirmlocation()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ConfirmLocation()));
               },
               child: Container(
                 height: 65,

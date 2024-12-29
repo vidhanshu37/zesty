@@ -37,7 +37,7 @@ class _LocationAccessState extends State<LocationAccess> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => Confirmlocation()));
+                            builder: (context) => ConfirmLocation()));
                   }),
             ),
 

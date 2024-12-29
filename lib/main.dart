@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zesty/screens/location_access/locationAccess.dart';
+import 'package:zesty/screens/location_access/shimmerEffect.dart';
 import 'package:zesty/screens/login_process/signin.dart';
 import 'package:zesty/screens/onboarding/onBoardingScreen.dart';
 import 'package:zesty/utils/theme/theme.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       theme: TAppTheme.lightTheme,
       darkTheme: TAppTheme.darkTheme,
-      home: onbording(),
+      home: LocationAccess(),
     );
   }
 }
