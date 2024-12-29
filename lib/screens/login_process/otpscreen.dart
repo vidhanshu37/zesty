@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
 import 'package:zesty/screens/login_process/signin.dart';
+import 'package:zesty/utils/constants/text_string.dart';
 
 class otpverify extends StatefulWidget{
 
@@ -67,22 +68,23 @@ class _otpverifyState extends State<otpverify> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => signin(),));
-          },
-        ),
-        title: Text("Verify your details",style: Theme.of(context).textTheme.headlineLarge),
-      ),
       body: Stack(
           children: [ Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(15.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 70,),
-                Text("Enter OTP sent to ${widget.phone} vio sms",style: Theme.of(context).textTheme.titleMedium),
+                SizedBox(height: 30,),
+                IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => signin(),));
+                  },
+                ),
+                const SizedBox(height: 7,),
+                Text(ZText.lable,style: Theme.of(context).textTheme.headlineLarge),
+                SizedBox(height: 7,),
+                Text("Enter OTP sent to ${widget.phone} vio sms",style: Theme.of(context).textTheme.labelMedium),
                 const SizedBox(height: 20,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -90,17 +92,17 @@ class _otpverifyState extends State<otpverify> {
                   List.generate(4, (index) => _otpTextField(index),),),
                 const SizedBox(height: 20,),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Didn't receive OTP ?",style: Theme.of(context).textTheme.titleMedium),
                     const SizedBox(width: 40,),
                     _isResendAvailable ? InkWell(
                       onTap: _resendOTP,
                       child: Text("Resend" ,style: Theme.of(context).textTheme.titleLarge),
-                    ) : Text('$_timer',style: Theme.of(context).textTheme.titleMedium),
+                    ) : Text('00:$_timer',style: Theme.of(context).textTheme.titleMedium),
                   ],
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(height: 50,),
                 ZElevatedButton(title: "Verify & Continue", onPress: (){})
               ],
             ),
@@ -122,21 +124,21 @@ class _otpverifyState extends State<otpverify> {
         onChanged: (value) => _handleotpinput(value,index),
         decoration: InputDecoration(
           border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(11),
+              borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
                   width: 2,
                   color: Colors.grey
               )
           ),
           enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(11),
+              borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
                 width: 2,
                 color: Colors.grey,
               )
           ),
           focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(11),
+              borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
                 width: 2,
                 color: Colors.black,
