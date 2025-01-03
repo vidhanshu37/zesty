@@ -117,6 +117,7 @@ class _ManualLocationState extends State<ManualLocation> {
             ),
             InkWell(
               onTap: () {
+                Navigator.pop(context);
                 Navigator.push(context, MaterialPageRoute(builder: (context) => ConfirmLocation()));
               },
               child: Container(
@@ -152,13 +153,13 @@ class _ManualLocationState extends State<ManualLocation> {
                       itemBuilder: (context, index) {
                         return ListTile(
                           leading: Icon(Icons.location_on_rounded),
-                          title: Text(
-                            _suggestions[index],
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
                           subtitle: Text(
-                            placeLocation[index],
+                            _suggestions[index],
                             style: Theme.of(context).textTheme.labelLarge,
+                          ),
+                          title: Text(
+                            placeLocation[index],
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           onTap: () {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
