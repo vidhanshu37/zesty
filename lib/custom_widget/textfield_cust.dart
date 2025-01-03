@@ -14,6 +14,7 @@ class ZCustomTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final double borderRadius;
   final Color? prefixIconColor;
+  final int? maxLength;
 
   const ZCustomTextField(
       {this.onButtonPressed,
@@ -28,7 +29,8 @@ class ZCustomTextField extends StatelessWidget {
       this.onChanged,
       this.validator,
       this.borderRadius = 8.0,
-      this.prefixIconColor});
+      this.prefixIconColor,
+      this.maxLength});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +41,9 @@ class ZCustomTextField extends StatelessWidget {
       onTap: onButtonPressed,
       onChanged: onChanged,
       validator: validator,
+      maxLength: maxLength,
       decoration: InputDecoration(
+        counterText: "",
         labelText: labelText,
         hintText: hintText,
         prefixIcon: prefixIcon != null

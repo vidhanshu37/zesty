@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:zesty/screens/add_manually_address/googleMap.dart';
+import 'package:zesty/screens/add_manually_address/shimmerMap.dart';
 
 class ConfirmLocation extends StatefulWidget {
   const ConfirmLocation({super.key});
@@ -12,20 +16,10 @@ class ConfirmLocation extends StatefulWidget {
 class _ConfirmLocationState extends State<ConfirmLocation> {
 
   String _locationMessage = "Fetching location...";
-  late LatLng longitude;
-  late LatLng latitude;
-
-  getCurrentLocation() async {
-    LocationPermission permission = await Geolocator.checkPermission();
-
-    if(permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
-      LocationPermission ask = await Geolocator.requestPermission(); // if user denied once it ask again for grant permission
-    } else {
-      Position currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      latitude = currentPosition.latitude as LatLng;
-      longitude = currentPosition.longitude as LatLng;
-    }
-  }
+  final Completer<GoogleMapController> _controller = Completer();
+  bool _isLocationFetched = false; // Track location fetching status
+  late double userLatitude;
+  late double userLongitude;
 
   Future<void> _getCurrentLocation() async {
     bool serviceEnabled;
@@ -33,12 +27,6 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
 
     // Check if location services are enabled
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      setState(() {
-        _locationMessage = "Location services are disabled.";
-      });
-      return;
-    }
 
     // Check location permissions
     permission = await Geolocator.checkPermission();
@@ -56,6 +44,7 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
       setState(() {
         _locationMessage = "Location permissions are permanently denied.";
       });
+      _showPermissionDeniedDialog();
       return;
     }
 
@@ -66,8 +55,11 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
       );
 
       setState(() {
+        userLatitude = position.latitude;
+        userLongitude = position.longitude;
         _locationMessage =
         "Latitude: ${position.latitude}, Longitude: ${position.longitude}";
+        _isLocationFetched = true; // Ensure Mark location as fetched
       });
     } catch (e) {
       setState(() {
@@ -79,14 +71,46 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
   @override
   void initState() {
     super.initState();
-    // getCurrentLocation();
     _getCurrentLocation();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text(_locationMessage)),
+      body: SafeArea(
+          child: Stack(
+            children: [
+              _isLocationFetched
+                  ? ShowGoogleMap(latitude: userLatitude, longitude: userLongitude)
+                  : Text(_locationMessage),
+            ],
+          )
+      ),
     );
   }
+
+  void _showPermissionDeniedDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Location Permission Needed"),
+        content: Text(
+            "Location permissions are permanently denied. Please enable them in the app settings."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text("Cancel", style: TextStyle(color: Color(0xffCAE97C)),),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Geolocator.openAppSettings(); // Opens app settings
+            },
+            child: Text("Open Settings", style: TextStyle(color: Color(0xffCAE97C)),),
+          ),
+        ],
+      ),
+    );
+  }
+
 }
