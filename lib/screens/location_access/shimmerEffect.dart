@@ -22,7 +22,7 @@ class ShimmerEffects extends StatelessWidget {
                   : TColors.grey,
               highlightColor: ZMediaQuery(context).isDarkMode
                   ? TColors.darkGrey
-                  : TColors.softGrey,
+                  : TColors.shimmerGrey,
               child: ListView.builder(
                 itemCount: itemCount,
                 itemBuilder: (context, index) {
@@ -47,7 +47,7 @@ class ShimmerEffects extends StatelessWidget {
                             children: [
                               Container(
                                 height: 15,
-                                width: ZMediaQuery(context).width,
+                                width: 100,
                                 decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(5)),
@@ -57,7 +57,7 @@ class ShimmerEffects extends StatelessWidget {
                               ),
                               Container(
                                 height: 10,
-                                width: 100,
+                                width: ZMediaQuery(context).width,
                                 decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(5)),
