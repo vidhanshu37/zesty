@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:zesty/utils/constants/colors.dart';
+import 'package:zesty/utils/constants/media_query.dart';
 
 class ZCustomTextField extends StatelessWidget {
   final String? labelText;
@@ -42,6 +44,7 @@ class ZCustomTextField extends StatelessWidget {
       onChanged: onChanged,
       validator: validator,
       maxLength: maxLength,
+      cursorColor: ZMediaQuery(context).isDarkMode ? TColors.white : TColors.black ,
       decoration: InputDecoration(
         counterText: "",
         labelText: labelText,
