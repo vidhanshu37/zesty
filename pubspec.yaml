@@ -41,6 +41,9 @@ dependencies:
   permission_handler: ^11.3.1 # Ask for access location permission
   google_maps_flutter: ^2.10.0
   geocoding: ^3.0.0
+  rive: ^0.13.20
+  flutter_3d_controller: ^2.0.3
+  carousel_slider: ^5.0.0
 
 dev_dependencies:
   flutter_test:
@@ -67,7 +70,9 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
-    - assets/icons/pin.png
+    - assets/icons/anim_icon.riv
+    - assets/riveIcons/delivery.riv
+    - assets/icons/burger.glb
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
