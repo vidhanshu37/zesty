@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:zesty/screens/home/bottom_navigation/bottomNavigation.dart';
+import 'package:zesty/screens/home/home.dart';
+import 'package:zesty/screens/home/rough.dart';
 import 'package:zesty/screens/location_access/locationAccess.dart';
 import 'package:zesty/screens/location_access/shimmerEffect.dart';
 import 'package:zesty/screens/login_process/signin.dart';
