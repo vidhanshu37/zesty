@@ -15,6 +15,13 @@ class _onbordingState extends State<onbording> {
   PageController pageController = PageController();
   int currentIndex = 0;
 
+  void nextpage(){
+    if(currentIndex < 3){
+      pageController.nextPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+    } else{
+      Navigator.push(context, MaterialPageRoute(builder: (context) => signin(),));
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,12 +97,13 @@ class _onbordingState extends State<onbording> {
             bottom: 55,
             left: 5,
             right: 5,
-            child: ZElevatedButton(title: currentIndex == 4 ? 'Get Started' : 'Next', onPress: (){
-              if(currentIndex == 1){
-
-              } else{
-                pageController.nextPage(duration: Duration(milliseconds: 300), curve: Curves.easeIn);
-              }
+            child: ZElevatedButton(title: currentIndex < 3 ? 'Next' : 'Get Started', onPress: (){
+              nextpage();
+              // if(currentIndex == 1){
+              //
+              // } else{
+              //   pageController.nextPage(duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+              // }
 
             }),
           ),
