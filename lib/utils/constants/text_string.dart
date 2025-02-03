@@ -2,7 +2,7 @@ class ZText {
 
   ///OnBoarding Screen1
   static const String title1 = "Food delivery at door step";
-  static const String subTitle = "Get yummy delicious food at your                       service in less time";
+  static const String subTitle = "Get yummy delicious food at your                               service in less time";
   ///screen 2
   static const String title2 = "Grocery & Essentials Delivery";
   ///screen 3
