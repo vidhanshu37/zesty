@@ -63,7 +63,7 @@ class _searchbarHomeState extends State<searchbarHome> {
         decoration: BoxDecoration(
           // border: Border.all(color: TColors.grey),
           borderRadius: BorderRadius.circular(10),
-          color: Colors.white,
+          color: TColors.white,
         ),
         child: Row(children: [
           Padding(
