@@ -71,12 +71,9 @@ flutter:
   assets:
     - assets/
     - assets/icons/
-    - assets/icons/anim_icon.riv
-    - assets/riveIcons/delivery.riv
-    - assets/icons/Burger.avif
-    - assets/icons/Pizza.avif
-    - assets/icons/pin.png
-    - assets/icons/Sushi_replace.avif
+    - assets/icons/appbar_image/
+    - assets/icons/food_category/
+    - assets/icons/temp/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
