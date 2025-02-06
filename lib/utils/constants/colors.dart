@@ -10,7 +10,7 @@ class TColors {
   // static const Color accent = Color(0xFFb0c7ff);
 
   // static const Color ligthGreen = Color(0xffCAE97C);
-  static const Color ligthGreen = Color(0xff26546e);
+  static const Color ligthGreen = Color(0xff306685);
 
 
 // Gradient color [example]

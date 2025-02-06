@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_avif/flutter_avif.dart';
+import 'package:zesty/screens/home/custom_widget/appBarHome.dart';
 import 'package:zesty/utils/constants/media_query.dart';
+import 'custom_widget/appBarBanner.dart';
 import 'custom_widget/searchbarHome.dart';
 import '../../utils/constants/colors.dart';
 import 'custom_widget/carouselBanner.dart';
@@ -32,29 +34,29 @@ class _HomeScreenState extends State<HomeScreen>
   late Animation<Color?> colorAnimationAddress;
   CarouselController carouselController = CarouselController(initialItem: 5);
   List<String> foodCategory1 = [
-    'assets/icons/Pizza.avif',
-    'assets/icons/Salad.avif',
-    'assets/icons/Cake.avif',
-    'assets/icons/Dosa.avif',
-    'assets/icons/Noodles.avif',
-    'assets/icons/Burger.avif',
-    'assets/icons/Rolls.avif',
-    'assets/icons/Biryani.avif',
-    'assets/icons/Paratha.avif',
-    'assets/icons/North Indian.avif',
+    'assets/icons/food_category/Pizza.avif',
+    'assets/icons/food_category/Salad.avif',
+    'assets/icons/food_category/Cake.avif',
+    'assets/icons/food_category/Dosa.avif',
+    'assets/icons/food_category/Noodles.avif',
+    'assets/icons/food_category/Burger.avif',
+    'assets/icons/food_category/Rolls.avif',
+    'assets/icons/food_category/Biryani.avif',
+    'assets/icons/food_category/Paratha.avif',
+    'assets/icons/food_category/North Indian.avif',
   ];
 
   List<String> foodCategory2 = [
-    'assets/icons/Pasta.avif',
-    'assets/icons/Chole Bhature.avif',
-    'assets/icons/Shake.avif',
-    'assets/icons/Chinese.avif',
-    'assets/icons/Pav Bhaji.avif',
-    'assets/icons/Idli.avif',
-    'assets/icons/Khichdi.avif',
-    'assets/icons/South Indian.avif',
-    'assets/icons/Shawarma.avif',
-    'assets/icons/Pure Veg.avif',
+    'assets/icons/food_category/Pasta.avif',
+    'assets/icons/food_category/Chole Bhature.avif',
+    'assets/icons/food_category/Shake.avif',
+    'assets/icons/food_category/Chinese.avif',
+    'assets/icons/food_category/Pav Bhaji.avif',
+    'assets/icons/food_category/Idli.avif',
+    'assets/icons/food_category/Khichdi.avif',
+    'assets/icons/food_category/South Indian.avif',
+    'assets/icons/food_category/Shawarma.avif',
+    'assets/icons/food_category/Pure Veg.avif',
   ];
 
   @override
@@ -132,6 +134,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       bottomNavigationBar: AnimatedContainer(
         duration: const Duration(milliseconds: 400),
         height: isVisible ? 62.0 : 0.0,
@@ -142,6 +145,7 @@ class _HomeScreenState extends State<HomeScreen>
         ),
         child: Center(child: Text("Bottom navigation "),),
       ),
+
       body: CustomScrollView(
         controller: hideBottomNavController,
         slivers: [
@@ -149,106 +153,17 @@ class _HomeScreenState extends State<HomeScreen>
           AnimatedBuilder(
               animation: colorAnimation,
               builder: (context, child) {
-                return SliverAppBar(
-                  // pinned: true,
-                  snap: true,
-                  collapsedHeight: 120,
-                  floating: true,
-                  centerTitle: false,
-                  expandedHeight: 120,
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: Container(
-                      color: colorAnimation.value,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          ListTile(
-                            title: Text(
-                              widget.address,
-                              // style: Theme.of(context).textTheme.titleMedium,
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: colorAnimationAddress.value),
-                            ),
-                            subtitle: Text(
-                              widget.subAddress,
-                              // style: Theme.of(context).textTheme.labelLarge,
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  color: colorAnimationAddress.value),
-                            ),
-                            trailing: Icon(
-                              Icons.supervised_user_circle_outlined,
-                              size: 30,
-                              color: colorAnimationAddress.value,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 0,
-                          ),
-
-                          /// searchbar
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 18, vertical: 5),
-                            child: searchbarHome(
-                                searchController: searchController),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                );
+                // main App-bar (address, sub-add, search)
+                return AppBarHome(colorAnimation: colorAnimation, widget: widget, colorAnimationAddress: colorAnimationAddress, searchController: searchController);
               }),
 
-          /// show advertisement
-          SliverAppBar(
-            expandedHeight: 160,
-            // title: Text("Zesty"), // title
-            centerTitle: false,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                height: 170,
-                width: ZMediaQuery(context).width,
-                decoration: BoxDecoration(
-                  color: TColors.ligthGreen,
-                  borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(20),
-                      bottomLeft: Radius.circular(20)),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                        height: 180,
-                        width: 100,
-                        child: AvifImage.asset('assets/icons/Veggies_new.avif',
-                            fit: BoxFit.cover)),
-                    Text(
-                      "\nBest deals of\n\t\t\t  the day!",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 26,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    Container(
-                      height: 180,
-                      width: 100,
-                      child: AvifImage.asset('assets/icons/Sushi_replace.avif',
-                          fit: BoxFit.cover),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
+          /// Show Banner
+          appBarBanner(),
 
+          /// carousel
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.only(top: 10),
               child: SizedBox(
                 height: 150,
                 child: carouselBanner(),
@@ -297,8 +212,8 @@ class _HomeScreenState extends State<HomeScreen>
                     return Column(
                       children: [
                         Container(
-                            height: 120,
-                            width: 120,
+                            height: 110,
+                            width: 110,
                             child: AvifImage.asset(
                               foodCategory1[index],
                               height: 80,
@@ -308,8 +223,8 @@ class _HomeScreenState extends State<HomeScreen>
                           height: 20,
                         ),
                         Container(
-                            height: 120,
-                            width: 120,
+                            height: 110,
+                            width: 110,
                             child: AvifImage.asset(
                               foodCategory2[index],
                               height: 80,
@@ -337,3 +252,5 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
+
