@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
 import 'package:zesty/screens/location_access/locationAccess.dart';
 import 'package:zesty/screens/login_process/signin.dart';
+import 'package:zesty/utils/constants/colors.dart';
+import 'package:zesty/utils/constants/media_query.dart';
 import 'package:zesty/utils/constants/text_string.dart';
 
 class otpverify extends StatefulWidget{
@@ -142,21 +144,21 @@ class _otpverifyState extends State<otpverify> {
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
                   width: 2,
-                  color: Colors.grey
+                  color: ZMediaQuery(context).isDarkMode ? TColors.grey : TColors.darkerGrey,
               )
           ),
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
                 width: 2,
-                color: Colors.grey,
+                color: ZMediaQuery(context).isDarkMode ? TColors.darkerGrey : TColors.grey,
               )
           ),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
                 width: 2,
-                color: Colors.black,
+                color: ZMediaQuery(context).isDarkMode ? TColors.darkGrey : TColors.darkGrey,
               )
           ),
           counterText: '',

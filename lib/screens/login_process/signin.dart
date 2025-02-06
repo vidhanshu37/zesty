@@ -73,7 +73,7 @@ class _signinState extends State<signin> {
               ),
             ),
             Positioned(
-              bottom: 75,
+              top: ZMediaQuery(context).height - 130,
               left: 5,
               right: 5,
               child: ZElevatedButton(
@@ -96,7 +96,7 @@ class _signinState extends State<signin> {
                   }),
             ),
             Positioned(
-                bottom: 25,
+                top : ZMediaQuery(context).height - 70,
                 left: 5,
                 right: 5,
                 child: Text(ZText.termsConditions,

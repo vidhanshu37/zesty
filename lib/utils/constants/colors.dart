@@ -10,17 +10,19 @@ class TColors {
   // static const Color accent = Color(0xFFb0c7ff);
 
   // static const Color ligthGreen = Color(0xffCAE97C);
-  static const Color ligthGreen = Color(0xff306685);
-
+  static const Color appbarBanner = Color(0xff306685);
+  static const Color Green = Color(0xffCAE97C);
+  static const Color darkGreen = Color(0xff70b943);
+  static const Color ligthGreen = Color(0xff26546e);
 
 // Gradient color [example]
   static const Gradient linearGradient = LinearGradient(
-    begin: Alignment(0.0, 0.0),
+      begin: Alignment(0.0, 0.0),
       end: Alignment(0.707, -0.707),
       colors: [
-    Colors.white,
-    Colors.black,
-  ]);
+        Colors.white,
+        Colors.black,
+      ]);
 
 // Text Colors
   static const Color textPrimary = Color(0xFF333333);
@@ -68,5 +70,3 @@ class TColors {
   static const Color white = Color (0xFFFFFFFF);
 
 }
-
-

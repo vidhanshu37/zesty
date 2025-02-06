@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
 import 'package:zesty/screens/login_process/signin.dart';
+import 'package:zesty/utils/constants/colors.dart';
 import 'package:zesty/utils/constants/media_query.dart';
 import 'package:zesty/utils/constants/text_string.dart';
 
@@ -17,7 +18,7 @@ class _onbordingState extends State<onbording> {
 
   void nextpage(){
     if(currentIndex < 3){
-      pageController.nextPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+       pageController.nextPage(duration: Duration(milliseconds: 300), curve: Curves.easeIn);
     } else{
       Navigator.push(context, MaterialPageRoute(builder: (context) => signin(),));
     }
@@ -99,12 +100,6 @@ class _onbordingState extends State<onbording> {
             right: 5,
             child: ZElevatedButton(title: currentIndex < 3 ? 'Next' : 'Get Started', onPress: (){
               nextpage();
-              // if(currentIndex == 1){
-              //
-              // } else{
-              //   pageController.nextPage(duration: Duration(milliseconds: 300), curve: Curves.easeIn);
-              // }
-
             }),
           ),
           Positioned(
@@ -113,7 +108,7 @@ class _onbordingState extends State<onbording> {
             right: 5,
             child: InkWell(onTap: (){
               Navigator.push(context, MaterialPageRoute(builder: (context) => signin(),));
-            }, child: Text("Skip",style: Theme.of(context).textTheme.titleMedium,textAlign: TextAlign.center,) ,),
+            }, child: Text(currentIndex == 3 ? "" : "Skip" ,style: Theme.of(context).textTheme.titleMedium,textAlign: TextAlign.center,) ,),
           ),
           ],
       ),
@@ -131,7 +126,7 @@ class _onbordingState extends State<onbording> {
                 height: 3,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(11),
-                  color: currentIndex == index ? Colors.black : Colors.grey ,)),),
+                  color: currentIndex == index ? ZMediaQuery(context).isDarkMode ? TColors.grey : TColors.darkerGrey : ZMediaQuery(context).isDarkMode ? TColors.darkerGrey : TColors.grey ,)),),
                 ),
 
         ),
