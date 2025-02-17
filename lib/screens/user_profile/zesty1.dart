@@ -11,6 +11,26 @@ class zesty1 extends StatefulWidget{
 }
 
 class _zesty1State extends State<zesty1> {
+
+  final List<Map<String, String>> faqs = [
+    {
+      "question": "Is there a limit on the number of devices I can use Swiggy One Lite on?",
+      "answer": "Yes. Swiggy One Lite membership can be used only on 2 devices at a time. Swiggy Zesty Lite memberships are priced for individual and personal usage. Having a 2 device limit helps us curb disproportionate usage of benefits and ensures the sustainability of the pricing we offer to all our consumers."
+    },
+    {
+      "question": "Is there a limit on free deliveries or extra discounts on Food delivery or Instamart with One Lite?",
+      "answer": "Details about the free deliveries and discounts..."
+    },
+    {
+      "question": "Is there a minimum bill value to avail Swiggy One Pre-Book offers on Dineout?",
+      "answer": "Minimum bill value required is..."
+    },
+    {
+      "question": "What will happen once I finish my free deliveries on either Food or Instamart?",
+      "answer": "After finishing your free deliveries..."
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,7 +105,7 @@ class _zesty1State extends State<zesty1> {
                 ),
               ),
               SizedBox(height: 20,),
-              Text("ONE LITE BENEFITS",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: TColors.darkerGrey),),
+              Text("ONE LITE BENEFITS",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: ZMediaQuery(context).isDarkMode ? TColors.white : TColors.darkerGrey),),
               SizedBox(height: 10,),
               Container(
                 padding: EdgeInsets.all(16),
@@ -95,8 +115,8 @@ class _zesty1State extends State<zesty1> {
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey.shade300,
-                      blurRadius: 5,
-                      spreadRadius: 2
+                      //blurRadius: 2,
+                      //spreadRadius: 1
                     ),
                   ]
                 ),
@@ -110,22 +130,64 @@ class _zesty1State extends State<zesty1> {
                   ],
                 ),
               ),
+              SizedBox(height: 10,),
               Container(
+                width: double.infinity,
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
+                  color: Colors.grey.shade200
                 ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 10,),
-                    Text("Food",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,color: TColors.darkGreen),),
-                    SizedBox(height: 5,),
-                    Text("10 free deliveries",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 13,color: Colors.black),),
+                    Text("Food",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: TColors.darkGreen),),
+                    SizedBox(height: 13,),
+                    Text("10 free deliveries",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.black),),
                     SizedBox(height: 3,),
-                    Text("on all restauants up to 7 km,",style: TextStyle(fontSize: 10,color: Colors.grey),),
+                    Text("on all restauants up to 7 km,",style: TextStyle(fontSize: 13,color: Colors.grey),),
+                    SizedBox(height: 3,),
+                    Text("on orders above ₹199",style: TextStyle(fontSize: 13,color: Colors.grey),),
+                    SizedBox(height: 10,),
+                    Text("Up to 30% extra discounts",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.black),),
+                    SizedBox(height: 3,),
+                    Text("over & above other offers",style: TextStyle(fontSize: 13,color: Colors.grey),),
+                    SizedBox(height: 10,),
+                    Text("No surge fee, ever!",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.black),),
+                    SizedBox(height: 3,),
+                    Text("even during rain or peak hours",style: TextStyle(fontSize: 13,color: Colors.grey),),
+                    SizedBox(height: 20,),
+                    Divider(),
+                    SizedBox(height: 13,),
+                    Text("Instamart",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: TColors.darkGreen),),
+                    SizedBox(height: 10,),
+                    Text("10 free deliveries",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.black),),
+                    SizedBox(height: 3,),
+                    Text("on all orders above ₹199",style: TextStyle(fontSize: 13,color: Colors.grey),),
+                    SizedBox(height: 10,),
+                    Text("No surge fee, ever!",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.black),),
+                    SizedBox(height: 3,),
+                    Text("even during rain or peak hours",style: TextStyle(fontSize: 13,color: Colors.grey),),
+                    SizedBox(height: 15,),
                   ],
                 ),
-              )
+              ),
+              SizedBox(height: 10,),
+              Container(
+                child: ListView(
+                  children: faqs.map((faq) {
+                    return ExpansionTile(
+                      title: Text(faq["question"]!, style: TextStyle(fontWeight: FontWeight.bold),overflow: TextOverflow.ellipsis,maxLines: 3,),
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text(faq["answer"]!,overflow: TextOverflow.ellipsis,maxLines: 8,),
+                        )
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ),
             ],
           ),
         ),
