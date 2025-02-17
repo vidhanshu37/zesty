@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_avif/flutter_avif.dart';
 import 'package:zesty/utils/constants/colors.dart';
 
-import '../../utils/constants/media_query.dart';
+import '../../../utils/constants/media_query.dart';
+
 
 class zesty1 extends StatefulWidget{
   @override
