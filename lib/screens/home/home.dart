@@ -2,7 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_avif/flutter_avif.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:zesty/screens/home/custom_widget/appBarHome.dart';
+import 'package:zesty/screens/home/reorder/reorder_page.dart';
+import 'package:zesty/screens/home/user_profile/profile.dart';
+import 'package:zesty/screens/home/zesty_Mart/zesty_mart_page.dart';
 import 'package:zesty/utils/constants/media_query.dart';
 import 'custom_widget/appBarBanner.dart';
 import 'custom_widget/searchbarHome.dart';
@@ -22,7 +26,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
-  bool isVisible = true;
+  int _selectedIndex = 0;
+  PageController _pageController = PageController();
+
+  static bool isVisible = true;
   final ScrollController hideBottomNavController = ScrollController();
   double currentOffset = 0;
   double previousOffset = 0;
@@ -131,6 +138,13 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
+  final List<Widget> _screen = [
+    Container(),
+    ZestyMartPage(),
+    ReorderPage(),
+    profile(),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,148 +154,178 @@ class _HomeScreenState extends State<HomeScreen>
         height: isVisible ? 62.0 : 0.0,
         margin: const EdgeInsets.symmetric(horizontal: 24.0),
         decoration: BoxDecoration(
-          color: TColors.darkerGrey,
+          color: ZMediaQuery(context).isDarkMode ? TColors.white : TColors.black,
           // borderRadius: const BorderRadius.all(Radius.circular(24.0)),
         ),
-        child: Center(child: Text("Bottom navigation "),),
+        child:  Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 7),
+          child: GNav(
+            backgroundColor: ZMediaQuery(context).isDarkMode ? TColors.white : TColors.black,
+            color: ZMediaQuery(context).isDarkMode ? TColors.black : TColors.white,
+            activeColor: ZMediaQuery(context).isDarkMode ? TColors.black : TColors.white,
+            tabBackgroundColor: ZMediaQuery(context).isDarkMode ? TColors.grey : TColors.darkGrey,
+            padding: EdgeInsets.all(16),
+            selectedIndex: _selectedIndex,
+            onTabChange: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+              // _pageController.jumpToPage(index);
+            },
+            gap: 8,
+            tabs: [GButton(icon: Icons.home_filled,text: "Home",),
+              GButton(icon: Icons.card_travel,text: "ZestyMart",),
+              GButton(icon: Icons.shopping_basket_rounded, text: "Reorder"),
+              GButton(icon: Icons.person, text: "Profile"),
+            ],
+          ),
+        ),
       ),
 
-      body: CustomScrollView(
-        controller: hideBottomNavController,
-        slivers: [
-          /// main top appbar(searching, profile)
-          AnimatedBuilder(
-              animation: colorAnimation,
-              builder: (context, child) {
-                // main App-bar (address, sub-add, search)
-                return AppBarHome(colorAnimation: colorAnimation, widget: widget, colorAnimationAddress: colorAnimationAddress, searchController: searchController);
-              }),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          CustomScrollView(
+          controller: hideBottomNavController,
+          slivers: [
+            /// main top appbar(searching, profile)
+            AnimatedBuilder(
+                animation: colorAnimation,
+                builder: (context, child) {
+                  // main App-bar (address, sub-add, search)
+                  return AppBarHome(colorAnimation: colorAnimation, widget: widget, colorAnimationAddress: colorAnimationAddress, searchController: searchController);
+                }),
 
-          /// Show Banner
-          appBarBanner(),
+            /// Show Banner
+            appBarBanner(),
 
-          /// carousel
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: SizedBox(
-                height: 150,
-                child: carouselBanner(),
+            /// carousel
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: SizedBox(
+                  height: 150,
+                  child: carouselBanner(),
+                ),
               ),
             ),
-          ),
 
-          SliverToBoxAdapter(
-            child: Container(
-                height: 60,
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                child: Center(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Divider(
-                            color: TColors.grey, // Customize the color
-                            thickness: 1,       // Customize the thickness
+            SliverToBoxAdapter(
+              child: Container(
+                  height: 60,
+                  padding: EdgeInsets.symmetric(horizontal: 15),
+                  child: Center(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Divider(
+                              color: TColors.grey, // Customize the color
+                              thickness: 1,       // Customize the thickness
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Text("WHAT'S  ON YOUR MIND?",
-                              style: Theme.of(context).textTheme.labelMedium),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            color: TColors.grey,
-                            thickness: 1,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Text("WHAT'S  ON YOUR MIND?",
+                                style: Theme.of(context).textTheme.labelMedium),
                           ),
-                        ),
-                      ],
-                    )
-                )
+                          Expanded(
+                            child: Divider(
+                              color: TColors.grey,
+                              thickness: 1,
+                            ),
+                          ),
+                        ],
+                      )
+                  )
+              ),
             ),
-          ),
 
-          /// Food category
-          SliverToBoxAdapter(
-            child: Container(
-              height: 260,
-              child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: foodCategory1.length,
-                  itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        Container(
-                            height: 110,
-                            width: 110,
-                            child: AvifImage.asset(
-                              foodCategory1[index],
-                              height: 80,
-                              width: 80,
-                            )),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Container(
-                            height: 110,
-                            width: 110,
-                            child: AvifImage.asset(
-                              foodCategory2[index],
-                              height: 80,
-                              width: 80,
-                            )),
-                      ],
-                    );
-                  }),
+            /// Food category
+            SliverToBoxAdapter(
+              child: Container(
+                height: 260,
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: foodCategory1.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          Container(
+                              height: 110,
+                              width: 110,
+                              child: AvifImage.asset(
+                                foodCategory1[index],
+                                height: 80,
+                                width: 80,
+                              )),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                              height: 110,
+                              width: 110,
+                              child: AvifImage.asset(
+                                foodCategory2[index],
+                                height: 80,
+                                width: 80,
+                              )),
+                        ],
+                      );
+                    }),
+              ),
             ),
-          ),
 
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Top Rated Restaurants", style: Theme.of(context).textTheme.titleLarge,),
-                  SizedBox(height: 5,),
-                  Card(
-                    elevation: 3,
-                    child: Container(
-                      height: 150,
-                      width: 140,
-                      decoration: BoxDecoration(
-                          color: Colors.amber,
-                        borderRadius: BorderRadius.circular(10)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Top Rated Restaurants", style: Theme.of(context).textTheme.titleLarge,),
+                    SizedBox(height: 5,),
+                    Card(
+                      elevation: 3,
+                      child: Container(
+                        height: 150,
+                        width: 140,
+                        decoration: BoxDecoration(
+                            color: Colors.amber,
+                          borderRadius: BorderRadius.circular(10)
+                        ),
                       ),
                     ),
-                  ),
-                  Text("    Radhe Dhokla", style: Theme.of(context).textTheme.bodyLarge,)
-                ],
+                    Text("    Radhe Dhokla", style: Theme.of(context).textTheme.bodyLarge,)
+                  ],
+                ),
               ),
             ),
-          ),
 
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: [],
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  children: [],
+                ),
               ),
             ),
-          ),
 
-          /// main home page content
-          SliverList(
-              delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              return Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text("data"),
-              );
-            },
-            childCount: 100,
-          )),
-          
+            /// main home page content
+            SliverList(
+                delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text("data"),
+                );
+              },
+              childCount: 100,
+            )),
+
+          ],
+        ),
+          ZestyMartPage(),
+          ReorderPage(),
+          profile(),
         ],
       ),
     );
