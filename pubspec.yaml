@@ -41,9 +41,9 @@ dependencies:
   permission_handler: ^11.3.1 # Ask for access location permission
   google_maps_flutter: ^2.10.0
   geocoding: ^3.0.0
-  flutter_3d_controller: ^2.0.3
   carousel_slider: ^5.0.0
   flutter_avif: ^3.0.0
+  shared_preferences: ^2.5.2
 
 dev_dependencies:
   flutter_test:

@@ -1,7 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_avif/flutter_avif.dart';
-import 'package:zesty/custom_widget/elevatedButton_cust.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:zesty/utils/constants/media_query.dart';
 
@@ -14,21 +12,49 @@ class _carouselBannerState extends State<carouselBanner> {
   @override
   Widget build(BuildContext context) {
 
-
     List<String> advertisement = [
       'assets/icons/temp/Ice Cream_b.png',
-      'assets/icons/temp/kabab_b.png',
-      'assets/icons/temp/momo_b.png',
+      'assets/icons/temp/kabab_b-removebg-preview.png',
+      'assets/icons/temp/momo_b-removebg-preview.png',
       'assets/icons/temp/Pastry_b.png',
-      'assets/icons/temp/pizza_b.png',
-      'assets/icons/temp/thali_b.png',
-      'assets/icons/temp/veg_b.png'
+      'assets/icons/temp/pizza_b-removebg-preview.png',
+      'assets/icons/temp/thali_b-removebg-preview.png',
+      'assets/icons/temp/veg_b-removebg-preview.png'
     ];
 
+    List<String> title = [
+      'Hot day?', // ice-cream
+      'Craving something\nsmoky?',
+      'Momos so good,',
+      'Indulge in pastries',
+      'Hot, fresh, delicious',
+      'Bringing the flavors\nof India to your plate!',
+      'Something light?',
+    ];
+
+    List<String> subTitle = [
+      'Zesty’s ice cream is just a\ntap away!',
+      'Zesty’s seekh kebabs are here',
+      'you’ll Zesty them again\nand again!',
+      'because you deserve a treat\nand get offers!',
+      'Zesty’s pizzas are a slice of\nheaven!',
+      '',
+      'Salads are here to refresh\njust tap and order!',
+    ];
+
+    List<Color> startingColor = [
+      Color(0xffedc4b3),
+      Color(0xffedc4b3), // pastry-4
+    ];
+    
+    List<Color> endColor = [
+      Color(0xff9d6b53),
+      Color(0xff9d6b53) // pastry-4
+    ];
 
     return CarouselSlider(
         options: CarouselOptions(
-          height: 120,
+          height: 125,
           autoPlay: true,  // Enable auto-play
           autoPlayInterval: Duration(seconds: 5), // Interval between auto-play
           autoPlayAnimationDuration: Duration(milliseconds: 1000), // Animation duration
@@ -40,9 +66,17 @@ class _carouselBannerState extends State<carouselBanner> {
           (index) => ClipRRect(
             borderRadius: BorderRadius.circular(10.0),
               child: Container(
-                color: TColors.white,
                 height: double.infinity,
-                width: ZMediaQuery(context).width - 40,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    // colors: [Color(0xffc1aaa9), Color(0xffa08679)],
+                    colors: [Color(0xff051a2d), Color(0xff004e99)],
+                      tileMode: TileMode.clamp,
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight
+                  ),
+                ),
+                width: ZMediaQuery(context).width,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -51,26 +85,25 @@ class _carouselBannerState extends State<carouselBanner> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Hidden gems for you!", style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900)),
+                            Text(title[index], style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: TColors.white)),
                             SizedBox(height: 2,),
-                            Text("Try amazing spots\n& surprise yourself.", style: Theme.of(context).textTheme.labelSmall,),
-                            SizedBox(height: 10,),
+                            Text(subTitle[index], style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: TColors.white.withOpacity(0.5))),
+                            SizedBox(height: 9,),
                             // order now button
                             Container(
                               height: 22,
                               width: 85,
                               decoration: BoxDecoration(
-                                  color: TColors.warning,
+                                  color: TColors.white,
                                 borderRadius: BorderRadius.circular(10.0)
                               ),
-                              child: Center(child: Text("ORDER NOW", style: TextStyle(color: TColors.white, fontSize: 11, fontWeight: FontWeight.w600),)),
+                              child: Center(child: Text("ORDER NOW", style: TextStyle(color: TColors.black, fontSize: 11, fontWeight: FontWeight.w600),)),
                             )
                           ],
                         ),
                       ),
                       SizedBox(
                           width: 120,
-                          // child: AvifImage.asset(advertisementBanner[index], fit: BoxFit.cover,)
                         child: Image.asset(advertisement[index], fit: BoxFit.cover,),
                       ),
                     ],
