@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:zesty/custom_widget/textfield_cust.dart';
 import 'package:zesty/screens/add_manually_address/confirmLocation.dart';
+import 'package:zesty/screens/home/home.dart';
 import 'package:zesty/screens/location_access/shimmerEffect.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/constants/media_query.dart';
@@ -110,7 +111,7 @@ class _ManualLocationState extends State<ManualLocation> {
             ZCustomTextField(
                 controller: _controller,
                 hintText: "Try citylight, surat, etc.",
-                onChanged: (value) => _getSuggestions(value),
+                onChanged: (value) => _getSuggestions(value.toLowerCase().trim()),
                 prefixIcon: Icons.search_rounded),
             SizedBox(
               height: 10,
@@ -162,9 +163,12 @@ class _ManualLocationState extends State<ManualLocation> {
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content:
-                                    Text('Selected: ${_suggestions[index]}')));
+
+                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen(address: placeLocation[index], subAddress: "surat")), (route) => false);
+
+                            // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            //     content:
+                            //         Text('Selected: ${_suggestions[index]}')));
                           },
                         );
                       },

@@ -204,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen>
           /// Food category
           SliverToBoxAdapter(
             child: Container(
-              height: 270,
+              height: 260,
               child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: foodCategory1.length,
@@ -236,6 +236,40 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           ),
 
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Top Rated Restaurants", style: Theme.of(context).textTheme.titleLarge,),
+                  SizedBox(height: 5,),
+                  Card(
+                    elevation: 3,
+                    child: Container(
+                      height: 150,
+                      width: 140,
+                      decoration: BoxDecoration(
+                          color: Colors.amber,
+                        borderRadius: BorderRadius.circular(10)
+                      ),
+                    ),
+                  ),
+                  Text("    Radhe Dhokla", style: Theme.of(context).textTheme.bodyLarge,)
+                ],
+              ),
+            ),
+          ),
+
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                children: [],
+              ),
+            ),
+          ),
+
           /// main home page content
           SliverList(
               delegate: SliverChildBuilderDelegate(
@@ -246,7 +280,8 @@ class _HomeScreenState extends State<HomeScreen>
               );
             },
             childCount: 100,
-          ))
+          )),
+          
         ],
       ),
     );
