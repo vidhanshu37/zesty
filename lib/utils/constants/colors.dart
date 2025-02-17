@@ -14,6 +14,7 @@ class TColors {
   static const Color Green = Color(0xffCAE97C);
   static const Color darkGreen = Color(0xff70b943);
   static const Color ligthGreen = Color(0xff26546e);
+  static const Color orange = Color(0xfffe5200);
 
 // Gradient color [example]
   static const Gradient linearGradient = LinearGradient(
