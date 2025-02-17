@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:zesty/utils/constants/colors.dart';
+import 'package:zesty/utils/constants/media_query.dart';
 
 class profile extends StatefulWidget{
   @override
@@ -12,7 +13,7 @@ class _profileState extends State<profile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(onPressed: (){}, icon: Icon(Icons.arrow_back,color: Colors.black,)),
+        leading: IconButton(onPressed: (){}, icon: Icon(Icons.arrow_back,color: ZMediaQuery(context).isDarkMode ? Colors.white : Colors.black,)),
       ),
       body: SingleChildScrollView(
         child: Padding(
