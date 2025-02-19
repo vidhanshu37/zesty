@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:zesty/screens/home/home.dart';
 import 'package:zesty/screens/home/rough.dart';
+import 'package:zesty/screens/home/user_profile/profile.dart';
+import 'package:zesty/screens/home/user_profile/zesty1.dart';
 import 'package:zesty/screens/location_access/locationAccess.dart';
 import 'package:zesty/screens/location_access/shimmerEffect.dart';
 import 'package:zesty/screens/login_process/signin.dart';
 import 'package:zesty/screens/onboarding/onBoardingScreen.dart';
-import 'package:zesty/screens/user_profile/profile.dart';
-import 'package:zesty/screens/user_profile/zesty1.dart';
+import 'package:zesty/screens/restaurants_side/restaurants_home.dart';
 import 'package:zesty/utils/theme/theme.dart';
 
 import 'myHomePage.dart';
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       theme: TAppTheme.lightTheme,
       darkTheme: TAppTheme.darkTheme,
-      home: zesty1(),
+      home: RestaurantsHome(),
       //home: HomeScreen(address: "surat", subAddress: "subAddress"),
     );
   }
