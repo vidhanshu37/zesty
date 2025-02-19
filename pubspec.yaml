@@ -78,6 +78,7 @@ flutter:
     - assets/icons/food_category/
     - assets/icons/temp/
     - assets/images/
+    - assets/icons/zestyMartCategory/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

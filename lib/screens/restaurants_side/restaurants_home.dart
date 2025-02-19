@@ -149,7 +149,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
             ),
             Padding(
               padding: const EdgeInsets.all(13.0),
-              child: searchbarHome(searchController: searchbarController),
+              child: SearchBarHome(searchController: searchbarController),
             ),
           ],
         ),
