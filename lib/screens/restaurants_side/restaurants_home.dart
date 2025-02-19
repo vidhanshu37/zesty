@@ -1,11 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:zesty/custom_widget/elevatedButton_cust.dart';
 import 'package:zesty/screens/home/custom_widget/searchbarHome.dart';
+import 'package:zesty/utils/constants/api_constants.dart';
 import 'package:zesty/utils/constants/colors.dart';
+import 'package:http/http.dart' as http;
 
 class RestaurantsHome extends StatefulWidget {
-  const RestaurantsHome({super.key});
+  final String id;
+  const RestaurantsHome({super.key,required this.id});
 
   @override
   State<RestaurantsHome> createState() => _RestaurantsHomeState();
@@ -15,7 +20,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
   final TextEditingController searchbarController = TextEditingController();
   final PageController pageController = PageController();
   int _currentIndex = 0;
-
+  String restaurantName = "";
   final List<String> _coupons = [
     "Extra ₹75 off",
     "Flat 10% off above ₹500",
@@ -27,6 +32,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
   @override
   void initState() {
     super.initState();
+    getRestaurantData(widget.id); //fetch data of restaurant
     Timer.periodic(Duration(seconds: 3), (Timer timer){
       if(_currentIndex < _coupons.length -1){
         _currentIndex++;
@@ -41,6 +47,31 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
   void dispose() {
     pageController.dispose();
     super.dispose();
+  }
+
+  Future<void> getRestaurantData(String id) async {
+    final url = Uri.parse(ApiConstants.getSingleRestaurantData(id));
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        restaurantName = data['restaurantName'];
+        setState(() {
+
+        });
+      } else{
+        restaurantName = "Fail";
+        setState(() {
+
+        });
+      }
+    } catch(e){
+      print(e);
+      restaurantName = "Error";
+      setState(() {
+
+      });
+    }
   }
 
   @override
@@ -80,11 +111,11 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                           ],
                         ),
                         SizedBox(height: 5,),
-                        Text("Jalaram Locho &  Rasawala khaman",style: Theme.of(context).textTheme.headlineLarge,overflow: TextOverflow.ellipsis,maxLines: 2,),
+                        Text(restaurantName,style: Theme.of(context).textTheme.headlineLarge,overflow: TextOverflow.ellipsis,maxLines: 2,),
                         SizedBox(height: 5,),
                         Text("15-20 mins • 2.4 km • Katargam",style: TextStyle(fontSize: 14),overflow: TextOverflow.ellipsis,maxLines: 1,),
                         SizedBox(height: 5,),
-                        Text("Gujarati,snacks",style: TextStyle(color: TColors.darkGrey,fontSize: 12,overflow: TextOverflow.ellipsis,),maxLines: 1,),
+                        Text(widget.id,style: TextStyle(color: TColors.darkGrey,fontSize: 12,overflow: TextOverflow.ellipsis,),maxLines: 1,),
                       ],
                     ),
                   ),
@@ -149,8 +180,68 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
             ),
             Padding(
               padding: const EdgeInsets.all(13.0),
-              child: searchbarHome(searchController: searchbarController),
+              child: SearchBarHome(searchController: searchbarController),
             ),
+            SizedBox(height: 10,),
+            Container(
+              padding: EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.transparent,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(height: 20,width: 20,color: Colors.amber,),
+                        SizedBox(height: 5,),
+                        Text("Korean paneer Tikka Garlic bread",style: Theme.of(context).textTheme.titleMedium,overflow: TextOverflow.ellipsis,maxLines: 2,),
+                        SizedBox(height: 4,),
+                        Text("Freshly Baked Stuffed garlic Bread infused with Korean Sweet Chili Sauce,Molten Cheese,Onion and Paneer Tikka Filings.",style: TextStyle(fontSize: 12,color: TColors.darkGrey),overflow: TextOverflow.ellipsis,maxLines: 2,),
+                        SizedBox(height: 7,),
+                        Text("₹ 200",style: TextStyle(fontSize: 14,color: TColors.darkerGrey,fontWeight: FontWeight.bold),),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 10,),
+                  Container(
+                    width: 130,
+                    height: 150,
+                    child: Stack(
+                      alignment: Alignment.topLeft,
+                      children: [
+                        ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: Image.network("https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chorizo-mozarella-gnocchi-bake-cropped-9ab73a3.jpg?resize=768,574",width: 130,height: 130,fit: BoxFit.cover,)
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          left: 25,
+                          child: ElevatedButton(onPressed: (){},
+                              style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              elevation: 5,
+                              side: BorderSide.none,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),)
+                              ),
+                              child: Text("ADD",style: TextStyle(color: Colors.black),)),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Divider(
+                color: TColors.grey.withOpacity(0.5),
+              ),
+            )
           ],
         ),
       ),

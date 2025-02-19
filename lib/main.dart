@@ -27,8 +27,8 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       theme: TAppTheme.lightTheme,
       darkTheme: TAppTheme.darkTheme,
-      home: RestaurantsHome(),
-      //home: HomeScreen(address: "surat", subAddress: "subAddress"),
+      // home: RestaurantsHome(),
+      home: HomeScreen(address: "surat", subAddress: "subAddress"),
     );
   }
 }

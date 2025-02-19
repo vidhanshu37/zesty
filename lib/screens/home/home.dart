@@ -10,6 +10,7 @@ import 'package:zesty/screens/home/custom_widget/appBarHome.dart';
 import 'package:zesty/screens/home/reorder/reorder_page.dart';
 import 'package:zesty/screens/home/user_profile/profile.dart';
 import 'package:zesty/screens/home/zesty_Mart/zesty_mart_page.dart';
+import 'package:zesty/screens/restaurants_side/restaurants_home.dart';
 import 'package:zesty/utils/constants/api_constants.dart';
 import 'package:zesty/utils/constants/media_query.dart';
 import 'custom_widget/appBarBanner.dart';
@@ -373,14 +374,19 @@ class _HomeScreenState extends State<HomeScreen>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            width: double.infinity,
-                            height: 200,
-                            decoration: BoxDecoration(
-                                color: TColors.lightGrey,
-                                borderRadius: BorderRadius.circular(12.0)
+                          GestureDetector(
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantsHome(id: restaurantData[index]["_id"],),));
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              height: 200,
+                              decoration: BoxDecoration(
+                                  color: TColors.lightGrey,
+                                  borderRadius: BorderRadius.circular(12.0)
+                              ),
+                              child: Image.network('https://zesty-backend.onrender.com/restaurant/get-restaurant-logo/${restaurantData[index]['_id']}', fit: BoxFit.cover,),
                             ),
-                            child: Image.network('https://zesty-backend.onrender.com/restaurant/get-restaurant-logo/${restaurantData[index]['_id']}', fit: BoxFit.cover,),
                           ),
                           SizedBox(height: 5,),
                           Text(restaurantData[index]['restaurantName'], style: Theme.of(context).textTheme.titleMedium, maxLines: 1, overflow: TextOverflow.ellipsis,),
