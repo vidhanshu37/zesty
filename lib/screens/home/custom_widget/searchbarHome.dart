@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 
 import '../../../utils/constants/colors.dart';
 
-class searchbarHome extends StatefulWidget {
-  const searchbarHome({
+class SearchBarHome extends StatefulWidget {
+  const SearchBarHome({
     super.key,
     required this.searchController,
   });
@@ -14,10 +14,10 @@ class searchbarHome extends StatefulWidget {
   final TextEditingController searchController;
 
   @override
-  State<searchbarHome> createState() => _searchbarHomeState();
+  State<SearchBarHome> createState() => SearchBarHomeState();
 }
 
-class _searchbarHomeState extends State<searchbarHome> {
+class SearchBarHomeState extends State<SearchBarHome> {
   List<String> searchSuggestion = [
     'search for "pizza"',
     'search for "burger"',
@@ -53,7 +53,6 @@ class _searchbarHomeState extends State<searchbarHome> {
   @override
   void dispose() {
     _timer?.cancel();
-    widget.searchController.dispose();
     super.dispose();
   }
 

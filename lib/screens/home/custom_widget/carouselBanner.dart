@@ -70,7 +70,7 @@ class _carouselBannerState extends State<carouselBanner> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     // colors: [Color(0xffc1aaa9), Color(0xffa08679)],
-                    colors: [Color(0xff051a2d), Color(0xff004e99)],
+                    colors: [TColors.appbarBanner, TColors.Green],
                       tileMode: TileMode.clamp,
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight
@@ -85,9 +85,10 @@ class _carouselBannerState extends State<carouselBanner> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(title[index], style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: TColors.white)),
+                            Text(title[index], style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: TColors.white), maxLines: 1,
+                              overflow: TextOverflow.ellipsis,),
                             SizedBox(height: 2,),
-                            Text(subTitle[index], style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: TColors.white.withOpacity(0.5))),
+                            Text(subTitle[index], style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: TColors.white.withOpacity(0.5)), maxLines: 2, overflow: TextOverflow.ellipsis,),
                             SizedBox(height: 9,),
                             // order now button
                             Container(
