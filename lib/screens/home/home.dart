@@ -1,17 +1,21 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_avif/flutter_avif.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:zesty/screens/home/Shimmer_home.dart';
 import 'package:zesty/screens/home/custom_widget/appBarHome.dart';
 import 'package:zesty/screens/home/reorder/reorder_page.dart';
 import 'package:zesty/screens/home/user_profile/profile.dart';
 import 'package:zesty/screens/home/zesty_Mart/zesty_mart_page.dart';
+import 'package:zesty/utils/constants/api_constants.dart';
 import 'package:zesty/utils/constants/media_query.dart';
 import 'custom_widget/appBarBanner.dart';
-import 'custom_widget/searchbarHome.dart';
 import '../../utils/constants/colors.dart';
 import 'custom_widget/carouselBanner.dart';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen(
@@ -27,7 +31,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
-  PageController _pageController = PageController();
 
   static bool isVisible = true;
   final ScrollController hideBottomNavController = ScrollController();
@@ -40,31 +43,11 @@ class _HomeScreenState extends State<HomeScreen>
   late Animation<Color?> colorAnimation;
   late Animation<Color?> colorAnimationAddress;
   CarouselController carouselController = CarouselController(initialItem: 5);
-  List<String> foodCategory1 = [
-    'assets/icons/food_category/Pizza.avif',
-    'assets/icons/food_category/Salad.avif',
-    'assets/icons/food_category/Cake.avif',
-    'assets/icons/food_category/Dosa.avif',
-    'assets/icons/food_category/Noodles.avif',
-    'assets/icons/food_category/Burger.avif',
-    'assets/icons/food_category/Rolls.avif',
-    'assets/icons/food_category/Biryani.avif',
-    'assets/icons/food_category/Paratha.avif',
-    'assets/icons/food_category/North Indian.avif',
-  ];
 
-  List<String> foodCategory2 = [
-    'assets/icons/food_category/Pasta.avif',
-    'assets/icons/food_category/Chole Bhature.avif',
-    'assets/icons/food_category/Shake.avif',
-    'assets/icons/food_category/Chinese.avif',
-    'assets/icons/food_category/Pav Bhaji.avif',
-    'assets/icons/food_category/Idli.avif',
-    'assets/icons/food_category/Khichdi.avif',
-    'assets/icons/food_category/South Indian.avif',
-    'assets/icons/food_category/Shawarma.avif',
-    'assets/icons/food_category/Pure Veg.avif',
-  ];
+  List category = [];
+  List restaurantData = [];
+
+  bool isRefreshing = false;
 
   @override
   void initState() {
@@ -75,6 +58,47 @@ class _HomeScreenState extends State<HomeScreen>
 
     /// Hide bottom navigation
     hideBottomNav();
+
+    /// API data fetching 
+    fetchDataCategory(); // for category
+    fetchDataRestaurant(); // for restaurant
+
+  }
+
+
+  /// get API for category name and image
+  Future<void> fetchDataCategory() async {
+    final url = Uri.parse(ApiConstants.getAllcategory);
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          print(response.body);
+          category = jsonDecode(response.body);
+        });
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  /// Fetch restaurant name and image for vertically display.
+  Future<void> fetchDataRestaurant() async {
+    final url = Uri.parse(ApiConstants.getAllRestuarnat);
+    
+    try{
+      final response = await http.get(url);
+      
+      if(response.statusCode == 200 ) {
+          restaurantData = jsonDecode(response.body);
+          setState(() {});
+      }
+    } catch(e) {
+      print(e);
+    }
+    
   }
 
   void bannerColorChange() {
@@ -138,32 +162,42 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
-  final List<Widget> _screen = [
-    Container(),
-    ZestyMartPage(),
-    ReorderPage(),
-    profile(),
-  ];
+  Future<void> _onRefresh() async {
+    setState(() {
+      isRefreshing = true; // Show full-screen loader
+    });
+    await Future.delayed(const Duration(seconds: 2));
+    fetchDataCategory();
+    fetchDataRestaurant();
+    setState(() {
+      isRefreshing = false; // Show UI after delay
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       bottomNavigationBar: AnimatedContainer(
         duration: const Duration(milliseconds: 400),
         height: isVisible ? 62.0 : 0.0,
-        margin: const EdgeInsets.symmetric(horizontal: 24.0),
+        // margin: const EdgeInsets.symmetric(horizontal: 24.0),
         decoration: BoxDecoration(
-          color: ZMediaQuery(context).isDarkMode ? TColors.white : TColors.black,
+          color:
+              ZMediaQuery(context).isDarkMode ? TColors.white : TColors.black,
           // borderRadius: const BorderRadius.all(Radius.circular(24.0)),
         ),
-        child:  Padding(
+        child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 7),
           child: GNav(
-            backgroundColor: ZMediaQuery(context).isDarkMode ? TColors.white : TColors.black,
-            color: ZMediaQuery(context).isDarkMode ? TColors.black : TColors.white,
-            activeColor: ZMediaQuery(context).isDarkMode ? TColors.black : TColors.white,
-            tabBackgroundColor: ZMediaQuery(context).isDarkMode ? TColors.grey : TColors.darkGrey,
+            backgroundColor:
+                ZMediaQuery(context).isDarkMode ? TColors.white : TColors.black,
+            color:
+                ZMediaQuery(context).isDarkMode ? TColors.black : TColors.white,
+            activeColor:
+                ZMediaQuery(context).isDarkMode ? TColors.black : TColors.white,
+            tabBackgroundColor: ZMediaQuery(context).isDarkMode
+                ? TColors.grey
+                : TColors.darkGrey,
             padding: EdgeInsets.all(16),
             selectedIndex: _selectedIndex,
             onTabChange: (index) {
@@ -173,156 +207,193 @@ class _HomeScreenState extends State<HomeScreen>
               // _pageController.jumpToPage(index);
             },
             gap: 8,
-            tabs: [GButton(icon: Icons.home_filled,text: "Home",),
-              GButton(icon: Icons.card_travel,text: "ZestyMart",),
+            tabs: [
+              GButton(
+                icon: Icons.home_filled,
+                text: "Home",
+              ),
+              GButton(
+                icon: Icons.card_travel,
+                text: "ZestyMart",
+              ),
               GButton(icon: Icons.shopping_basket_rounded, text: "Reorder"),
               GButton(icon: Icons.person, text: "Profile"),
             ],
           ),
         ),
       ),
-
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          CustomScrollView(
-          controller: hideBottomNavController,
-          slivers: [
-            /// main top appbar(searching, profile)
-            AnimatedBuilder(
-                animation: colorAnimation,
-                builder: (context, child) {
-                  // main App-bar (address, sub-add, search)
-                  return AppBarHome(colorAnimation: colorAnimation, widget: widget, colorAnimationAddress: colorAnimationAddress, searchController: searchController);
-                }),
+          category.isEmpty && restaurantData.isEmpty ? ShimmerHome() : isRefreshing ? ShimmerHome() : CustomScrollView(
+            controller: hideBottomNavController,
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              /// main top appbar(searching, profile)
+              AnimatedBuilder(
+                  animation: colorAnimation,
+                  builder: (context, child) {
+                    // main App-bar (address, sub-add, search)
+                    return AppBarHome(
+                        colorAnimation: colorAnimation,
+                        widget: widget,
+                        colorAnimationAddress: colorAnimationAddress,
+                        searchController: searchController);
+                  }),
 
-            /// Show Banner
-            appBarBanner(),
+              /// Show Banner
+              appBarBanner(),
 
-            /// carousel
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: SizedBox(
-                  height: 150,
-                  child: carouselBanner(),
+              CupertinoSliverRefreshControl(
+                onRefresh: _onRefresh,
+                refreshIndicatorExtent: 60.0,
+                refreshTriggerPullDistance: 60.0,
+              ),
+
+              /// carousel
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: SizedBox(
+                    height: 150,
+                    child: carouselBanner(),
+                  ),
                 ),
               ),
-            ),
 
-            SliverToBoxAdapter(
-              child: Container(
-                  height: 60,
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  child: Center(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Divider(
-                              color: TColors.grey, // Customize the color
-                              thickness: 1,       // Customize the thickness
+              SliverToBoxAdapter(
+                child: Container(
+                    height: 60,
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    child: Center(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Divider(
+                                color: TColors.grey, // Customize the color
+                                thickness: 1, // Customize the thickness
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Text("WHAT'S  ON YOUR MIND?",
-                                style: Theme.of(context).textTheme.labelMedium),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              color: TColors.grey,
-                              thickness: 1,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Text("WHAT'S  ON YOUR MIND?",
+                                  style: Theme.of(context).textTheme.labelMedium),
                             ),
-                          ),
-                        ],
-                      )
-                  )
+                            Expanded(
+                              child: Divider(
+                                color: TColors.grey,
+                                thickness: 1,
+                              ),
+                            ),
+                          ],
+                        ))),
               ),
-            ),
 
-            /// Food category
-            SliverToBoxAdapter(
-              child: Container(
-                height: 260,
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: foodCategory1.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          Container(
-                              height: 110,
-                              width: 110,
-                              child: AvifImage.asset(
-                                foodCategory1[index],
-                                height: 80,
-                                width: 80,
-                              )),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                              height: 110,
-                              width: 110,
-                              child: AvifImage.asset(
-                                foodCategory2[index],
-                                height: 80,
-                                width: 80,
-                              )),
-                        ],
-                      );
-                    }),
+              /// Food category
+              SliverToBoxAdapter(
+                child: Container(
+                    height: 270,
+                    child: GridView.builder(
+                        scrollDirection: Axis.horizontal,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 1,
+                        ),
+                        itemCount: category.length,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              Image.network(
+                                'https://zesty-backend.onrender.com/category/get-category-image/${category[index]['_id']}',
+                                // category[index]['image']['data'],
+                                fit: BoxFit.cover,
+                                height: 100,
+                                width: 100,
+                              ),
+                              Text(
+                                category[index]['name'],
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              )
+                            ],
+                          );
+                        })),
               ),
-            ),
 
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Top Rated Restaurants", style: Theme.of(context).textTheme.titleLarge,),
-                    SizedBox(height: 5,),
-                    Card(
-                      elevation: 3,
-                      child: Container(
-                        height: 150,
-                        width: 140,
-                        decoration: BoxDecoration(
-                            color: Colors.amber,
-                          borderRadius: BorderRadius.circular(10)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Top Rated Restaurants",
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Card(
+                        elevation: 3,
+                        child: Container(
+                          height: 150,
+                          width: 140,
+                          decoration: BoxDecoration(
+                              color: Colors.amber,
+                              borderRadius: BorderRadius.circular(10)),
                         ),
                       ),
-                    ),
-                    Text("    Radhe Dhokla", style: Theme.of(context).textTheme.bodyLarge,)
-                  ],
+                      Text(
+                        "    Radhe Dhokla",
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      SizedBox(height: 30,),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: [],
-                ),
-              ),
-            ),
+              /// main home page vertical restaurant
+              // SliverList(
+              //     delegate: SliverChildBuilderDelegate(
+              //   (context, index) {
+              //     return Padding(
+              //       padding: EdgeInsets.all(8.0),
+              //       child: Text("data"),
+              //     );
+              //   },
+              //   childCount: 100,
+              // )),
+              SliverList.builder(
+                  itemCount: restaurantData.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            height: 200,
+                            decoration: BoxDecoration(
+                                color: TColors.lightGrey,
+                                borderRadius: BorderRadius.circular(12.0)
+                            ),
+                            child: Image.network('https://zesty-backend.onrender.com/restaurant/get-restaurant-logo/${restaurantData[index]['_id']}', fit: BoxFit.cover,),
+                          ),
+                          SizedBox(height: 5,),
+                          Text(restaurantData[index]['restaurantName'], style: Theme.of(context).textTheme.titleMedium, maxLines: 1, overflow: TextOverflow.ellipsis,),
+                          Text("Tag-line which include dish name on display", style: Theme.of(context).textTheme.labelMedium, maxLines: 1, overflow: TextOverflow.ellipsis,),
+                          SizedBox(height: 15,),
+                        ],
+                      ),
+                    );
+                  }),
 
-            /// main home page content
-            SliverList(
-                delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text("data"),
-                );
-              },
-              childCount: 100,
-            )),
 
-          ],
-        ),
+            ],
+          ),
           ZestyMartPage(),
           ReorderPage(),
           profile(),
@@ -331,5 +402,3 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
-
-

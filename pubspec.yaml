@@ -45,6 +45,7 @@ dependencies:
   flutter_avif: ^3.0.0
   shared_preferences: ^2.5.2
   google_nav_bar: ^5.0.7
+  animated_segmented_tab_control: ^2.0.0
 
 dev_dependencies:
   flutter_test:
