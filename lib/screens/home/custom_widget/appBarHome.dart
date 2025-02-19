@@ -40,7 +40,7 @@ class AppBarHome extends StatelessWidget {
                   widget.address,
                   // style: Theme.of(context).textTheme.titleMedium,
                   style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 16,
                       color: colorAnimationAddress.value),
                 ),
                 subtitle: Text(
@@ -49,11 +49,6 @@ class AppBarHome extends StatelessWidget {
                   style: TextStyle(
                       fontSize: 12,
                       color: colorAnimationAddress.value),
-                ),
-                trailing: Icon(
-                  Icons.supervised_user_circle_outlined,
-                  size: 30,
-                  color: colorAnimationAddress.value,
                 ),
               ),
               SizedBox(
@@ -64,8 +59,7 @@ class AppBarHome extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(
                     horizontal: 18, vertical: 5),
-                child: searchbarHome(
-                    searchController: searchController),
+                child: SearchBarHome(searchController: searchController)
               )
             ],
           ),
