@@ -5,7 +5,15 @@ class ApiConstants {
   static String getSingleRestaurantData(String id){
     return "https://zesty-backend.onrender.com/restaurant/get/$id";
   }
-  //https://zesty-backend.onrender.com/restaurant/get/67b476885f33bc567dca29d6
+
+  static String getAllMartItem = "https://zesty-backend.onrender.com/zestyMart/get-all-martItem";
+  static String getMartImage(String imgId) {
+    return "https://zesty-backend.onrender.com/zestyMart/get-martItem-image/$imgId";
+  }
+  //static String getAllMartItem = "https://zesty-backend.onrender.com/zestyMart/get/{id}";
+
+
+// Zesty particular food item - https://zesty-backend.onrender.com/menu/get/67b75d821b1d9625f4c099c0{id}
 
 
 }

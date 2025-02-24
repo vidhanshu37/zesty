@@ -1,21 +1,34 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
+import 'package:zesty/custom_widget/elevatedButton_cust.dart';
+import 'package:zesty/utils/constants/api_constants.dart';
 import 'package:zesty/utils/constants/colors.dart';
-
+import 'package:http/http.dart' as http;
+import '../../restaurants_side/custom_widget/mart_categoryTabs.dart';
+import '../../restaurants_side/custom_widget/mart_itemCard.dart';
 import '../custom_widget/searchbarHome.dart';
 
 class ZestyMartPage extends StatefulWidget {
-  const ZestyMartPage({super.key});
+  final String address;
+  final String subAddress;
+
+  const ZestyMartPage(
+      {super.key, required this.address, required this.subAddress});
 
   @override
   State<ZestyMartPage> createState() => _ZestyMartPageState();
 }
 
-class _ZestyMartPageState extends State<ZestyMartPage>  with SingleTickerProviderStateMixin{
+class _ZestyMartPageState extends State<ZestyMartPage>
+    with SingleTickerProviderStateMixin {
   TextEditingController searchController = TextEditingController();
   late TabController _tabController;
   late ScrollController _scrollController;
 
+  List allMartItem = [];
 
   List<String> zestyMartCategoryIcon = [
     'assets/icons/zestyMartCategory/basket.png',
@@ -37,23 +50,32 @@ class _ZestyMartPageState extends State<ZestyMartPage>  with SingleTickerProvide
     'Kids'
   ];
 
+  int _activeIndex = 0;
+
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 10, vsync: this);
+    _tabController = TabController(length: 7, vsync: this);
     _scrollController = ScrollController();
 
     _tabController.addListener(() {
-      if (_tabController.indexIsChanging || _tabController.index != _tabController.previousIndex) {
+      _activeIndex = _tabController.index;
+      setState(() {});
+      if (_tabController.indexIsChanging ||
+          _tabController.index != _tabController.previousIndex) {
         _scrollToSelectedTab();
       }
     });
+
+    /// Call fetch all mart data API
+    fetchAllMartItem();
   }
 
   void _scrollToSelectedTab() {
     double screenWidth = MediaQuery.of(context).size.width;
     double tabWidth = 80; // Approximate width of each tab, adjust as needed
-    double targetScrollX = (tabWidth * _tabController.index) - (screenWidth / 2) + (tabWidth / 2);
+    double targetScrollX =
+        (tabWidth * _tabController.index) - (screenWidth / 2) + (tabWidth / 2);
 
     _scrollController.animateTo(
       targetScrollX.clamp(0.0, _scrollController.position.maxScrollExtent),
@@ -62,142 +84,231 @@ class _ZestyMartPageState extends State<ZestyMartPage>  with SingleTickerProvide
     );
   }
 
+  Color appBarColorTab() {
+    if (_activeIndex == 4) {
+      return Colors.pinkAccent.withOpacity(0.2);
+    } else if (_activeIndex == 6) {
+      return Colors.brown.withOpacity(0.3);
+    } else if (_activeIndex == 1) {
+      return Colors.deepOrangeAccent.withOpacity(0.2);
+    } else if (_activeIndex == 2) {
+      return Colors.green.withOpacity(0.3);
+    }
+    return Colors.blue.withOpacity(0.3);
+  }
+
+  Color appBarDividerTab() {
+    if (_activeIndex == 4) {
+      return Colors.pinkAccent.withOpacity(0.3);
+    } else if (_activeIndex == 6) {
+      return Colors.brown.withOpacity(0.4);
+    } else if (_activeIndex == 1) {
+      return Colors.deepOrangeAccent.withOpacity(0.3);
+    } else if (_activeIndex == 2) {
+      return Colors.green.withOpacity(0.4);
+    }
+    return Colors.blue.withOpacity(0.4);
+  }
+
+  Future<void> fetchAllMartItem() async {
+    final url = Uri.parse(
+        "https://zesty-backend.onrender.com/zestyMart/get-all-martItem");
+
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        allMartItem = jsonDecode(response.body);
+        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("success - ${response.statusCode}")));
+        setState(() {});
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Something went wrong - ${response.statusCode}")));
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          SliverAppBar(
-            pinned: true ,
-            snap: true,
-            floating: true,
-            backgroundColor: Colors.blue.withOpacity(0.3),
-            expandedHeight: 70,
-            collapsedHeight: 10,
-            toolbarHeight: 10,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Padding(
-                padding: const EdgeInsets.all(10),
-                // padding: EdgeInsets.all(1.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 15,
+      backgroundColor: TColors.white,
+      body: Stack(
+        children: [
+          CustomScrollView(
+            // physics: const BouncingScrollPhysics(),
+            slivers: [
+              /// AppBar for Address and Sub-address
+              SliverAppBar(
+                pinned: true,
+                snap: true,
+                floating: true,
+                backgroundColor: appBarColorTab(),
+                expandedHeight: 50,
+                collapsedHeight: 10,
+                toolbarHeight: 10,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Padding(
+                    padding: const EdgeInsets.all(10),
+                    // padding: EdgeInsets.all(1.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Text(widget.address, style: TextStyle(fontSize: 16)),
+                        Text(widget.subAddress, style: TextStyle(fontSize: 12))
+                      ],
                     ),
-                    Text("Surat", style: TextStyle(fontSize: 16)),
-                    Text("Katargam-395004", style: TextStyle(fontSize: 12))
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
-          SliverAppBar(
-            pinned: true,
-            expandedHeight: 130,
-            backgroundColor: TColors.bgLight,
-            collapsedHeight: 130,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Column(
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                      color: Colors.blue.withOpacity(0.3),
-                      child: Center(child: SearchBarHome(searchController: searchController))
-                  ),
-                  DefaultTabController(length: 10, child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+
+              /// SearchView and Tabview
+              SliverAppBar(
+                pinned: true,
+                expandedHeight: 130,
+                backgroundColor: TColors.bgLight,
+                collapsedHeight: 130,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Column(
                     children: [
-                      Material(
-                        child: Container(
-                          // height: 120,
-                          color: Colors.blue.withOpacity(0.3),
-                          child: SingleChildScrollView(
-                            controller: _scrollController,
-                            scrollDirection: Axis.horizontal,
-                            child: TabBar(
-                              controller: _tabController,
-                              isScrollable: true,
-                              labelColor: Colors.black,
-                              padding: EdgeInsets.only(top: 10),
-                              labelStyle: TextStyle(fontSize: 12),
-                              physics: BouncingScrollPhysics(),
-                              unselectedLabelColor: Colors.black.withOpacity(0.5),
-                              indicatorSize: TabBarIndicatorSize.label,
-                              indicator: BoxDecoration(
-                                  borderRadius: BorderRadius.only(topRight: Radius.circular(12), topLeft: Radius.circular(12.0)),
-                                  color:  TColors.bgLight
+                      Container(
+                          padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                          color: appBarColorTab(),
+                          child: Center(
+                              child: SearchBarHome(
+                                  searchController: searchController))),
+                      DefaultTabController(
+                          length: 7,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Material(
+                                child: Container(
+                                  // height: 120,
+                                  color: appBarColorTab(),
+                                  child: SingleChildScrollView(
+                                    controller: _scrollController,
+                                    scrollDirection: Axis.horizontal,
+                                    child: TabBar(
+                                      controller: _tabController,
+                                      isScrollable: true,
+                                      labelColor: Colors.black,
+                                      padding: EdgeInsets.only(top: 10),
+                                      labelStyle: TextStyle(fontSize: 12),
+                                      physics: BouncingScrollPhysics(),
+                                      unselectedLabelColor:
+                                      Colors.black.withOpacity(0.5),
+                                      indicatorSize: TabBarIndicatorSize.label,
+                                      indicator: BoxDecoration(
+                                          borderRadius: BorderRadius.only(
+                                              topRight: Radius.circular(12),
+                                              topLeft: Radius.circular(12.0)),
+                                          color: TColors.bgLight),
+                                      dividerHeight: 22,
+                                      dividerColor: appBarDividerTab(),
+                                      tabAlignment: TabAlignment.start,
+                                      labelPadding:
+                                      EdgeInsets.symmetric(horizontal: 5),
+                                      tabs: [
+                                        ...List.generate(
+                                            7,
+                                                (index) => categoryTab(
+                                                iconPath:
+                                                zestyMartCategoryIcon[index],
+                                                title: categoryTitle[index]))
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ),
-                              dividerHeight: 22,
-                              dividerColor: Colors.blue.withOpacity(0.2),
-                              tabAlignment: TabAlignment.start,
-                              labelPadding: EdgeInsets.symmetric(horizontal: 5),
-                              tabs: [
-                                ...List.generate(7, (index) => categoryTab(iconPath: zestyMartCategoryIcon[index], title: categoryTitle[index]))
-                              ],
-                            ),
-                          ),
+                            ],
+                          )),
+                    ],
+                  ),
+                ),
+              ),
+
+              /// ViewPager of Tabview
+              SliverToBoxAdapter(
+                child: Container(
+                  height: 1000,
+                  child: TabBarView(
+                    controller: _tabController,
+                    physics: NeverScrollableScrollPhysics(),
+                    children: [
+                      SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                              height: 300,
+                                width: 400,
+                                color: Colors.amber,
+                                child: Center(child: Text("All"))),
+                            Container(
+                                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                height: 300,
+                                width: 400,
+                                color: Colors.amber,
+                                child: Center(child: Text("All"))),
+                            Container(
+                                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                height: 300,
+                                width: 400,
+                                color: Colors.amber,
+                                child: Center(child: Text("All"))),
+                          ],
                         ),
                       ),
+                      Text("tab2"),
+                      Text("tab3"),
+                      Text("tab4"),
+                      Text("tab5"),
+                      Text("tab6"),
+                      Text("tab7"),
                     ],
-                  )),
-                ],
+                  ),
+                ),
               ),
-            ),
+
+              /// Top picks for you - section
+              // SliverToBoxAdapter(
+              //   child: allMartItem.isEmpty
+              //       ? Container(
+              //     height: 200,
+              //     width: 200,
+              //     color: TColors.lightGrey,
+              //   )
+              //       : SizedBox(
+              //     height: 280,
+              //     child: ListView.builder(
+              //         itemCount: allMartItem.length,
+              //         scrollDirection: Axis.horizontal,
+              //         itemBuilder: (context, index) {
+              //           return martItemCard(
+              //               imgId: allMartItem[index]['_id'],
+              //               name: allMartItem[index]['name'],
+              //               weight: allMartItem[index]['weight'],
+              //               price: allMartItem[index]['price']);
+              //         }),
+              //   ),
+              // ),
+
+            ],
           ),
-          SliverToBoxAdapter(
-            child: Container(
-              height: 300,
-              width: double.infinity,
-              color: TColors.bgLight,
-              child: TabBarView(
-                controller: _tabController,
-                children: List.generate(7, (index) =>
-                      Center(child: Text(categoryTitle[index]))
-                    ),
-              ),
-            ),
-          ),
-          SliverList.builder(
-            itemCount: 100,
-              itemBuilder: (context, index) {
-              return Text("data");
-              })
+          Positioned(
+              bottom: 0,
+              right: 0,
+              left: 0,
+              child: Container()
+          )
         ],
       ),
     );
   }
-
-  Widget buildSegment(String text) => Container(
-        padding: EdgeInsets.all(12.0),
-        child: Text(
-          text,
-          style: TextStyle(fontSize: 20),
-        ),
-      );
 }
-
-class categoryTab extends StatefulWidget {
-  final String iconPath, title;
-  const categoryTab({
-    super.key,
-    required this.iconPath, required this.title,
-  });
-
-  @override
-  State<categoryTab> createState() => _categoryTabState();
-}
-
-class _categoryTabState extends State<categoryTab> {
-  @override
-  Widget build(BuildContext context) {
-    return Tab(
-      iconMargin: EdgeInsets.symmetric(vertical: 6.0, horizontal: 15.0),
-      text: widget.title,
-      icon: Image.asset(widget.iconPath, height: 30, width: 30, fit: BoxFit.cover,),
-    );
-  }
-}
-
