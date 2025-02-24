@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hive/hive.dart';
 import 'package:zesty/screens/add_manually_address/googleMap.dart';
 import 'package:zesty/screens/add_manually_address/shimmerMap.dart';
 
@@ -60,12 +61,20 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
         _locationMessage =
         "Latitude: ${position.latitude}, Longitude: ${position.longitude}";
         _isLocationFetched = true; // Ensure Mark location as fetched
+        storeData(position.latitude, position.longitude);
       });
     } catch (e) {
       setState(() {
         _locationMessage = "Error: $e";
       });
     }
+  }
+
+  /// store latitude and longitude of user
+  void storeData(double latitude,double longitude) {
+    var hiveBox = Hive.box("zestyBox");
+    hiveBox.put("latitude", latitude);
+    hiveBox.put("longitude", longitude);
   }
 
   @override

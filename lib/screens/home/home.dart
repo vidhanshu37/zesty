@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_avif/flutter_avif.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:zesty/screens/home/Shimmer_home.dart';
+import 'package:zesty/screens/home/category_home.dart';
 import 'package:zesty/screens/home/custom_widget/appBarHome.dart';
 import 'package:zesty/screens/home/reorder/reorder_page.dart';
 import 'package:zesty/screens/home/user_profile/profile.dart';
@@ -49,6 +50,8 @@ class _HomeScreenState extends State<HomeScreen>
   List restaurantData = [];
 
   bool isRefreshing = false;
+  double lat = 0;
+  double long = 0;
 
   @override
   void initState() {
@@ -63,7 +66,6 @@ class _HomeScreenState extends State<HomeScreen>
     /// API data fetching 
     fetchDataCategory(); // for category
     fetchDataRestaurant(); // for restaurant
-
   }
 
 
@@ -76,7 +78,6 @@ class _HomeScreenState extends State<HomeScreen>
 
       if (response.statusCode == 200) {
         setState(() {
-          print(response.body);
           category = jsonDecode(response.body);
         });
       }
@@ -175,31 +176,39 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: AnimatedContainer(
         duration: const Duration(milliseconds: 400),
-        height: isVisible ? 62.0 : 0.0,
+        height: isVisible ? 65.0 : 0.0,
         // margin: const EdgeInsets.symmetric(horizontal: 24.0),
         decoration: BoxDecoration(
-          color:
-              ZMediaQuery(context).isDarkMode ? TColors.white : TColors.black,
+          color: ZMediaQuery(context).isDarkMode ? TColors.bgDark : TColors.bgLight,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3), // Shadow color
+              blurRadius: 10, // Spread of the shadow
+              spreadRadius: 2, // How much the shadow spreads
+              offset: Offset(5, 5), // Shadow position (X, Y)
+            ),
+          ],
           // borderRadius: const BorderRadius.all(Radius.circular(24.0)),
         ),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 7),
           child: GNav(
             backgroundColor:
-                ZMediaQuery(context).isDarkMode ? TColors.white : TColors.black,
+                ZMediaQuery(context).isDarkMode ? TColors.bgDark : TColors.bgLight,
             color:
-                ZMediaQuery(context).isDarkMode ? TColors.black : TColors.white,
+                ZMediaQuery(context).isDarkMode ? TColors.bgLight : TColors.bgDark,
             activeColor:
-                ZMediaQuery(context).isDarkMode ? TColors.black : TColors.white,
+                ZMediaQuery(context).isDarkMode ? TColors.bgLight : TColors.bgDark,
             tabBackgroundColor: ZMediaQuery(context).isDarkMode
-                ? TColors.grey
-                : TColors.darkGrey,
-            padding: EdgeInsets.all(16),
+                ? TColors.darkGrey
+                : TColors.grey,
+            padding: EdgeInsets.all(15),
             selectedIndex: _selectedIndex,
             onTabChange: (index) {
               setState(() {
@@ -212,13 +221,14 @@ class _HomeScreenState extends State<HomeScreen>
               GButton(
                 icon: Icons.home_filled,
                 text: "Home",
+                iconSize: 20,
               ),
               GButton(
                 icon: Icons.card_travel,
                 text: "ZestyMart",
               ),
               GButton(icon: Icons.shopping_basket_rounded, text: "Reorder"),
-              GButton(icon: Icons.person, text: "Profile"),
+              GButton(icon: Icons.person, text: "Profile", iconSize: 20,),
             ],
           ),
         ),
@@ -262,6 +272,7 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
               ),
 
+              /// title - what's in your mind
               SliverToBoxAdapter(
                 child: Container(
                     height: 60,
@@ -279,6 +290,7 @@ class _HomeScreenState extends State<HomeScreen>
                               padding: const EdgeInsets.symmetric(horizontal: 10),
                               child: Text("WHAT'S  ON YOUR MIND?",
                                   style: Theme.of(context).textTheme.labelMedium),
+                              // child: Text("latitude - $lat and longitude - $long"),
                             ),
                             Expanded(
                               child: Divider(
@@ -304,20 +316,36 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                         itemCount: category.length,
                         itemBuilder: (context, index) {
-                          return Column(
-                            children: [
-                              Image.network(
-                                'https://zesty-backend.onrender.com/category/get-category-image/${category[index]['_id']}',
-                                // category[index]['image']['data'],
-                                fit: BoxFit.cover,
-                                height: 100,
-                                width: 100,
-                              ),
-                              Text(
-                                category[index]['name'],
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              )
-                            ],
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryHome(categoryImageId: category[index]['_id'], categoryName: category[index]['name'])));
+                            },
+                            child: Column(
+                              children: [
+                                Image.network(
+                                  'https://zesty-backend.onrender.com/category/get-category-image/${category[index]['_id']}',
+                                  // category[index]['image']['data'],
+                                  fit: BoxFit.cover,
+                                  height: 90,
+                                  width: 90,
+                                  loadingBuilder: (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Container(
+                                      height: 90,
+                                      width: 90,
+                                      color: TColors.grey,
+                                    );
+                                  },
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Icon(Icons.image_not_supported, size: 50, color: Colors.grey);
+                                  },
+                                ),
+                                Text(
+                                  category[index]['name'],
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                )
+                              ],
+                            ),
                           );
                         })),
               ),
@@ -385,7 +413,16 @@ class _HomeScreenState extends State<HomeScreen>
                                   color: TColors.lightGrey,
                                   borderRadius: BorderRadius.circular(12.0)
                               ),
-                              child: Image.network('https://zesty-backend.onrender.com/restaurant/get-restaurant-logo/${restaurantData[index]['_id']}', fit: BoxFit.cover,),
+                              child: Image.network('https://zesty-backend.onrender.com/restaurant/get-restaurant-logo/${restaurantData[index]['_id']}',
+                                fit: BoxFit.cover,
+                                loadingBuilder: (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(child: CircularProgressIndicator());
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Icon(Icons.image_not_supported, size: 50, color: Colors.grey);
+                                },
+                              ),
                             ),
                           ),
                           SizedBox(height: 5,),
@@ -400,7 +437,7 @@ class _HomeScreenState extends State<HomeScreen>
 
             ],
           ),
-          ZestyMartPage(),
+          ZestyMartPage(address: widget.address, subAddress: widget.subAddress,),
           ReorderPage(),
           profile(),
         ],

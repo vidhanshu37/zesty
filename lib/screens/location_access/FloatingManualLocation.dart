@@ -26,7 +26,7 @@ class _ManualLocationState extends State<ManualLocation> {
   List<String> placeLocation = [];
   final String apiKey =
       '2SbwJ2FVBuS_QShPV008-M-njDmBzvXQ2nXEbxDFsjI'; // Replace with your API key
-  bool isLoading = false;
+  // bool isLoading = false;
 
   Future<List<Map<String, String>>> getPlaceSuggestions(
       String query, String apiKey) async {
@@ -56,24 +56,24 @@ class _ManualLocationState extends State<ManualLocation> {
   }
 
   void _getSuggestions(String query) async {
-    setState(() {
-      isLoading = true; // start loading
-    });
+    // setState(() {
+    //   isLoading = true; // start loading
+    // });
     if (query.isNotEmpty) {
       try {
         final suggestions = await getPlaceSuggestions(query, apiKey);
-        await Future.delayed(const Duration(seconds: 1));
+        // await Future.delayed(const Duration(seconds: 1));
         setState(() {
           _suggestions = suggestions.map((item) => item['label']!).toList();
           placeLocation = suggestions.map((item) => item['district']!).toList();
-          isLoading = false; // stop loading
+          // isLoading = false; // stop loading
         });
       } catch (e) {
         print('Error fetching suggestions: $e');
       }
     } else {
       // If query is empty, stop shimmer and reset suggestions
-      await Future.delayed(const Duration(seconds: 1));
+      // await Future.delayed(const Duration(seconds: 1));
       setState(() {
         _suggestions = [];
         placeLocation = [];
@@ -147,7 +147,7 @@ class _ManualLocationState extends State<ManualLocation> {
               endIndent: 5,
             ),
             Expanded(
-              child: isLoading
+              child: _suggestions.isEmpty && placeLocation.isEmpty
                   ? ShimmerEffects(itemCount: _suggestions.length)
                   : ListView.builder(
                       itemCount: _suggestions.length,
