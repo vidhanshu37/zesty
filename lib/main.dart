@@ -46,12 +46,11 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       theme: TAppTheme.lightTheme,
       darkTheme: TAppTheme.darkTheme,
-      // home: HomeScreen(address: "surat", subAddress: "subAddress"),
+      home: HomeScreen(address: "surat", subAddress: "subAddress"),
       // home: ItemCard(itemName: "itemName", itemDescription: "itemDescription", itemPrice: "itemPrice", itemMenuId: "itemMenuId", updateCartState: () {}, restaurantId: "restaurantId", onIncrement: (){}, onDecrement: (){}, counter: 0),
       // home: MartItemImagesScreen(martItemId: '67b9c261b10e67aa58074037',),
       // home: LocationAccess(),
       // home: FirstScreen(),
-      home: Coupons(),
     );
   }
 }
