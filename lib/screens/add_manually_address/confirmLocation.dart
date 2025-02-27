@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:zesty/screens/add_manually_address/googleMap.dart';
 import 'package:zesty/screens/add_manually_address/shimmerMap.dart';
+import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
 
 class ConfirmLocation extends StatefulWidget {
   const ConfirmLocation({super.key});
@@ -91,7 +92,7 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
             children: [
               _isLocationFetched
                   ? ShowGoogleMap(latitude: userLatitude, longitude: userLongitude)
-                  : Text(_locationMessage),
+                  : Center(child: CircularProgressIndicator(color: Colors.black)),
             ],
           )
       ),

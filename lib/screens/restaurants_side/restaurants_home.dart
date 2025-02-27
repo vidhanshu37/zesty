@@ -1,16 +1,23 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:zesty/custom_widget/elevatedButton_cust.dart';
+import 'package:hive/hive.dart';
 import 'package:zesty/screens/home/custom_widget/searchbarHome.dart';
 import 'package:zesty/utils/constants/api_constants.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:http/http.dart' as http;
 
+import '../../utils/local_storage/HiveOpenBox.dart';
+import '../home/item_cart/cart_page.dart';
+import '../home/restaurantSingleItemCard.dart';
+import 'custom_widget/mart_itemCard.dart';
+
 class RestaurantsHome extends StatefulWidget {
   final String id;
-  const RestaurantsHome({super.key,required this.id});
+
+  const RestaurantsHome({super.key, required this.id});
 
   @override
   State<RestaurantsHome> createState() => _RestaurantsHomeState();
@@ -18,9 +25,8 @@ class RestaurantsHome extends StatefulWidget {
 
 class _RestaurantsHomeState extends State<RestaurantsHome> {
   final TextEditingController searchbarController = TextEditingController();
-  final PageController pageController = PageController();
-  int _currentIndex = 0;
-  String restaurantName = "";
+  // int _currentIndex = 0;
+  Map<String, dynamic>? restaurantData;
   final List<String> _coupons = [
     "Extra ₹75 off",
     "Flat 10% off above ₹500",
@@ -29,50 +35,58 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
     "Save ₹50 on your first order",
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    getRestaurantData(widget.id); //fetch data of restaurant
-    Timer.periodic(Duration(seconds: 3), (Timer timer){
-      if(_currentIndex < _coupons.length -1){
-        _currentIndex++;
-      } else{
-        _currentIndex = 0;
+  List allMenuItem = [];
+
+  double distanceRestaurantKm = 0;
+  double lat = 0;
+  double long = 0;
+
+  var box = Hive.box(HiveOpenBox.zestyFoodCart);
+
+  int countCartTotal() {
+    int totalAge = box.values.fold(0, (sum, item) {
+      if (item is Map<String, dynamic> && item.containsKey('age')) {
+        return sum + (item['age'] as int);
       }
-      pageController.animateToPage(_currentIndex, duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
+      return sum;
     });
+    return 0;
   }
 
   @override
-  void dispose() {
-    pageController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    retriveData();
+    getRestaurantData(widget.id); //fetch data of restaurant
   }
 
   Future<void> getRestaurantData(String id) async {
     final url = Uri.parse(ApiConstants.getSingleRestaurantData(id));
     try {
       final response = await http.get(url);
-      if (response.statusCode == 200){
-        final data = jsonDecode(response.body);
-        restaurantName = data['restaurantName'];
-        setState(() {
-
-        });
-      } else{
-        restaurantName = "Fail";
-        setState(() {
-
-        });
+      if (response.statusCode == 200) {
+        restaurantData = jsonDecode(response.body);
+        allMenuItem = restaurantData?['menu'];
+        // print("Success");
+        setState(() {});
+      } else {
+        // print("Fail");
       }
-    } catch(e){
-      print(e);
-      restaurantName = "Error";
-      setState(() {
-
-      });
+    } catch (e) {
+      // print(e);
     }
   }
+
+  void updateCartState() {
+    setState(() {});
+  }
+
+  void retriveData() {
+    var hiveBox = Hive.box("zestyBox");
+    lat = hiveBox.get("latitude", defaultValue: 21.2049);
+    long = hiveBox.get("longitude", defaultValue: 72.8411);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -80,170 +94,199 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
       appBar: AppBar(
         backgroundColor: Colors.grey.withOpacity(0.5),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: double.infinity,
-              height: 200,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(22),bottomRight: Radius.circular(22)),
-                color: Colors.grey.withOpacity(0.5),
-              ),
-              child: Padding(padding: EdgeInsets.all(10),
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(17),
-                  ),
-                  elevation: 3,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
+      body: restaurantData == null
+          ? Center(
+        child: CircularProgressIndicator(),
+      )
+          : LayoutBuilder(
+        builder: (context, constraints) {
+          return Stack(
+            children: [
+              /// Main content
+              CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 10,),
-                        Row(
-                          children: [
-                            Icon(Icons.verified,color: Colors.green,),
-                            SizedBox(width: 5,),
-                            Text("Pure Veg",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.green),),
-                          ],
+                        /// Root restaurant card
+                        Container(
+                          width: double.infinity,
+                          height: 200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(22),
+                                bottomRight: Radius.circular(22)),
+                            color: Colors.grey.withOpacity(0.5),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(17),
+                              ),
+                              elevation: 3,
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.verified,
+                                          color: Colors.green,
+                                        ),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        Text(
+                                          "Pure Veg",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.green),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      restaurantData?['restaurantName'] ?? "Zesty",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineLarge,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      "15-20 mins • ${ApiConstants.calculateDistance(lat, long, restaurantData?['latitude'] ?? 21.70, restaurantData?['longitude'] ?? 71.12).toStringAsFixed(1)}km • Katargam",
+                                      style: TextStyle(fontSize: 14),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      'description line',
+                                      style: TextStyle(
+                                        color: TColors.darkGrey,
+                                        fontSize: 12,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      maxLines: 1,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                        SizedBox(height: 5,),
-                        Text(restaurantName,style: Theme.of(context).textTheme.headlineLarge,overflow: TextOverflow.ellipsis,maxLines: 2,),
-                        SizedBox(height: 5,),
-                        Text("15-20 mins • 2.4 km • Katargam",style: TextStyle(fontSize: 14),overflow: TextOverflow.ellipsis,maxLines: 1,),
-                        SizedBox(height: 5,),
-                        Text(widget.id,style: TextStyle(color: TColors.darkGrey,fontSize: 12,overflow: TextOverflow.ellipsis,),maxLines: 1,),
+                        SizedBox(
+                          height: 7,
+                        ),
+
+                        /// Searchbar
+                        Padding(
+                          padding: const EdgeInsets.all(13.0),
+                          child: SearchBarHome(
+                              searchController: searchbarController),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
                       ],
                     ),
                   ),
-                ),
-              ),
-            ),
-            SizedBox(height: 7,),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Stack(
-                children: [
-                  Container(
-                    height: 80,
-                    child: PageView.builder(
-                      controller: pageController,
-                      itemCount: _coupons.length,
-                      onPageChanged: (index) {
-                        setState(() {
-                          _currentIndex = index;
-                        });
+
+                  /// Item card - menu
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                        return ItemCard(
+                          itemName: allMenuItem[index]['name'] ?? "Zesty",
+                          itemDescription: allMenuItem[index]['description'] ?? "Zesty description",
+                          itemPrice: allMenuItem[index]['price'] ?? "100",
+                          itemImageId: allMenuItem[index]['_id'] ?? "",
+                          updateCartState: updateCartState,
+                          restaurantId: restaurantData!['_id'],
+                          restaurantName: restaurantData!['restaurantName'],
+                          itemImageUrl: allMenuItem[index]['image'],
+                        );
                       },
-                      itemBuilder: (context, index) {
-                      return Card(
-                        color: TColors.bgLight,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            side: BorderSide(color: TColors.darkGrey)
-                        ),
-                        elevation: 0,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                      childCount: allMenuItem.length,
+                    ),
+                  ),
+
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 300,
+                    ),
+                  )
+                ],
+              ),
+
+              /// Bottom cart button
+                box.isNotEmpty ? Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    height: 110,
+                    width: constraints.maxWidth, // Use constraints from LayoutBuilder
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(14),
+                          topRight: Radius.circular(14)),
+                      color: TColors.bgLight,
+                      boxShadow: [
+                        BoxShadow(
+                          color: TColors.black.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          offset: Offset(0, 3),
+                        )
+                      ],
+                    ),
+                    child: Center(
+                      child: SizedBox(
+                        height: 60,
+                        width: constraints.maxWidth - 40, // Use constraints from LayoutBuilder
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(box.toMap().toString())));
+                            if(box.isNotEmpty) {
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => CartPage()));
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: TColors.black,
+                            side: BorderSide(color: TColors.black, width: 1),
+                          ),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Icon(Icons.local_offer,color: Colors.brown,),
-                              SizedBox(width: 5,),
-                              Expanded(child: Text(_coupons[index],style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),))
+                              Text("Total item - ${box.values
+                                  .map((order) => order['qty'] as int) // Extract 'qty' from each item
+                                  .fold(0, (sum, qty) => sum + qty)}"), // Sum all quantities
+                              Text("View cart")
                             ],
                           ),
-                        )
-                      );
-                    },)
-                  ),
-                  // Positioned(
-                  //   right: 5,
-                  //     child:Container(
-                  //       padding: EdgeInsets.symmetric(horizontal: 8,vertical: 5),
-                  //       decoration: BoxDecoration(
-                  //         color: Colors.white,
-                  //         borderRadius: BorderRadius.circular(5),
-                  //         boxShadow: [
-                  //           BoxShadow(
-                  //             color: Colors.black26,
-                  //             blurRadius: 3,
-                  //           )
-                  //         ]
-                  //       ), child: Text("${_currentIndex + 1}/${_coupons.length}",style: TextStyle(fontWeight: FontWeight.bold),),
-                  //     ),
-                  // ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(13.0),
-              child: SearchBarHome(searchController: searchbarController),
-            ),
-            SizedBox(height: 10,),
-            Container(
-              padding: EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.transparent,
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(height: 20,width: 20,color: Colors.amber,),
-                        SizedBox(height: 5,),
-                        Text("Korean paneer Tikka Garlic bread",style: Theme.of(context).textTheme.titleMedium,overflow: TextOverflow.ellipsis,maxLines: 2,),
-                        SizedBox(height: 4,),
-                        Text("Freshly Baked Stuffed garlic Bread infused with Korean Sweet Chili Sauce,Molten Cheese,Onion and Paneer Tikka Filings.",style: TextStyle(fontSize: 12,color: TColors.darkGrey),overflow: TextOverflow.ellipsis,maxLines: 2,),
-                        SizedBox(height: 7,),
-                        Text("₹ 200",style: TextStyle(fontSize: 14,color: TColors.darkerGrey,fontWeight: FontWeight.bold),),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 10,),
-                  Container(
-                    width: 130,
-                    height: 150,
-                    child: Stack(
-                      alignment: Alignment.topLeft,
-                      children: [
-                        ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: Image.network("https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chorizo-mozarella-gnocchi-bake-cropped-9ab73a3.jpg?resize=768,574",width: 130,height: 130,fit: BoxFit.cover,)
                         ),
-                        Positioned(
-                          bottom: 0,
-                          left: 25,
-                          child: ElevatedButton(onPressed: (){},
-                              style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              elevation: 5,
-                              side: BorderSide.none,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),)
-                              ),
-                              child: Text("ADD",style: TextStyle(color: Colors.black),)),
-                        )
-                      ],
+                      ),
                     ),
                   ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Divider(
-                color: TColors.grey.withOpacity(0.5),
-              ),
-            )
-          ],
-        ),
+                ) : SizedBox.shrink(),
+            ],
+          );
+        },
       ),
     );
   }

@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hive/hive.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
 import 'package:zesty/screens/add_manually_address/addAddressDetailsHelper/sliverMapAddress.dart';
 import 'package:zesty/screens/add_manually_address/shimmerMap.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:zesty/utils/constants/media_query.dart';
 
+import '../../utils/local_storage/HiveOpenBox.dart';
 import '../location_access/showFloatingManualLocation.dart';
 
 class ShowGoogleMap extends StatefulWidget {
@@ -36,6 +38,13 @@ class _ShowGoogleMapState extends State<ShowGoogleMap> {
     _fetchAddress(_userLocation.latitude, _userLocation.longitude);
   }
 
+  /// Store address and subAddress
+  void storeAddress(title, subTitle) {
+    var box = Hive.box(HiveOpenBox.storeAddress);
+    box.put(HiveOpenBox.storeAddressTitle, title);
+    box.put(HiveOpenBox.storeAddressSubTitle, subTitle);
+  }
+
 
   // fetching address for location and show street name etc from geolocation
   Future<void> _fetchAddress(double latitude, double longitude) async {
@@ -54,6 +63,7 @@ class _ShowGoogleMapState extends State<ShowGoogleMap> {
         setState(() {
           address = "${place.street}, ${place.subLocality}";
           subAddress = "${place.locality}, ${place.country}, ${place.postalCode}";
+          storeAddress(address, subAddress);
           _isFetchingLocation = false;
         });
       }
