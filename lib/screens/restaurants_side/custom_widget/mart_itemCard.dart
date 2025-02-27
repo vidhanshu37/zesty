@@ -65,7 +65,7 @@ class _martItemCardState extends State<martItemCard> {
         },
         child: Container(
           padding: EdgeInsets.all(10.0),
-          // height: 270,
+          height: 270,
           width: 150,
           decoration: BoxDecoration(
             color: Colors.white,
@@ -124,6 +124,7 @@ class _martItemCardState extends State<martItemCard> {
                                // Dot Indicator
                                Positioned(
                                  bottom: 8,
+                                 right: 15,
                                  child: Row(
                                    mainAxisAlignment: MainAxisAlignment.end,
                                    children: widget.images.asMap().entries.map((entry) {
