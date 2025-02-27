@@ -255,6 +255,8 @@ class _HomeScreenState extends State<HomeScreen>
               /// Show Banner
               appBarBanner(),
 
+
+              /// Pull to refresh
               CupertinoSliverRefreshControl(
                 onRefresh: _onRefresh,
                 refreshIndicatorExtent: 60.0,
@@ -323,8 +325,8 @@ class _HomeScreenState extends State<HomeScreen>
                             child: Column(
                               children: [
                                 Image.network(
-                                  'https://zesty-backend.onrender.com/category/get-category-image/${category[index]['_id']}',
-                                  // category[index]['image']['data'],
+                                  '${category[index]['image']}',
+                                  // 'https://zesty-backend.onrender.com/category/get-category-image/${category[index]['_id']}',
                                   fit: BoxFit.cover,
                                   height: 90,
                                   width: 90,
@@ -413,7 +415,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   color: TColors.lightGrey,
                                   borderRadius: BorderRadius.circular(12.0)
                               ),
-                              child: Image.network('https://zesty-backend.onrender.com/restaurant/get-restaurant-logo/${restaurantData[index]['_id']}',
+                              child: Image.network('${restaurantData[index]['logoImg']}',
                                 fit: BoxFit.cover,
                                 loadingBuilder: (context, child, loadingProgress) {
                                   if (loadingProgress == null) return child;

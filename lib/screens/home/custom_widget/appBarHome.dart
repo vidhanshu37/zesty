@@ -2,6 +2,7 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:zesty/screens/home/custom_widget/searchbarHome.dart';
+import 'package:zesty/utils/constants/media_query.dart';
 
 import '../home.dart';
 
@@ -41,14 +42,19 @@ class AppBarHome extends StatelessWidget {
                   // style: Theme.of(context).textTheme.titleMedium,
                   style: TextStyle(
                       fontSize: 16,
-                      color: colorAnimationAddress.value),
+                      color: colorAnimationAddress.value, overflow: TextOverflow.ellipsis,),
+                  maxLines: 1,
                 ),
-                subtitle: Text(
-                  widget.subAddress,
-                  // style: Theme.of(context).textTheme.labelLarge,
-                  style: TextStyle(
-                      fontSize: 12,
-                      color: colorAnimationAddress.value),
+                subtitle: Container(
+                  padding: EdgeInsets.only(right: ZMediaQuery(context).width - 230),
+                  child: Text(
+                    widget.subAddress,
+                    // style: Theme.of(context).textTheme.labelLarge,
+                    maxLines: 1,
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: colorAnimationAddress.value, overflow: TextOverflow.ellipsis),
+                  ),
                 ),
               ),
               SizedBox(

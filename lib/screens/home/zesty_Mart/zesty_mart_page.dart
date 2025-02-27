@@ -4,18 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
-import 'package:zesty/screens/home/zesty_Mart/all_Tab.dart';
-import 'package:zesty/screens/home/zesty_Mart/beauty_Tab.dart';
-import 'package:zesty/screens/home/zesty_Mart/electronics_Tab.dart';
-import 'package:zesty/screens/home/zesty_Mart/fresh_Tab.dart';
-import 'package:zesty/screens/home/zesty_Mart/grocery_Tab.dart';
-import 'package:zesty/screens/home/zesty_Mart/home_Tab.dart';
-import 'package:zesty/screens/home/zesty_Mart/kids_Tab.dart';
 import 'package:zesty/utils/constants/api_constants.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:http/http.dart' as http;
 import '../../restaurants_side/custom_widget/mart_categoryTabs.dart';
-// import '../../restaurants_side/custom_widget/mart_itemCard.dart';
 import '../../restaurants_side/custom_widget/mart_itemCard.dart';
 import '../custom_widget/searchbarHome.dart';
 
@@ -152,7 +144,7 @@ class _ZestyMartPageState extends State<ZestyMartPage>
                 snap: true,
                 floating: true,
                 backgroundColor: appBarColorTab(),
-                expandedHeight: 60,
+                expandedHeight: 50,
                 collapsedHeight: 10,
                 toolbarHeight: 10,
                 flexibleSpace: FlexibleSpaceBar(
@@ -243,26 +235,78 @@ class _ZestyMartPageState extends State<ZestyMartPage>
 
               /// ViewPager of Tabview
               SliverToBoxAdapter(
-                child: Column(
-                  children:[ IndexedStack(
-                    index: _tabController.index,
-                      children: [
-                        AllTab(),
-                        FreshTab(),
-                        GroceryTab(),
-                        ElectronicsTab(),
-                        BeautyTab(),
-                        HomeTab(),
-                        KidsTab(),
-                      ],
-                    ),
-                  ]
+                child: Container(
+                  height: 1000,
+                  child: TabBarView(
+                    controller: _tabController,
+                    physics: NeverScrollableScrollPhysics(),
+                    children: [
+                      SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                              height: 300,
+                                width: 400,
+                                color: Colors.amber,
+                                child: Center(child: Text("All"))),
+                            Container(
+                                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                height: 300,
+                                width: 400,
+                                color: Colors.amber,
+                                child: Center(child: Text("All"))),
+                            Container(
+                                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                height: 300,
+                                width: 400,
+                                color: Colors.amber,
+                                child: Center(child: Text("All"))),
+                          ],
+                        ),
+                      ),
+                      Text("tab2"),
+                      Text("tab3"),
+                      Text("tab4"),
+                      Text("tab5"),
+                      Text("tab6"),
+                      Text("tab7"),
+                    ],
                   ),
                 ),
+              ),
+
+              /// Top picks for you - section
+              SliverToBoxAdapter(
+                child: allMartItem.isEmpty
+                    ? Container(
+                  height: 200,
+                  width: 200,
+                  color: TColors.lightGrey,
+                )
+                    : SizedBox(
+                  height: 280,
+                  child: ListView.builder(
+                      itemCount: allMartItem.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        return martItemCard(
+                            imgId: allMartItem[index]['_id'],
+                            name: allMartItem[index]['name'],
+                            weight: allMartItem[index]['weight'],
+                            price: allMartItem[index]['price']);
+                      }),
+                ),
+              ),
 
             ],
           ),
-
+          Positioned(
+              bottom: 0,
+              right: 0,
+              left: 0,
+              child: Container()
+          )
         ],
       ),
     );
