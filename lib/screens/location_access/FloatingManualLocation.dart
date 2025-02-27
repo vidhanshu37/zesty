@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:zesty/custom_widget/textfield_cust.dart';
 import 'package:zesty/screens/add_manually_address/confirmLocation.dart';
 import 'package:zesty/screens/home/home.dart';
 import 'package:zesty/screens/location_access/shimmerEffect.dart';
+import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
 import '../../utils/constants/colors.dart';
 import '../../utils/constants/media_query.dart';
 import '../../utils/constants/text_string.dart';
@@ -24,6 +26,7 @@ class _ManualLocationState extends State<ManualLocation> {
   final TextEditingController _controller = TextEditingController();
   List<String> _suggestions = [];
   List<String> placeLocation = [];
+
   final String apiKey =
       '2SbwJ2FVBuS_QShPV008-M-njDmBzvXQ2nXEbxDFsjI'; // Replace with your API key
   // bool isLoading = false;
@@ -81,6 +84,12 @@ class _ManualLocationState extends State<ManualLocation> {
     }
   }
 
+  void storeAddress(title, subTitle) {
+    var box = Hive.box(HiveOpenBox.storeAddress);
+    box.put(HiveOpenBox.storeAddressTitle, title);
+    box.put(HiveOpenBox.storeAddressSubTitle, subTitle);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,7 +119,7 @@ class _ManualLocationState extends State<ManualLocation> {
             ),
             ZCustomTextField(
                 controller: _controller,
-                hintText: "Try citylight, surat, etc.",
+                hintText: "Try city light, surat, etc.",
                 onChanged: (value) => _getSuggestions(value.toLowerCase().trim()),
                 prefixIcon: Icons.search_rounded),
             SizedBox(
@@ -118,8 +127,7 @@ class _ManualLocationState extends State<ManualLocation> {
             ),
             InkWell(
               onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ConfirmLocation()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ConfirmLocation()));
               },
               child: Container(
                 height: 65,
@@ -163,8 +171,8 @@ class _ManualLocationState extends State<ManualLocation> {
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           onTap: () {
-
-                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen(address: placeLocation[index], subAddress: "surat")), (route) => false);
+                            storeAddress(placeLocation[index], _suggestions[index]);
+                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen(address: placeLocation[index], subAddress: _suggestions[index])), (route) => false);
 
                             // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             //     content:

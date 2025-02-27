@@ -277,27 +277,27 @@ class _ZestyMartPageState extends State<ZestyMartPage>
               ),
 
               /// Top picks for you - section
-              // SliverToBoxAdapter(
-              //   child: allMartItem.isEmpty
-              //       ? Container(
-              //     height: 200,
-              //     width: 200,
-              //     color: TColors.lightGrey,
-              //   )
-              //       : SizedBox(
-              //     height: 280,
-              //     child: ListView.builder(
-              //         itemCount: allMartItem.length,
-              //         scrollDirection: Axis.horizontal,
-              //         itemBuilder: (context, index) {
-              //           return martItemCard(
-              //               imgId: allMartItem[index]['_id'],
-              //               name: allMartItem[index]['name'],
-              //               weight: allMartItem[index]['weight'],
-              //               price: allMartItem[index]['price']);
-              //         }),
-              //   ),
-              // ),
+              SliverToBoxAdapter(
+                child: allMartItem.isEmpty
+                    ? Container(
+                  height: 200,
+                  width: 200,
+                  color: TColors.lightGrey,
+                )
+                    : SizedBox(
+                  height: 280,
+                  child: ListView.builder(
+                      itemCount: allMartItem.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        return martItemCard(
+                            imgId: allMartItem[index]['_id'],
+                            name: allMartItem[index]['name'],
+                            weight: allMartItem[index]['weight'],
+                            price: allMartItem[index]['price']);
+                      }),
+                ),
+              ),
 
             ],
           ),

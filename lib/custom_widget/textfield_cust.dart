@@ -46,6 +46,8 @@ class ZCustomTextField extends StatelessWidget {
       maxLength: maxLength,
       cursorColor: ZMediaQuery(context).isDarkMode ? TColors.white : TColors.black ,
       decoration: InputDecoration(
+        errorStyle: TextStyle(fontSize: 12),
+
         counterText: "",
         labelText: labelText,
         hintText: hintText,
