@@ -1,82 +1,95 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:zesty/screens/home/home.dart';
 
-class MartItemImagesScreen extends StatefulWidget {
-  final String martItemId;
-
-  const MartItemImagesScreen({super.key, required this.martItemId});
-
+class FirstScreen extends StatefulWidget {
   @override
-  _MartItemImagesScreenState createState() => _MartItemImagesScreenState();
+  _FirstScreenState createState() => _FirstScreenState();
 }
 
-class _MartItemImagesScreenState extends State<MartItemImagesScreen> {
-  List<String> imageUrls = [];
-  bool isLoading = true;
-  String errorMessage = '';
+class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
+  List<String> data = [];
 
   @override
   void initState() {
     super.initState();
-    fetchMartImages();
+    WidgetsBinding.instance.addObserver(this); // Add observer for lifecycle events
+    fetchData();
   }
 
-  Future<void> fetchMartImages() async {
-    try {
-      final response = await http.get(
-        Uri.parse('https://zesty-backend.onrender.com/zestyMart/get-martItem-images/${widget.martItemId}'),
-      );
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this); // Remove observer
+    super.dispose();
+    print("dispose");
+  }
 
-      if (response.statusCode == 200) {
-        List<dynamic> imagesData = jsonDecode(response.body);
-        List<String> images = imagesData.map((img) => img['data'] as String).toList();
-
-        setState(() {
-          imageUrls = images;
-          isLoading = false;
-        });
-      } else {
-        setState(() {
-          isLoading = false;
-          errorMessage = "Failed to load images";
-        });
-      }
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-        errorMessage = "Error: ${e.toString()}";
-      });
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Refresh data when the screen is revisited
+      print("back press");
+      fetchData();
     }
+  }
+
+  void fetchData() async {
+    // Fetch data from Hive
+    // Example: data = await Hive.box('myBox').get('data');
+    setState(() {
+      data = ['Item 1', 'Item 2', 'Item 3']; // Example data
+    });
+  }
+
+
+
+  void _navigateToSecondScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomeScreen(address: "address", subAddress: "subAddress"),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Mart Item Images")),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : errorMessage.isNotEmpty
-          ? Center(child: Text(errorMessage, style: const TextStyle(color: Colors.red)))
-          : imageUrls.isEmpty
-          ? const Center(child: Text("No images available"))
-          : GridView.builder(
-        padding: const EdgeInsets.all(10),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // Display 2 images per row
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-        ),
-        itemCount: imageUrls.length,
+      appBar: AppBar(
+        title: Text('First Screen'),
+      ),
+      body: ListView.builder(
+        itemCount: data.length,
         itemBuilder: (context, index) {
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.memory(
-              base64Decode(imageUrls[index].split(",")[1]), // Decode Base64
-              fit: BoxFit.cover,
-            ),
+          return ListTile(
+            title: Text(data[index]),
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _navigateToSecondScreen,
+        child: Icon(Icons.navigate_next),
+      ),
+    );
+  }
+}
+
+class SecondScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Second Screen'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            // Modify data in Hive
+            // Example: Hive.box('myBox').put('data', ['Modified Item 1', 'Modified Item 2']);
+
+            Navigator.pop(context); // Return to the first screen
+          },
+          child: Text('Modify Data and Go Back'),
+        ),
       ),
     );
   }

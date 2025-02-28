@@ -16,6 +16,7 @@ class ItemCard extends StatefulWidget {
   final String restaurantId;
   final String restaurantName;
   final String itemImageUrl;
+  final String foodType;
 
   const ItemCard({
     super.key,
@@ -27,6 +28,7 @@ class ItemCard extends StatefulWidget {
     required this.restaurantId,
     required this.restaurantName,
     required this.itemImageUrl,
+    required this.foodType,
   });
 
   @override
@@ -198,12 +200,16 @@ class _ItemCardState extends State<ItemCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 20),
-                    Container(
-                      height: 20,
-                      width: 20,
-                      color: Colors.amber,
+
+                    /// Logo of veg or non-veg
+                    SizedBox(
+                      height: 18,
+                      width: 18,
+                      child: widget.foodType == "Veg" ? Image.asset('assets/images/vegSymbol.png', fit: BoxFit.cover,) : Image.asset('assets/images/nonVegSymbol.png', fit: BoxFit.cover, height: 16, width: 16,),
                     ),
                     SizedBox(height: 5),
+
+                    /// Food Item name
                     Text(
                       widget.itemName,
                       style: Theme.of(context).textTheme.titleMedium,
@@ -211,8 +217,11 @@ class _ItemCardState extends State<ItemCard> {
                       maxLines: 2,
                     ),
                     SizedBox(height: 4),
+
+
+                    /// Food item description
                     Text(
-                      widget.itemImageId,
+                      widget.itemDescription,
                       style: TextStyle(fontSize: 12, color: TColors.darkGrey),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,

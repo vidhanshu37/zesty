@@ -25,15 +25,7 @@ class RestaurantsHome extends StatefulWidget {
 
 class _RestaurantsHomeState extends State<RestaurantsHome> {
   final TextEditingController searchbarController = TextEditingController();
-  // int _currentIndex = 0;
   Map<String, dynamic>? restaurantData;
-  final List<String> _coupons = [
-    "Extra ₹75 off",
-    "Flat 10% off above ₹500",
-    "Free Delivery on orders ₹199+",
-    "Buy 1 Get 1 Free",
-    "Save ₹50 on your first order",
-  ];
 
   List allMenuItem = [];
 
@@ -42,16 +34,6 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
   double long = 0;
 
   var box = Hive.box(HiveOpenBox.zestyFoodCart);
-
-  int countCartTotal() {
-    int totalAge = box.values.fold(0, (sum, item) {
-      if (item is Map<String, dynamic> && item.containsKey('age')) {
-        return sum + (item['age'] as int);
-      }
-      return sum;
-    });
-    return 0;
-  }
 
   @override
   void initState() {
@@ -88,15 +70,35 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
   }
 
 
+  String countDeliveryTime(){
+    double distance = ApiConstants.calculateDistance(lat, long, restaurantData?['latitude'] ?? 21.70, restaurantData?['longitude'] ?? 71.12);
+    if (distance < 3) {
+      return "15-20 mins";
+    } else if (distance >= 3 && distance < 5) {
+      return "20-25 mins";
+    } else if (distance >= 5 && distance < 7) {
+      return "30-35 mins";
+    } else {
+      return "45-50 mins";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   setState(() {
+    //
+    //   });
+    // });
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey.withOpacity(0.5),
       ),
       body: restaurantData == null
           ? Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(color: Colors.black,),
       )
           : LayoutBuilder(
         builder: (context, constraints) {
@@ -112,7 +114,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                         /// Root restaurant card
                         Container(
                           width: double.infinity,
-                          height: 200,
+                          // height: 200,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(22),
@@ -132,9 +134,9 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SizedBox(
-                                      height: 10,
+                                      height: 20,
                                     ),
-                                    Row(
+                                    restaurantData?['veg'] == 'veg' ? Row(
                                       children: [
                                         Icon(
                                           Icons.verified,
@@ -150,9 +152,10 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                                               color: Colors.green),
                                         ),
                                       ],
-                                    ),
+                                    ) : SizedBox(height:0,),
+
                                     SizedBox(
-                                      height: 5,
+                                      height: 10,
                                     ),
                                     Text(
                                       restaurantData?['restaurantName'] ?? "Zesty",
@@ -166,23 +169,18 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                                       height: 5,
                                     ),
                                     Text(
-                                      "15-20 mins • ${ApiConstants.calculateDistance(lat, long, restaurantData?['latitude'] ?? 21.70, restaurantData?['longitude'] ?? 71.12).toStringAsFixed(1)}km • Katargam",
+                                      countDeliveryTime() + " • ${ApiConstants.calculateDistance(lat, long, restaurantData?['latitude'] ?? 21.2049, restaurantData?['longitude'] ?? 72.8411).toStringAsFixed(1)}km • ${restaurantData?['selectedArea']}",
                                       style: TextStyle(fontSize: 14),
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                     ),
                                     SizedBox(
-                                      height: 5,
+                                      height: 8,
                                     ),
-                                    Text(
-                                      'description line',
-                                      style: TextStyle(
-                                        color: TColors.darkGrey,
-                                        fontSize: 12,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      maxLines: 1,
-                                    ),
+                                    Text("Tagline set by restaurant", style: Theme.of(context).textTheme.labelMedium,),
+                                    SizedBox(
+                                      height: 10,
+                                    )
                                   ],
                                 ),
                               ),
@@ -219,12 +217,15 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                           restaurantId: restaurantData!['_id'],
                           restaurantName: restaurantData!['restaurantName'],
                           itemImageUrl: allMenuItem[index]['image'],
+                          foodType: allMenuItem[index]['foodType'],
                         );
                       },
                       childCount: allMenuItem.length,
                     ),
                   ),
 
+
+                  /// Shop Address & disclaimer & FSSAI license no.
                   SliverToBoxAdapter(
                     child: SizedBox(
                       height: 300,
@@ -240,7 +241,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                   right: 0,
                   child: Container(
                     height: 110,
-                    width: constraints.maxWidth, // Use constraints from LayoutBuilder
+                    width: double.infinity, // Use constraints from LayoutBuilder
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(14),

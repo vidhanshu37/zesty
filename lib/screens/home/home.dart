@@ -176,7 +176,6 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -185,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen>
         height: isVisible ? 65.0 : 0.0,
         // margin: const EdgeInsets.symmetric(horizontal: 24.0),
         decoration: BoxDecoration(
-          color: ZMediaQuery(context).isDarkMode ? TColors.bgDark : TColors.bgLight,
+          color: TColors.bgLight,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.3), // Shadow color
@@ -200,14 +199,13 @@ class _HomeScreenState extends State<HomeScreen>
           padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 7),
           child: GNav(
             backgroundColor:
-                ZMediaQuery(context).isDarkMode ? TColors.bgDark : TColors.bgLight,
+                 TColors.bgLight,
             color:
-                ZMediaQuery(context).isDarkMode ? TColors.bgLight : TColors.bgDark,
+                 TColors.bgDark,
             activeColor:
-                ZMediaQuery(context).isDarkMode ? TColors.bgLight : TColors.bgDark,
-            tabBackgroundColor: ZMediaQuery(context).isDarkMode
-                ? TColors.darkGrey
-                : TColors.grey,
+                 TColors.bgDark,
+            tabBackgroundColor:
+                 TColors.grey,
             padding: EdgeInsets.all(15),
             selectedIndex: _selectedIndex,
             onTabChange: (index) {
@@ -312,8 +310,8 @@ class _HomeScreenState extends State<HomeScreen>
                         scrollDirection: Axis.horizontal,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 0,
+                          mainAxisSpacing: 0,
                           childAspectRatio: 1,
                         ),
                         itemCount: category.length,
@@ -386,16 +384,6 @@ class _HomeScreenState extends State<HomeScreen>
               ),
 
               /// main home page vertical restaurant
-              // SliverList(
-              //     delegate: SliverChildBuilderDelegate(
-              //   (context, index) {
-              //     return Padding(
-              //       padding: EdgeInsets.all(8.0),
-              //       child: Text("data"),
-              //     );
-              //   },
-              //   childCount: 100,
-              // )),
               SliverList.builder(
                   itemCount: restaurantData.length,
                   itemBuilder: (context, index) {
@@ -435,8 +423,6 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                     );
                   }),
-
-
             ],
           ),
           ZestyMartPage(address: widget.address, subAddress: widget.subAddress,),
