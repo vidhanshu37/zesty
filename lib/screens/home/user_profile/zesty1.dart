@@ -46,15 +46,15 @@ class _zesty1State extends State<zesty1> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Zesty",style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: TColors.orange),),
+                  Text("Zesty",style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: TColors.darkGreen),),
                   SizedBox(width: 6,),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 8,vertical: 2),
                     decoration: BoxDecoration(
-                      border: Border.all(color: TColors.orange,width: 2),
+                      border: Border.all(color: TColors.darkGreen,width: 2),
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: Text("LITE",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: TColors.orange),),
+                    child: Text("LITE",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: TColors.darkGreen),),
                   ),
                 ],
               ),
@@ -70,8 +70,8 @@ class _zesty1State extends State<zesty1> {
                     SizedBox(height: 3,),
                     Container(
                         width: double.infinity,
-                        color: TColors.orange.withOpacity(0.3),
-                        child: Center(child: Text("3 MONTHS PLAN",style: TextStyle(fontSize: 14,color: TColors.orange),))
+                        color: TColors.Green.withOpacity(0.5),
+                        child: Center(child: Text("3 MONTHS PLAN",style: TextStyle(fontSize: 14,color: TColors.darkGreen),))
                     ),
                     SizedBox(height: 7,),
                     SizedBox(
@@ -80,12 +80,13 @@ class _zesty1State extends State<zesty1> {
                         child: AvifImage.asset('assets/icons/food_category/Pizza.avif', fit: BoxFit.cover,)
                     ),
                     SizedBox(height: 13,),
-                    Text("Unlock 20 Free Deliveries",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold,color: TColors.orange),),
+                    Text("Unlock 20 Free Deliveries",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold,color: TColors.darkGreen),),
                     Text("10 on Food + 10 on Zestymart",style: TextStyle(fontSize: 15,color: TColors.darkerGrey),),
                     SizedBox(height: 22,),
                     ElevatedButton(onPressed: (){},
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: TColors.orange,
+                          backgroundColor: TColors.darkGreen,
+                          side: BorderSide.none,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           )
@@ -94,8 +95,8 @@ class _zesty1State extends State<zesty1> {
                         padding: const EdgeInsets.symmetric(vertical: 12,horizontal: 20),
                         child: Column(
                           children: [
-                            Text("Buy Zesty Lite at Rs.30",style: TextStyle(fontSize: 16,color: Colors.white),),
-                            Text("for 3 months (GST will apply)",style: TextStyle(fontSize: 16,color: Colors.white),)
+                            Text("Buy Zesty Lite at Rs.30",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.white),),
+                            Text("for 3 months (GST will apply)",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.white),)
                           ],
                         ),
                       ),
@@ -110,7 +111,7 @@ class _zesty1State extends State<zesty1> {
               Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                    color: TColors.orange.withOpacity(0.3),
+                    color: TColors.Green.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
@@ -141,7 +142,7 @@ class _zesty1State extends State<zesty1> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Food",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: TColors.orange),),
+                    Text("Food",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: TColors.darkGreen),),
                     SizedBox(height: 13,),
                     Text("10 free deliveries",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.black),),
                     SizedBox(height: 3,),
@@ -159,7 +160,7 @@ class _zesty1State extends State<zesty1> {
                     SizedBox(height: 20,),
                     Divider(),
                     SizedBox(height: 13,),
-                    Text("Instamart",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: TColors.orange),),
+                    Text("Instamart",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: TColors.darkGreen),),
                     SizedBox(height: 10,),
                     Text("10 free deliveries",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.black),),
                     SizedBox(height: 3,),
@@ -196,14 +197,15 @@ class _zesty1State extends State<zesty1> {
                 padding: EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    Text("YOU GOT A SPECIAL DISCOUNT",style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold,color: Colors.red),),
+                    Text("YOU GOT A SPECIAL DISCOUNT",style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold,color: TColors.darkGreen),),
                     SizedBox(height: 10,),
                     Container(
                       width: double.infinity,
                       child: ElevatedButton(
                           onPressed: (){},
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
+                              backgroundColor: TColors.darkGreen,
+                              side: BorderSide.none,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               )

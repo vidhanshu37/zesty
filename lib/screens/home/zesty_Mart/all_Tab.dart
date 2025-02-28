@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_avif/flutter_avif.dart';
 import 'package:http/http.dart' as http;
+import 'package:zesty/screens/home/zesty_Mart/zesty_mart_page.dart';
 import 'package:zesty/utils/constants/media_query.dart';
 import '../../../utils/constants/colors.dart';
 import '../../restaurants_side/custom_widget/mart_itemCard.dart';
@@ -19,6 +20,27 @@ class AllTab extends StatefulWidget {
 class _AllTabState extends State<AllTab> {
   List allMartItem = [];
   int _currentIndex = 0;
+
+  final List<Map<String, String>> items = [
+    {"name": "Fruits", "image": "assets/images/fFresh.png"},
+    {"name": "Grocery", "image": "assets/images/Grocery.png"},
+    {"name": "Skin Care", "image": "assets/images/Beauty.png"},
+    {"name": "Electronics", "image": "assets/images/Electronic.png"},
+    {"name": "Home", "image": "assets/images/Home.png"},
+    {"name": "Kids", "image": "assets/images/Kids.png"},
+    {"name": "Vegetable", "image": "assets/images/Fresh.png"},
+  ];
+
+  final Map<String, int> CategoryIndexs = {
+    "All" : 0,
+    "Fruits" : 1,
+    "Grocery" : 2,
+    "Electronics" : 3,
+    "Skin Care" : 4,
+    "Home" : 5,
+    "Kids" : 6,
+    "Vegetable" : 1,
+  };
 
   final List<String> imageList = [
     'assets/images/adv1.avif',
@@ -108,46 +130,84 @@ class _AllTabState extends State<AllTab> {
                   ],
                 ),
                 SizedBox(height: 10,),
-                SizedBox(
-                  height: 280,
-                  child: ListView.builder(
-                    // physics: NeverScrollableScrollPhysics(),
-                      itemCount: allMartItem.length,
-                      scrollDirection: Axis.horizontal,
+
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    height: 240,
+                    child: GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: 0.8,
+                      ),
+                      itemCount: items.length,
                       itemBuilder: (context, index) {
-                        return martItemCard(
-                          imgId: allMartItem[index]['_id'],
-                          name: allMartItem[index]['name'],
-                          weight: allMartItem[index]['weight'],
-                          price: allMartItem[index]['price'],
-                          images: allMartItem[index]['images'],
-                          id: allMartItem[index]['_id'],
+                        return GestureDetector(
+                          onTap: () {
+                            // Navigate to ZestyMartPage and pass the selected category index
+                            int selectedTabIndex = CategoryIndexs[items[index] ['name']] ?? 0;
+                    // Navigate to ZestyMartPage and pass the selected category index
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ZestyMartPage(address: "Your Address",
+                                    subAddress: "Your Sub Address",selectedTabIndex: selectedTabIndex // Pass selected tab index
+                                ),
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8.0), // Adjust for rounded corners; set to 0 for a perfect square
+                                child: Image.asset(
+                                  items[index]["image"]!,
+                                  width: 65,
+                                  height: 65,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                items[index]["name"]!,
+                                style: TextStyle(fontSize: 13),
+                              ),
+                            ],
+                          ),
                         );
-                      }),
+                      },
+                    ),
+                  ),
                 ),
+
                 SizedBox(height: 10,),
               ]
           ),
         ),
-        SliverGrid(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisExtent: 240,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-          ),
-          delegate: SliverChildBuilderDelegate(
-                (context, index) {
-              return martItemCard(
-                imgId: allMartItem[index]['_id'],
-                name: allMartItem[index]['name'],
-                weight: allMartItem[index]['weight'],
-                price: allMartItem[index]['price'],
-                images: allMartItem[index]['images'],
-                id: allMartItem[index]['_id'],
-              );
-            },
-            childCount: allMartItem.length,
+        SliverPadding(
+          padding: EdgeInsets.all(10.0),
+          sliver: SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisExtent: 240,
+              crossAxisSpacing: 3,
+              mainAxisSpacing: 3,
+            ),
+            delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                return martItemCard(
+                  imgId: allMartItem[index]['_id'],
+                  name: allMartItem[index]['name'],
+                  weight: allMartItem[index]['weight'],
+                  price: allMartItem[index]['price'],
+                  images: allMartItem[index]['images'],
+                  id: allMartItem[index]['_id'],
+                );
+              },
+              childCount: allMartItem.length,
+            ),
           ),
         ),
       ],

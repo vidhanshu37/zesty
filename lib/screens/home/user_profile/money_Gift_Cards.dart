@@ -119,13 +119,6 @@ class _MoneyGiftState extends State<MoneyGift> {
                         child: Text("Add Balance",style: TextStyle(color: Colors.white,fontSize: 16),)
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Have a gift voucher?",style: TextStyle(color: TColors.black),),
-                      TextButton(onPressed: (){}, child: Text("Redeem Now",style: TextStyle(color: Colors.green,fontSize: 16),)),
-                    ],
-                  )
                 ],
               ),
             ),

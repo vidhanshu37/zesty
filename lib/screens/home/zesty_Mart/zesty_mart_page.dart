@@ -1,6 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:zesty/utils/constants/media_query.dart';
+import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
 
 import '../../../utils/constants/colors.dart';
 import '../../restaurants_side/custom_widget/mart_categoryTabs.dart';
@@ -17,9 +20,10 @@ import 'package:http/http.dart' as http;
 class ZestyMartPage extends StatefulWidget {
   final String address;
   final String subAddress;
+  final int selectedTabIndex;
 
   const ZestyMartPage(
-      {super.key, required this.address, required this.subAddress});
+      {super.key, required this.address, required this.subAddress,this.selectedTabIndex = 0,});
 
   @override
   State<ZestyMartPage> createState() => _ZestyMartPageState();
@@ -58,8 +62,11 @@ class _ZestyMartPageState extends State<ZestyMartPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 7, vsync: this);
+    _tabController = TabController(length: 7, vsync: this,initialIndex: widget.selectedTabIndex);
     _scrollController = ScrollController();
+
+    // _tabController = TabController(length: 7, vsync: this, initialIndex: widget.selectedTabIndex);
+
 
     _tabController.addListener(() {
       _activeIndex = _tabController.index;
@@ -134,7 +141,7 @@ class _ZestyMartPageState extends State<ZestyMartPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: TColors.white,
+       backgroundColor: TColors.bgLight,
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
@@ -155,8 +162,8 @@ class _ZestyMartPageState extends State<ZestyMartPage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: 15),
-                      Text(widget.address, style: TextStyle(fontSize: 16)),
-                      Text(widget.subAddress, style: TextStyle(fontSize: 12))
+                      Text(widget.address, style: TextStyle(fontSize: 16,color: TColors.black)),
+                      Text(widget.subAddress, style: TextStyle(fontSize: 12,color: TColors.black))
                     ],
                   ),
                 ),
@@ -229,18 +236,23 @@ class _ZestyMartPageState extends State<ZestyMartPage>
             ),
           ];
         },
-        body: TabBarView(
-          physics: NeverScrollableScrollPhysics(),
-          controller: _tabController,
-          children: [
-            AllTab(),
-            FreshTab(),
-            GroceryTab(),
-            ElectronicsTab(),
-            BeautyTab(),
-            HomeTab(),
-            KidsTab(),
-          ],
+        body: Stack(
+          children:[
+            TabBarView(
+            physics: NeverScrollableScrollPhysics(),
+            controller: _tabController,
+            children: [
+              AllTab(),
+              FreshTab(),
+              GroceryTab(),
+              ElectronicsTab(),
+              BeautyTab(),
+              HomeTab(),
+              KidsTab(),
+            ],
+          ),
+
+          ]
         ),
       ),
     );

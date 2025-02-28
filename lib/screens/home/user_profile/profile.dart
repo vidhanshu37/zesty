@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:zesty/screens/home/user_profile/editProfile.dart';
 import 'package:zesty/screens/home/user_profile/money_Gift_Cards.dart';
 import 'package:zesty/screens/home/user_profile/zesty1.dart';
 import 'package:zesty/utils/constants/colors.dart';
@@ -27,7 +28,9 @@ class _profileState extends State<profile> {
               Text("VISHU",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold)),
               Text("+91 8734567890",style: TextStyle(color: TColors.darkerGrey,fontSize: 12)),
               SizedBox(height: 10,),
-              InkWell(onTap: (){},child: Text("Edit Profile  >",style: TextStyle(color: TColors.orange,fontWeight: FontWeight.bold,fontSize: 15),),),
+              InkWell(onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => EditAccountScreen(),));
+              },child: Text("Edit Profile  >",style: TextStyle(color: TColors.darkGreen,fontWeight: FontWeight.bold,fontSize: 15),),),
               Divider(),
               SizedBox(height: 10,),
               Row(
@@ -36,7 +39,7 @@ class _profileState extends State<profile> {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 12,vertical: 6),
                     decoration: BoxDecoration(
-                      color: TColors.orange,
+                      color: TColors.darkGreen,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text("ZESTY ONE",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 10)),
@@ -48,7 +51,7 @@ class _profileState extends State<profile> {
                       //color: Colors.redAccent,
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: Text("JOIN NOW",style: TextStyle(color: TColors.orange,fontSize: 12)),
+                    child: Text("JOIN NOW",style: TextStyle(color: TColors.darkGreen,fontSize: 12)),
                   ),
                 ],
               ),

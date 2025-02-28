@@ -97,6 +97,7 @@ class _AddBalanceState extends State<AddBalance> {
               Text("Available balance: ₹${ZestyMoney.walletAmount}",style: TextStyle(color: TColors.darkerGrey,fontSize: 14),),
               SizedBox(height: 13,),
               Card(
+                color: TColors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)
                 ),
@@ -129,22 +130,6 @@ class _AddBalanceState extends State<AddBalance> {
                         ],
                       ),
                       SizedBox(height: 12,),
-                      Row(
-                        children: [
-                          const Text("Have a gift voucher?", style: TextStyle(fontSize: 14)),
-                          const SizedBox(width: 4),
-                          GestureDetector(
-                            onTap: () {},
-                            child: const Text(
-                              "Redeem Now",
-                              style: TextStyle(
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
                     ],
                   ),
                 ),
@@ -152,6 +137,7 @@ class _AddBalanceState extends State<AddBalance> {
         
               SizedBox(height: 16,),
               Card(
+                color: TColors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -161,7 +147,7 @@ class _AddBalanceState extends State<AddBalance> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Note:",style: TextStyle(color: Colors.red,fontWeight: FontWeight.bold),),
+                      Text("Note:",style: TextStyle(color: TColors.darkGreen,fontWeight: FontWeight.bold),),
                       SizedBox(height: 8,),
                       _noteItem("Zesty Money balances are valid for 1 year from credit on Zesty."),
                       _noteItem("Zesty Money cannot be transferred to your bank account as per RBI fuidelines."),
@@ -179,10 +165,11 @@ class _AddBalanceState extends State<AddBalance> {
                   openCheckout(amount);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: TColors.darkGreen,
+                  side: BorderSide.none,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)
-                  )
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
                     child: Text("Proceed to Add Balance",style: TextStyle(fontSize: 16,color: Colors.white),)),
               ),
@@ -200,13 +187,13 @@ class _AddBalanceState extends State<AddBalance> {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 12,horizontal: 14),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: _selectedAmount == amount ? Colors.red : Colors.grey.shade300),
-          color: _selectedAmount == amount ? Colors.red.withOpacity(0.2) : Colors.white
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: _selectedAmount == amount ? TColors.darkGreen : Colors.grey.shade300),
+          color: _selectedAmount == amount ? Color(0xffcae97c).withOpacity(0.2) : Colors.white
         ),
         child: Column(
           children: [
-            Text("₹$amount",style: TextStyle(fontSize: 13,color: _selectedAmount == amount ? Colors.red : Colors.black),),
+            Text("₹$amount",style: TextStyle(fontSize: 13,color: _selectedAmount == amount ? TColors.darkGreen : Colors.black),),
             // if(amount == 500)
             //   Padding(padding: EdgeInsets.only(top: 2),
             //     child: Container(
@@ -228,7 +215,10 @@ class _AddBalanceState extends State<AddBalance> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.circle,size: 8,color: Colors.black,),
+          Padding(
+            padding: const EdgeInsets.all(6),
+            child: Icon(Icons.circle,size: 8,color: Colors.black,),
+          ),
           SizedBox(width: 8,),
           Expanded(child: Text(text,style: TextStyle(fontSize: 14,color: TColors.darkerGrey),)),
         ],

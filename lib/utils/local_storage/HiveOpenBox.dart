@@ -7,4 +7,7 @@ class HiveOpenBox {
   static String storeAddressTitle = "title";
   static String storeAddressSubTitle = "subTitle";
 
+  /// Hive for store Zesty mart item
+  static String storeZestyMartItem = "ZestyMart";
+
 }
