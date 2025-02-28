@@ -8,6 +8,7 @@ import 'package:zesty/screens/home/zesty_Mart/single_Product/singleProduct.dart'
 import 'package:zesty/utils/constants/api_constants.dart';
 import 'package:zesty/utils/constants/manage_cart_item.dart';
 import 'package:http/http.dart' as http;
+import 'package:zesty/utils/constants/media_query.dart';
 import '../../../utils/constants/colors.dart';
 
 class martItemCard extends StatefulWidget {
@@ -68,7 +69,7 @@ class _martItemCardState extends State<martItemCard> {
           height: 270,
           width: 150,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: TColors.white,
             borderRadius: BorderRadius.circular(10),
            boxShadow: [
              BoxShadow(
@@ -88,7 +89,7 @@ class _martItemCardState extends State<martItemCard> {
                   borderRadius: BorderRadius.circular(15),
                   child: Container(
                       decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: TColors.white,
                           border: Border.all(color: TColors.grey),
                           borderRadius: BorderRadius.circular(15)),
                       child:
@@ -156,6 +157,7 @@ class _martItemCardState extends State<martItemCard> {
                   child: Text(
                     widget.name,
                     style: TextStyle(
+                      color: TColors.black,
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
                         overflow: TextOverflow.ellipsis),
@@ -175,7 +177,7 @@ class _martItemCardState extends State<martItemCard> {
                   ),
                   Text(
                     widget.weight,
-                    style: Theme.of(context).textTheme.labelMedium,
+                    style: TextStyle(fontSize: 12,color:Colors.black.withOpacity(0.5)),
                   ),
                 ],
               ),
