@@ -9,10 +9,12 @@ class ApiConstants {
   }
 
   static String getAllMartItem = "https://zesty-backend.onrender.com/zestyMart/get-all-martItem";
+
   static String getMartImage(String imgId) {
     return "https://zesty-backend.onrender.com/zestyMart/get-martItem-image/$imgId";
   }
 
+  static String getCouponData = "https://zesty-backend.onrender.com/coupon/get-all-coupons";
 
   static double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
     const double R = 6371; // Earth's radius in km

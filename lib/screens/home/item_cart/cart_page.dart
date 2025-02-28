@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
+import 'package:zesty/screens/home/item_cart/coupons.dart';
 import 'package:zesty/screens/restaurants_side/restaurants_home.dart';
 import 'package:zesty/utils/constants/api_constants.dart';
 import 'package:zesty/utils/constants/colors.dart';
@@ -20,6 +21,8 @@ class CartPage extends StatefulWidget {
 
 class _CartPageState extends State<CartPage> {
   bool isExpanded = false;
+
+  bool checkCouponDiscount = false;
 
   // List to track counters for each item
   late List<int> counters;
@@ -41,6 +44,9 @@ class _CartPageState extends State<CartPage> {
   var total = 0.0;
 
   String lastRestaurantId = "";
+
+  Map<String, String> couponData = {};
+
 
   /// For particular restaurant data
   Future<void> getRestaurantData() async {
@@ -157,6 +163,38 @@ class _CartPageState extends State<CartPage> {
     return total;
   }
 
+  void getCouponId() async {
+    couponData = await Navigator.push(context, MaterialPageRoute(builder: (context) => Coupons(updateCartUI: updateCartUI, calculateTotalCartValue: calculateTotalCartValue())));
+  }
+
+  var couponDiscount = 0.0;
+
+  /// Count coupon value (after apply coupon discount)
+  void countDiscountCoupon() {
+    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("hello")));
+    double totalCartValue = calculateTotalCartValue();
+    double discount;
+    if ( totalCartValue > double.parse(couponData['minAmtReq'] ?? '150.0') ) {
+      discount = totalCartValue * (double.parse(couponData['discountPercentage'] ?? '60') / 100);
+      if( discount > double.parse(couponData["discountUpto"] ?? '1.0')) {
+        couponDiscount = double.parse(couponData["discountUpto"] ?? '1.0');
+        setState(() {
+
+        });
+      } else {
+        couponDiscount = discount;
+        setState(() {
+
+        });
+      }
+    } else {
+      couponDiscount = 0;
+      setState(() {
+
+      });
+    }
+  }
+
   /// fetch cart data from hive database
   Future<void> fetchCartData() async {
     var allKeys = box.keys.toList();
@@ -225,15 +263,26 @@ class _CartPageState extends State<CartPage> {
         .fold(0.0, (sum, element) => sum + element); // Sum all packaging charges
     double tax = totalCartValue * 0.05; // Calculate 5% tax
 
-    double totalValue = (totalCartValue + deliveryCharge + totalPackagingCharge + tax) ?? 0.0;
+    double totalValue = (totalCartValue + deliveryCharge + totalPackagingCharge + tax - couponDiscount) ?? 0.0;
     // double totalValue = ( 0 + deliveryCharge + 0 + 0) ?? 0.0;
     String formattedTotalValue = totalValue.toStringAsFixed(2);
     return formattedTotalValue;
   }
 
+  void updateCartUI() {
+    setState(() {});
+  }
+
 
   @override
   Widget build(BuildContext context) {
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (couponData != null && couponData.isNotEmpty) {
+        countDiscountCoupon();
+      }
+    });
+
     return WillPopScope(
       onWillPop: () async {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => RestaurantsHome(id: lastRestaurantId)));
@@ -304,24 +353,6 @@ class _CartPageState extends State<CartPage> {
                                       color: TColors.darkGreen),
                                 ),
                               ),
-                              // Container(
-                              //   decoration: BoxDecoration(
-                              //       borderRadius: BorderRadius.circular(10),
-                              //       border: Border.all(
-                              //           color: TColors.darkGrey)),
-                              //   child: Padding(
-                              //     padding: const EdgeInsets.all(8.0),
-                              //     child: InkWell(
-                              //       onTap: () {},
-                              //       child: Text(
-                              //         "+ Add more items",
-                              //         style: TextStyle(
-                              //             fontSize: 12,
-                              //             color: TColors.darkGrey),
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
                             ],
                           ),
                           /// Item cart description
@@ -333,57 +364,8 @@ class _CartPageState extends State<CartPage> {
                         ],
                       ),
                     )),
-      
-                /// Cooking request
                 SizedBox(
-                  width: ZMediaQuery(context).width,
-                  child: Card(
-                    color: TColors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: InkWell(
-                      onTap: (){},
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child:
-                           Text(
-                            "Add Cooking requests",
-                            style: TextStyle(
-                                fontSize: 13,
-                                color: TColors.darkGrey),
-                        ),
-                        // child: Row(
-                        //   children: [
-                        //     Container(
-                        //       decoration: BoxDecoration(
-                        //           borderRadius: BorderRadius.circular(10),
-                        //           border: Border.all(
-                        //               color: TColors.darkGrey)),
-                        //       child: Padding(
-                        //         padding: const EdgeInsets.all(8.0),
-                        //         child: InkWell(
-                        //           onTap: () {},
-                        //           child: Text(
-                        //             "Cooking requests",
-                        //             style: TextStyle(
-                        //                 fontSize: 12,
-                        //                 color: TColors.darkGrey),
-                        //           ),
-                        //         ),
-                        //       ),
-                        //     ),
-                        //     SizedBox(
-                        //       width: 5,
-                        //     ),
-                        //   ],
-                        // )
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
+                  height: 0,
                 ),
       
                 /// Coupons
@@ -415,10 +397,11 @@ class _CartPageState extends State<CartPage> {
                             Icons.local_offer,
                             color: Colors.red,
                           ),
-                          title: Text("Apply Coupon",
-                              style: TextStyle(fontSize: 13)),
+                          title: couponDiscount == 0
+                              ? Text("Apply Coupon",style: TextStyle(fontSize: 13))
+                              : Text("₹${couponDiscount.toStringAsFixed(2)} saved with '${couponData['promoCode'] ?? ""}'"),
                           trailing: Icon(Icons.arrow_forward_ios_outlined, size: 16, color: TColors.darkerGrey,),
-                          onTap: () {},
+                          onTap: () => getCouponId(),
                         ),
                       ],
                     ),
@@ -450,12 +433,7 @@ class _CartPageState extends State<CartPage> {
                           children: [
                             SizedBox(height: 10,),
                             Text(
-                              // "$total",
-                              // getTotalToPay(),
                               "To Pay " + getTotal(),
-                             // "To Pay ₹${(double.parse(calculateTotalCartValue().toStringAsFixed(2)) + double.parse(calculateDeliveryCharge().toStringAsFixed(2)) + packagingCharge.map((e) => double.tryParse(e) ?? 0.0) // Convert each item to double
-                             //     .fold(0.0, (sum, element) => sum + element) + calculateTotalCartValue() * 0.05).toStringAsFixed(2)}",
-      
                               style:
                               Theme.of(context).textTheme.bodyLarge,
                             ),
@@ -492,24 +470,55 @@ class _CartPageState extends State<CartPage> {
                                   children: [
                                     Text(
                                       "Item Total",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall,
+                                      style: TextStyle(fontSize: 14.0, color: Colors.black.withOpacity(0.5), fontWeight: FontWeight.w500),
                                     ),
-                                    Text(
+                                    couponDiscount == 0.0
+                                    ? Text(
                                       "₹${calculateTotalCartValue().toStringAsFixed(2)}",
                                       style: Theme.of(context)
                                           .textTheme
                                           .labelLarge,
-                                    ),
+                                    )
+                                    : Row(children: [
+                                      Text(
+                                        "₹${calculateTotalCartValue().toStringAsFixed(2)}",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelMedium?.copyWith(decoration: TextDecoration.lineThrough),
+                                      ),
+                                      SizedBox(width: 8,),
+                                      Text("₹${(calculateTotalCartValue() - couponDiscount).toStringAsFixed(2)}")
+                                    ],)
       
                                   ],
                                 ),
                               ),
                               SizedBox(
-                                height: 6,
+                                height: 10,
                               ),
-      
+
+                              /// Coupon discount
+                              couponDiscount == 0.0 ? SizedBox.shrink() :Padding(
+                                padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "item Discount",
+                                      style: TextStyle(fontSize: 14.0, color: Colors.black.withOpacity(0.5), fontWeight: FontWeight.w500, decoration: TextDecoration.underline)
+                                    ),
+                                    Text(
+                                      "₹${couponDiscount.toStringAsFixed(2)}",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge?.copyWith(color: TColors.darkGreen, fontWeight: FontWeight.bold),
+                                    ),
+
+                                  ],
+                                ),
+                              ),
+
+
                               /// Delivery fees - price
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -693,8 +702,7 @@ class _CartPageState extends State<CartPage> {
                                       .bodyLarge,
                                 ),
                                 Text(
-                                  "₹${(double.parse(calculateTotalCartValue().toStringAsFixed(2)) + calculateDeliveryCharge() + packagingCharge.map((e) => double.tryParse(e) ?? 0.0) // Convert each item to double
-                                      .fold(0.0, (sum, element) => sum + element) + calculateTotalCartValue() * 0.05).toStringAsFixed(2)}",
+                                  "₹"+getTotal(),
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge,
@@ -716,11 +724,8 @@ class _CartPageState extends State<CartPage> {
                 /// for button adjustment remove
                 ZElevatedButton(title: "Make Payment", onPress: (){
       
-                  // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(
-                  //         "$counters")));
-                  // print(box.toMap());
-      
-      
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(couponDiscount.toString())));
+
                       // item total
                   // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(
                   //     "${(double.parse(calculateTotalCartValue().toStringAsFixed(2)))}")));

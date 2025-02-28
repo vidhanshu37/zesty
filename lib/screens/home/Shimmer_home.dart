@@ -15,12 +15,9 @@ class ShimmerHome extends StatelessWidget {
         height: ZMediaQuery(context).height - 20,
         width: ZMediaQuery(context).width,
         child: Shimmer.fromColors(
-            baseColor: ZMediaQuery(context).isDarkMode
-                ? TColors.darkerGrey
-                : TColors.grey.withValues(alpha: 0.4),
-            highlightColor: ZMediaQuery(context).isDarkMode
-                ? TColors.darkGrey
-                : TColors.shimmerGrey.withValues(alpha: 0.4),
+            baseColor:
+                 TColors.grey.withValues(alpha: 0.4),
+            highlightColor: TColors.shimmerGrey.withValues(alpha: 0.4),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
