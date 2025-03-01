@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:zesty/screens/home/home.dart';
+import 'package:zesty/screens/home/zesty_Mart/searchZestyMart.dart';
 import 'package:zesty/utils/constants/media_query.dart';
 import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
 
@@ -183,8 +185,21 @@ class _ZestyMartPageState extends State<ZestyMartPage>
                         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                         color: appBarColorTab(),
                         child: Center(
-                            child: SearchBarHome(
-                                searchController: searchController))),
+                            child: Hero(
+                              tag: "hero-search",
+                              child: SearchBarHome(
+                                  searchController: searchController,
+                                readOnly: true,
+                                // onTap: (){
+                                //     Navigator.push(context, MaterialPageRoute(builder: (context) => seachZestyMart(),));
+                                // },
+                                onTap: () {
+                                    Navigator.of(context).push(_createRoute());
+                                },
+                              ),
+                            )
+                        )
+                    ),
                     DefaultTabController(
                         length: 7,
                         child: Column(
@@ -255,6 +270,15 @@ class _ZestyMartPageState extends State<ZestyMartPage>
           ]
         ),
       ),
+    );
+  }
+  Route _createRoute() {
+    return PageRouteBuilder(
+      transitionDuration: Duration(milliseconds: 500),
+      pageBuilder: (context, animation, secondaryAnimation) => seachZestyMart(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(opacity: animation, child: child);
+      },
     );
   }
 }

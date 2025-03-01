@@ -6,9 +6,17 @@ import 'package:flutter/material.dart';
 import '../../../utils/constants/colors.dart';
 
 class SearchBarHome extends StatefulWidget {
+
+  final VoidCallback? onTap;
+  final bool readOnly;
+  final ValueChanged<String>? onChange;
+
   const SearchBarHome({
     super.key,
     required this.searchController,
+    this.onTap,
+    this.readOnly = false,
+    this.onChange
   });
 
   final TextEditingController searchController;
@@ -71,6 +79,9 @@ class SearchBarHomeState extends State<SearchBarHome> {
           ),
           Expanded(
             child: TextField(
+              readOnly: widget.readOnly,
+              onTap: widget.onTap,
+              onChanged: widget.onChange,
               controller: widget.searchController,
               decoration: InputDecoration(
                   hintText: isTyping ? "" : searchSuggestion[currentIndex],
