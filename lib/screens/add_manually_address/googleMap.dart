@@ -40,9 +40,11 @@ class _ShowGoogleMapState extends State<ShowGoogleMap> {
 
   /// Store address and subAddress
   void storeAddress(title, subTitle) {
-    var box = Hive.box(HiveOpenBox.storeAddress);
-    box.put(HiveOpenBox.storeAddressTitle, title);
-    box.put(HiveOpenBox.storeAddressSubTitle, subTitle);
+    // var box = Hive.box(HiveOpenBox.storeAddress);
+    // box.put(HiveOpenBox.storeAddressTitle, title);
+    // box.put(HiveOpenBox.storeAddressSubTitle, subTitle);
+    var box = Hive.box(HiveOpenBox.storeLatLongTable);
+    box.put(HiveOpenBox.address, title);
   }
 
 
@@ -61,8 +63,8 @@ class _ShowGoogleMapState extends State<ShowGoogleMap> {
       if (placemarks.isNotEmpty) {
         final Placemark place = placemarks.first;
         setState(() {
-          address = "${place.street}, ${place.subLocality}";
-          subAddress = "${place.locality}, ${place.country}, ${place.postalCode}";
+          address = "${place.street}, ${place.subLocality}, ${place.locality}, ${place.country}, ${place.postalCode}";
+          subAddress = "";
           storeAddress(address, subAddress);
           _isFetchingLocation = false;
         });
@@ -155,9 +157,7 @@ class _ShowGoogleMapState extends State<ShowGoogleMap> {
                   topLeft: Radius.circular(17),
                   topRight: Radius.circular(17),
                 ),
-                color: ZMediaQuery(context).isDarkMode
-                    ? TColors.bgDark
-                    : TColors.bgLight,
+                color: TColors.bgLight,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),

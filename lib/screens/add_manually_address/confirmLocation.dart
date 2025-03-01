@@ -73,9 +73,13 @@ class _ConfirmLocationState extends State<ConfirmLocation> {
 
   /// store latitude and longitude of user
   void storeData(double latitude,double longitude) {
-    var hiveBox = Hive.box("zestyBox");
-    hiveBox.put("latitude", latitude);
-    hiveBox.put("longitude", longitude);
+    var hiveBox = Hive.box(HiveOpenBox.storeLatLongTable);
+    hiveBox.put(HiveOpenBox.lat, latitude);
+    hiveBox.put(HiveOpenBox.long, longitude);
+
+    // var box = Hive.box(HiveOpenBox.storeAddress);
+    // box.put(HiveOpenBox.storeAddressLat, latitude);
+    // box.put(HiveOpenBox.storeAddressLong, longitude);
   }
 
   @override

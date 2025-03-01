@@ -149,9 +149,9 @@ class _AddBalanceState extends State<AddBalance> {
                     children: [
                       Text("Note:",style: TextStyle(color: TColors.darkGreen,fontWeight: FontWeight.bold),),
                       SizedBox(height: 8,),
-                      _noteItem("Zesty Money balances are valid for 1 year from credit on Zesty."),
-                      _noteItem("Zesty Money cannot be transferred to your bank account as per RBI fuidelines."),
-                      _noteItem("Zesty Money can be used for food deliveries and Zestymart."),
+                      noteItem(text: "Zesty Money balances are valid for 1 year from credit on Zesty."),
+                      noteItem(text: "Zesty Money cannot be transferred to your bank account as per RBI fuidelines."),
+                      noteItem(text: "Zesty Money can be used for food deliveries and Zestymart."),
                     ],
                   ),
                 ),
@@ -209,8 +209,22 @@ class _AddBalanceState extends State<AddBalance> {
       ),
     );
   }
-  
-  Widget _noteItem(String text){
+}
+
+class noteItem extends StatelessWidget {
+  const noteItem({
+    super.key,
+    required this.text,
+    this.fontSize = 14,
+    this.fontColor = TColors.darkerGrey
+  });
+
+  final double fontSize;
+  final Color fontColor;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(padding: EdgeInsets.only(bottom: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,7 +234,7 @@ class _AddBalanceState extends State<AddBalance> {
             child: Icon(Icons.circle,size: 8,color: Colors.black,),
           ),
           SizedBox(width: 8,),
-          Expanded(child: Text(text,style: TextStyle(fontSize: 14,color: TColors.darkerGrey),)),
+          Expanded(child: Text(text,style: TextStyle(fontSize: fontSize,color: fontColor),)),
         ],
       ),
     );

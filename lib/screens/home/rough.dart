@@ -32,6 +32,7 @@ class _FirstScreenState extends State<FirstScreen> with WidgetsBindingObserver {
     }
   }
 
+
   void fetchData() async {
     // Fetch data from Hive
     // Example: data = await Hive.box('myBox').get('data');

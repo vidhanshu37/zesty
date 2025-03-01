@@ -1,11 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:zesty/screens/home/home.dart';
+import 'package:zesty/utils/http/userExistAPI.dart';
+import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
 import '../../../custom_widget/elevatedButton_cust.dart';
 import '../../../custom_widget/textfield_cust.dart';
 import 'addressTypeButton.dart';
+import 'package:http/http.dart' as http;
 
-class addressTextFields extends StatelessWidget {
+class addressTextFields extends StatefulWidget {
   const addressTextFields({
     super.key,
     required this.houseNumber,
@@ -23,10 +29,46 @@ class addressTextFields extends StatelessWidget {
   final String subAddress;
   final formKey;
 
-  void _validation(BuildContext context) async {
-    if (formKey.currentState!.validate()) {
+  @override
+  State<addressTextFields> createState() => _addressTextFieldsState();
+}
 
-       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen(address: address, subAddress: subAddress),), (Route<dynamic> route) => false,);
+class _addressTextFieldsState extends State<addressTextFields> {
+  var box = Hive.box(HiveOpenBox.storeLatLongTable);
+
+  void _validation(BuildContext context) async {
+    if (widget.formKey.currentState!.validate()) {
+      userRegisterAPI(context);
+    }
+  }
+
+  Future<void> userRegisterAPI(context) async {
+    final url = Uri.parse('https://zesty-backend.onrender.com/user/register');
+    try {
+      final response = await http.post(
+          url,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: jsonEncode({
+            "mobile": box.get(HiveOpenBox.mobile, defaultValue: "1234567890"),
+            "email": box.get(HiveOpenBox.email, defaultValue: "abc"),
+            "address": box.get(HiveOpenBox.address, defaultValue: "abc"),
+            "latitute": box.get(HiveOpenBox.lat, defaultValue: "21.2049"),
+            "longitude": box.get(HiveOpenBox.long, defaultValue: "72.8411")
+          }));
+
+      if(response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User register")));
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen(address: box.get(HiveOpenBox.address, defaultValue: "abc"), subAddress: ""),), (Route<dynamic> route) => false,);
+      } else if (response.statusCode == 405) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User exist")));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.statusCode.toString())));
+      }
+
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -36,7 +78,7 @@ class addressTextFields extends StatelessWidget {
       Padding(
         padding: const EdgeInsets.all(15.0),
         child: Form(
-          key: formKey,
+          key: widget.formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -47,7 +89,7 @@ class addressTextFields extends StatelessWidget {
               ),
               const SizedBox(height: 5),
               ZCustomTextField(
-                controller: houseNumber,
+                controller: widget.houseNumber,
                 hintText: "HOUSE, FLAT, BLOCK NO.",
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -65,7 +107,7 @@ class addressTextFields extends StatelessWidget {
               ),
               const SizedBox(height: 5),
               ZCustomTextField(
-                controller: roadName,
+                controller: widget.roadName,
                 hintText: "APARTMENT, ROAD, AREA",
               ),
               const SizedBox(height: 25),
@@ -76,7 +118,7 @@ class addressTextFields extends StatelessWidget {
               const SizedBox(height: 5),
               TextFormField(
                 maxLines: 4,
-                controller: directionToReach,
+                controller: widget.directionToReach,
                 maxLength: 200,
                 keyboardType: TextInputType.multiline,
                 decoration: const InputDecoration(
@@ -91,7 +133,7 @@ class addressTextFields extends StatelessWidget {
               ),
               const SizedBox(height: 5),
               ZCustomTextField(
-                controller: contactNumber,
+                controller: widget.contactNumber,
                 hintText: "00000 00000",
                 keyboardType: TextInputType.number,
                 maxLength: 10,
