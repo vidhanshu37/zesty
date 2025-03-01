@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:zesty/screens/home/custom_widget/searchbarHome.dart';
+import 'package:zesty/screens/home/user_profile/add_balance.dart';
 import 'package:zesty/utils/constants/api_constants.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:http/http.dart' as http;
@@ -86,11 +87,9 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
   @override
   Widget build(BuildContext context) {
 
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   setState(() {
-    //
-    //   });
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {});
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -227,8 +226,49 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
 
                   /// Shop Address & disclaimer & FSSAI license no.
                   SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: 300,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: SizedBox(
+                        height: 500,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Disclaimer:", style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),),
+                            SizedBox(height: 10,),
+                            noteItem(text: "All prices are set direct by the restaurant.", fontSize: 13, fontColor: TColors.darkerGrey,),
+                            SizedBox(height: 3,),
+                            noteItem(text: "All nutritional information is indicative, values are per serve as shared by the restaurant and may vary depending on the ingredients and portion size.", fontSize: 13, fontColor: TColors.darkerGrey,),
+                            SizedBox(height: 3,),
+                            noteItem(text: "An average active adult requires 2,000 kcal energy per day, however, calorie needs may vary.", fontSize: 13, fontColor: TColors.darkerGrey,),
+                            SizedBox(height: 3,),
+                            noteItem(text: "Dish details might be AI crafted for a better experience.", fontSize: 13, fontColor: TColors.darkerGrey,),
+                            Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Divider(color: TColors.grey,),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(restaurantData?["restaurantName"], style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),),
+                                  SizedBox(height: 6,),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.location_on_rounded, size: 14,),
+                                      SizedBox(width: 10,),
+                                      Text("Shop number ${restaurantData?['shopNumber']}, ${restaurantData?['selectedArea']}, ${restaurantData?['city']}, ${restaurantData?['state']}, ${restaurantData?['pincode']}", style: TextStyle(fontSize: 12, color: TColors.darkerGrey),),
+                                    ],
+                                  )
+                                ],
+                              ),
+                              
+                              
+                            )
+
+                          ],
+                        ),
+                      ),
                     ),
                   )
                 ],
@@ -264,7 +304,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                           onPressed: () {
                             // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(box.toMap().toString())));
                             if(box.isNotEmpty) {
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => CartPage()));
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => CartPage(deliveryTime: countDeliveryTime())));
                             }
                           },
                           style: ElevatedButton.styleFrom(
