@@ -81,15 +81,15 @@ class _signinState extends State<signin> {
                   width: ZMediaQuery(context).width,
                   onPress: () {
                     if(phnNumber.length == 10) {
-                      // sendRequest(phnNumber, context);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => otpverify(
-                              phone: phnNumber,
-                              verificationId: "abc",
-                            ),
-                          ));
+                      sendRequest(phnNumber, context);
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => otpverify(
+                      //         phone: phnNumber,
+                      //         verificationId: "abc",
+                      //       ),
+                      //     ));
                     }
 
                     // InternationalPhoneNumberInput(onInputChanged: (PhoneNumber number){
@@ -130,8 +130,8 @@ Future<void> sendRequest(String phnNumber, BuildContext context) async {
       final body = response.body;
       final decode = jsonDecode(body);
       final verificationId = decode['data']['verificationId'];
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Request successful: $verificationId")));
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(content: Text("Request successful: $verificationId")));
 
       // redirect otp screen
       Navigator.push(

@@ -47,12 +47,9 @@ class _LocationAccessState extends State<LocationAccess> {
                 left: 0,
                 right: 0,
                 child: ZElevatedButton(
-                  bgColor: ZMediaQuery(context).isDarkMode
-                      ? TColors.darkerGrey
-                      : TColors.grey,
-                  btnTextColor: ZMediaQuery(context).isDarkMode
-                      ? TColors.bgLight
-                      : TColors.black,
+                  bgColor:
+                       TColors.grey,
+                  btnTextColor:  TColors.black,
                   title: "Enter manually",
                   onPress: () {
                     showFloatingSheet(context);

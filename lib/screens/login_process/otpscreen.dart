@@ -1,14 +1,18 @@
 import 'dart:convert';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
+import 'package:zesty/screens/home/home.dart';
 import 'package:zesty/screens/location_access/locationAccess.dart';
 import 'package:zesty/screens/login_process/signin.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:zesty/utils/constants/media_query.dart';
 import 'package:zesty/utils/constants/text_string.dart';
+import 'package:zesty/utils/http/userExistAPI.dart';
+import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
 
 class otpverify extends StatefulWidget{
 
@@ -24,12 +28,12 @@ class otpverify extends StatefulWidget{
 
 class _otpverifyState extends State<otpverify> {
 
-
   List<TextEditingController> _otpcontroller = List.generate(4, (_) => TextEditingController());
 
   String getOtp(){
     return _otpcontroller.map((e) => e.text).join();
   }
+
   final List<FocusNode> focusnode = List.generate(4, (_) => FocusNode());
   bool _isResendAvailable = false;
   int _timer = 30;
@@ -38,6 +42,32 @@ class _otpverifyState extends State<otpverify> {
   void initState() {
     super.initState();
     _startTimer();
+    // checkUserStatus();
+    userExistPhone(widget.phone);
+  }
+
+  /// Check user exists or not
+  int responseCode = 0;
+  Map<String, dynamic>? userExistData = {};
+
+  Future<void> userExistPhone(phoneNumber) async {
+    final url = Uri.parse(
+        'https://zesty-backend.onrender.com/user/check-exist');
+    try {
+      final response = await http.post(
+        url,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        body: jsonEncode({
+          "mobile": phoneNumber,
+        })
+      );
+      userExistData = jsonDecode(response.body);
+      responseCode = response.statusCode;
+    } catch (e) {
+      responseCode = 500;
+    }
   }
 
   void _startTimer() {
@@ -72,6 +102,61 @@ class _otpverifyState extends State<otpverify> {
       FocusScope.of(context).requestFocus(focusnode[index - 1]);
     }
   }
+
+
+  /// Validate OTP and determine user exist or not
+  Future<void> validateOtp(String phnNumber, String verificationId, String userOtp) async {
+    String url = "https://cpaas.messagecentral.com/verification/v3/validateOtp"
+        "?countryCode=91"
+        "&mobileNumber=$phnNumber"
+        "&verificationId=$verificationId"
+        "&customerId=C-5B7E17DA1EBF403"
+        "&code=$userOtp";
+
+    Map<String, String> headers = {
+      "authToken":
+      "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJDLTVCN0UxN0RBMUVCRjQwMyIsImlhdCI6MTczODQxMDk3NSwiZXhwIjoxODk2MDkwOTc1fQ.P5dM1uCoon3VEmnz0jvngUdyGiJoZYRM574VPyiKLQxwJZJctRCoQDOtG0UgIoI9SKMhht5l2rMT0ecg-iBpBQ",
+      "Content-Type": "text/plain",
+    };
+
+    try {
+      var response = await http.get(Uri.parse(url), headers: headers);
+
+      final body = response.body;
+      final decode = jsonDecode(body);
+
+      if (response.statusCode == 200) {
+        var responseBody = jsonDecode(response.body);
+        /// SUCCESS
+
+        if(responseCode == 200) {
+            var box = Hive.box(HiveOpenBox.storeAddress);
+            box.put(HiveOpenBox.storeAddressTitle, userExistData?['userExist']['address']);
+            box.put(HiveOpenBox.storeAddressSubTitle, "");
+            box.put(HiveOpenBox.storeAddressLat, userExistData?['userExist']['latitute']);
+            box.put(HiveOpenBox.storeAddressLong, userExistData?['userExist']['longitude']);
+            box.put(HiveOpenBox.userId, userExistData?['userExist']['_id']);
+            box.put(HiveOpenBox.userEmail, userExistData?['userExist']['email']);
+            box.put(HiveOpenBox.userMobile, userExistData?['userExist']['mobile']);
+            box.put(HiveOpenBox.userZestyLite, userExistData?['userExist']['zestyLite']);
+            box.put(HiveOpenBox.userZestyMoney, userExistData?['userExist']['zestyMoney']);
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => HomeScreen(address: userExistData?['userExist']['address'], subAddress: "")), (predicate) => false);
+        } else if (responseCode == 405) {
+          var box = Hive.box(HiveOpenBox.storeLatLongTable);
+          box.put(HiveOpenBox.mobile, widget.phone);
+          Navigator.push(context, MaterialPageRoute(builder: (context) => LocationAccess(),));
+        }
+        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(responseCode.toString())));
+
+      } else {
+        // print("Error: ${response.statusCode}, ${response.body}");
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(decode['message'])));
+      }
+    } catch (e) {
+      print("Exception: $e");
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -113,11 +198,11 @@ class _otpverifyState extends State<otpverify> {
                 const SizedBox(height: 50,),
                 ZElevatedButton(title: "Verify & Continue", onPress: (){
                   String otp = getOtp();
-                  print("Enter otp: $otp");
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(otp)));
-                  // validateOtp(widget.phone, widget.verificationId, otp, context);
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => LocationAccess(),));
-                })
+                  // print("Enter otp: $otp");
+                  // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(otp)));
+                  validateOtp(widget.phone, widget.verificationId, otp);
+                  //
+                }),
               ],
             ),
           ),]
@@ -132,6 +217,7 @@ class _otpverifyState extends State<otpverify> {
       width: 50,
       height: 50,
       child: TextField(
+        cursorColor: Colors.black,
         controller: _otpcontroller[index],
         focusNode: focusnode[index],
         keyboardType: TextInputType.number,
@@ -144,21 +230,21 @@ class _otpverifyState extends State<otpverify> {
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
                   width: 2,
-                  color: ZMediaQuery(context).isDarkMode ? TColors.grey : TColors.darkerGrey,
+                  color: TColors.darkerGrey,
               )
           ),
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
                 width: 2,
-                color: ZMediaQuery(context).isDarkMode ? TColors.darkerGrey : TColors.grey,
+                color: TColors.grey,
               )
           ),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
                 width: 2,
-                color: ZMediaQuery(context).isDarkMode ? TColors.darkGrey : TColors.darkGrey,
+                color:  TColors.darkGrey,
               )
           ),
           counterText: '',
@@ -169,35 +255,9 @@ class _otpverifyState extends State<otpverify> {
 }
 
 
-Future<void> validateOtp(String phnNumber, String verificationId, String userOtp, BuildContext context) async {
-  String url = "https://cpaas.messagecentral.com/verification/v3/validateOtp"
-      "?countryCode=91"
-      "&mobileNumber=$phnNumber"
-      "&verificationId=$verificationId"
-      "&customerId=C-5B7E17DA1EBF403"
-      "&code=$userOtp";
 
-  Map<String, String> headers = {
-    "authToken":
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJDLTVCN0UxN0RBMUVCRjQwMyIsImlhdCI6MTczODQxMDk3NSwiZXhwIjoxODk2MDkwOTc1fQ.P5dM1uCoon3VEmnz0jvngUdyGiJoZYRM574VPyiKLQxwJZJctRCoQDOtG0UgIoI9SKMhht5l2rMT0ecg-iBpBQ",
-    "Content-Type": "text/plain",
-  };
 
-  try {
-    var response = await http.get(Uri.parse(url), headers: headers);
-
-    final body = response.body;
-    final decode = jsonDecode(body);
-
-    if (response.statusCode == 200) {
-      var responseBody = jsonDecode(response.body);
-      // print("Response: $responseBody");
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(decode['message'])));
-    } else {
-      // print("Error: ${response.statusCode}, ${response.body}");
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(decode['message'])));
-    }
-  } catch (e) {
-    print("Exception: $e");
-  }
-}
+// user exist :
+// post: /user/user-exist      body: mobile   statuscode: 200-success  405-notexist
+// user register :
+// post: /user/register - body: mobile, email, address, latitute, longitude- status code: 200-success  405-exist

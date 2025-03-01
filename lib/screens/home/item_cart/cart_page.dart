@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
+import 'package:zesty/screens/home/item_cart/cartPayment.dart';
 import 'package:zesty/screens/home/item_cart/coupons.dart';
 import 'package:zesty/screens/restaurants_side/restaurants_home.dart';
 import 'package:zesty/utils/constants/api_constants.dart';
@@ -13,7 +14,8 @@ import '../../../utils/local_storage/HiveOpenBox.dart';
 
 class CartPage extends StatefulWidget {
 
-  const CartPage({super.key});
+  final String deliveryTime;
+  const CartPage({super.key, required this.deliveryTime});
 
   @override
   State<CartPage> createState() => _CartPageState();
@@ -723,8 +725,14 @@ class _CartPageState extends State<CartPage> {
       
                 /// for button adjustment remove
                 ZElevatedButton(title: "Make Payment", onPress: (){
+
+                  Navigator.push(context, MaterialPageRoute(builder: (builder) => CartPayment(
+                      restaurantName: resName,
+                      deliveryTime: widget.deliveryTime,
+                      totalPrice: getTotal()
+                  )));
       
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(couponDiscount.toString())));
+                  // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(couponDiscount.toString())));
 
                       // item total
                   // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(
