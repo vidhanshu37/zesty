@@ -60,6 +60,14 @@ class _addressTextFieldsState extends State<addressTextFields> {
 
       if(response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User register")));
+        var hiveBox = Hive.box(HiveOpenBox.storeAddress);
+        hiveBox.put(HiveOpenBox.storeAddressTitle, box.get(HiveOpenBox.address, defaultValue: "abc"));
+        hiveBox.put(HiveOpenBox.storeAddressLat, box.get(HiveOpenBox.lat, defaultValue: "21.2049"));
+        hiveBox.put(HiveOpenBox.storeAddressLong, box.get(HiveOpenBox.long, defaultValue: "72.8411"));
+        hiveBox.put(HiveOpenBox.userMobile, box.get(HiveOpenBox.mobile, defaultValue: "1234567890"));
+
+
+
         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen(address: box.get(HiveOpenBox.address, defaultValue: "abc"), subAddress: ""),), (Route<dynamic> route) => false,);
       } else if (response.statusCode == 405) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User exist")));
