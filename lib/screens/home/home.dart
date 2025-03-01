@@ -305,7 +305,7 @@ class _HomeScreenState extends State<HomeScreen>
               /// Food category
               SliverToBoxAdapter(
                 child: Container(
-                    height: 270,
+                    height: 240,
                     child: GridView.builder(
                         scrollDirection: Axis.horizontal,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
