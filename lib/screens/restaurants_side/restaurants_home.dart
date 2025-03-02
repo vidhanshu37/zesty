@@ -29,6 +29,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
   Map<String, dynamic>? restaurantData;
 
   List allMenuItem = [];
+  List filteredItemDetails = [];
 
   double distanceRestaurantKm = 0;
   double lat = 0;
@@ -57,6 +58,19 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
       }
     } catch (e) {
       // print(e);
+    }
+  }
+
+  void filterSearchResult(String query){
+    if (query.isEmpty){
+      filteredItemDetails = List.from(allMenuItem);
+    } else {
+      setState(() {
+        filteredItemDetails = allMenuItem.where((item) {
+          String itemName = item['name'].toString().toLowerCase();
+          return itemName.contains(query.toLowerCase());
+        },).toList();
+      });
     }
   }
 
@@ -194,6 +208,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                         Padding(
                           padding: const EdgeInsets.all(13.0),
                           child: SearchBarHome(
+                            onChange: filterSearchResult,
                               searchController: searchbarController),
                         ),
                         SizedBox(
@@ -203,23 +218,24 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                     ),
                   ),
 
-                  /// Item card - menu
+                 /// Search the item
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
                           (context, index) {
+                            final itemList = searchbarController.text.isEmpty ? allMenuItem : filteredItemDetails;
                         return ItemCard(
-                          itemName: allMenuItem[index]['name'] ?? "Zesty",
-                          itemDescription: allMenuItem[index]['description'] ?? "Zesty description",
-                          itemPrice: allMenuItem[index]['price'] ?? "100",
-                          itemImageId: allMenuItem[index]['_id'] ?? "",
+                          itemName: itemList[index]['name'] ?? "Zesty",
+                          itemDescription: itemList[index]['description'] ?? "Zesty description",
+                          itemPrice: itemList[index]['price'] ?? "100",
+                          itemImageId: itemList[index]['_id'] ?? "",
                           updateCartState: updateCartState,
                           restaurantId: restaurantData!['_id'],
                           restaurantName: restaurantData!['restaurantName'],
-                          itemImageUrl: allMenuItem[index]['image'],
-                          foodType: allMenuItem[index]['foodType'],
+                          itemImageUrl: itemList[index]['image'],
+                          foodType: itemList[index]['foodType'],
                         );
                       },
-                      childCount: allMenuItem.length,
+                      childCount: searchbarController.text.isEmpty ? allMenuItem.length : filteredItemDetails.length,
                     ),
                   ),
 
@@ -257,12 +273,11 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                                     children: [
                                       Icon(Icons.location_on_rounded, size: 14,),
                                       SizedBox(width: 10,),
-                                      Text("Shop number ${restaurantData?['shopNumber']}, ${restaurantData?['selectedArea']}, ${restaurantData?['city']}, ${restaurantData?['state']}, ${restaurantData?['pincode']}", style: TextStyle(fontSize: 12, color: TColors.darkerGrey),),
+                                      Expanded(child: Text("Shop number ${restaurantData?['shopNumber']}, ${restaurantData?['selectedArea']}, ${restaurantData?['city']}, ${restaurantData?['state']}, ${restaurantData?['pincode']}", style: TextStyle(fontSize: 12, color: TColors.darkerGrey,),maxLines: 3,overflow: TextOverflow.ellipsis,)),
                                     ],
                                   )
                                 ],
                               ),
-                              
                               
                             )
 
@@ -332,3 +347,5 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
     );
   }
 }
+
+

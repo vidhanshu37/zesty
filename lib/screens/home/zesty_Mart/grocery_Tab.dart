@@ -49,8 +49,7 @@ class _GroceryTabState extends State<GroceryTab> {
   }
   @override
   Widget build(BuildContext context) {
-
-    return CustomScrollView(
+    return groceryMartItem.isEmpty ? Center(child: CircularProgressIndicator(color: TColors.black,),) : CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
           child: Column(

@@ -5,6 +5,7 @@ import 'package:zesty/screens/home/custom_widget/searchbarHome.dart';
 import 'package:zesty/utils/constants/media_query.dart';
 
 import '../home.dart';
+import '../searchRestaurant.dart';
 
 class AppBarHome extends StatelessWidget {
   const AppBarHome({
@@ -65,7 +66,13 @@ class AppBarHome extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(
                     horizontal: 18, vertical: 5),
-                child: SearchBarHome(searchController: searchController)
+                child: SearchBarHome(
+                    searchController: searchController,
+                  readOnly: true,
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => Searchrestaurant(),));
+                  },
+                )
               )
             ],
           ),

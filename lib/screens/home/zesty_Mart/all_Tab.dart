@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_avif/flutter_avif.dart';
 import 'package:http/http.dart' as http;
+import 'package:zesty/screens/home/Shimmer_home.dart';
 import 'package:zesty/screens/home/zesty_Mart/zesty_mart_page.dart';
 import 'package:zesty/utils/constants/media_query.dart';
 import '../../../utils/constants/colors.dart';
@@ -29,6 +30,7 @@ class _AllTabState extends State<AllTab> {
     {"name": "Home", "image": "assets/images/Home.png"},
     {"name": "Kids", "image": "assets/images/Kids.png"},
     {"name": "Vegetable", "image": "assets/images/Fresh.png"},
+    {"name": "Biscuits", "image": "assets/images/Grocerry2.png"},
   ];
 
   final Map<String, int> CategoryIndexs = {
@@ -40,6 +42,7 @@ class _AllTabState extends State<AllTab> {
     "Home" : 5,
     "Kids" : 6,
     "Vegetable" : 1,
+    "Biscuits" : 2
   };
 
   final List<String> imageList = [
@@ -74,7 +77,8 @@ class _AllTabState extends State<AllTab> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
+    return allMartItem.isEmpty ? Center(child: CircularProgressIndicator(color: TColors.black,),)
+        : CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
           child: Column(
@@ -136,6 +140,7 @@ class _AllTabState extends State<AllTab> {
                   child: SizedBox(
                     height: 240,
                     child: GridView.builder(
+                      physics: NeverScrollableScrollPhysics(),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 4,
                         crossAxisSpacing: 10,

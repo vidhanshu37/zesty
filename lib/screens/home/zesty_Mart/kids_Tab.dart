@@ -50,7 +50,7 @@ class _KidsTabState extends State<KidsTab> {
   }
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
+    return kidsMartItem.isEmpty ? Center(child: CircularProgressIndicator(color: TColors.black,),) : CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
           child: Column(
