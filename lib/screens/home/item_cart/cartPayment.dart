@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
+import 'package:zesty/screens/home/item_cart/trackOrder.dart';
 import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
 import 'package:http/http.dart' as http;
 import '../../../utils/constants/colors.dart';
@@ -105,6 +107,7 @@ class _CartPaymentState extends State<CartPayment> {
 
       if(response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("DONE ORDER")));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => TrackOrder()));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.statusCode.toString())));
       }
@@ -112,6 +115,7 @@ class _CartPaymentState extends State<CartPayment> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
+
 
   @override
   void initState() {
@@ -323,11 +327,20 @@ class _CartPaymentState extends State<CartPayment> {
                   //     content: Text("helo : " + int.parse(widget.totalPrice).toString())));
 
                   if (selectedOption == "COD") {
-
+                    storeOrderData();
                   } else if (selectedOption == "ONLINE") {
                     openCheckout(200);
                   } else if (selectedOption == "WALLET") {
-
+                    double zestyWallet = double.parse(box.get(HiveOpenBox.userZestyMoney));
+                    double price = double.parse(widget.totalPrice);
+                    if( zestyWallet >= price ) {
+                      zestyWallet = zestyWallet - price;
+                      box.put(HiveOpenBox.userZestyMoney, zestyWallet.toStringAsFixed(2));
+                      storeOrderData();
+                      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(box.get(HiveOpenBox.userZestyMoney))));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Not enough balance")));
+                    }
                   }
                 }))
           ],
