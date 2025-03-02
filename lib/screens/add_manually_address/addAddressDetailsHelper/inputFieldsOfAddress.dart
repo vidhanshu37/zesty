@@ -35,6 +35,7 @@ class addressTextFields extends StatefulWidget {
 
 class _addressTextFieldsState extends State<addressTextFields> {
   var box = Hive.box(HiveOpenBox.storeLatLongTable);
+  Map<String, dynamic>? userData = {};
 
   void _validation(BuildContext context) async {
     if (widget.formKey.currentState!.validate()) {
@@ -58,14 +59,19 @@ class _addressTextFieldsState extends State<addressTextFields> {
             "longitude": box.get(HiveOpenBox.long, defaultValue: "72.8411")
           }));
 
+      userData = jsonDecode(response.body);
+
       if(response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User register")));
         var hiveBox = Hive.box(HiveOpenBox.storeAddress);
-        hiveBox.put(HiveOpenBox.storeAddressTitle, box.get(HiveOpenBox.address, defaultValue: "abc"));
-        hiveBox.put(HiveOpenBox.storeAddressLat, box.get(HiveOpenBox.lat, defaultValue: "21.2049"));
-        hiveBox.put(HiveOpenBox.storeAddressLong, box.get(HiveOpenBox.long, defaultValue: "72.8411"));
-        hiveBox.put(HiveOpenBox.userMobile, box.get(HiveOpenBox.mobile, defaultValue: "1234567890"));
-
+        hiveBox.put(HiveOpenBox.storeAddressTitle, userData!['user']['address'] ?? "surat");
+        hiveBox.put(HiveOpenBox.storeAddressLat, userData!['user']['latitute'] ?? "21.2049");
+        hiveBox.put(HiveOpenBox.storeAddressLong, userData!['user']['longitude'] ?? "72.8411");
+        hiveBox.put(HiveOpenBox.userMobile, userData!['user']['mobile'] ?? "1234567890");
+        hiveBox.put(HiveOpenBox.userId, userData!['user']['_id'] ?? "00");
+        hiveBox.put(HiveOpenBox.userEmail, userData!['user']['email'] ?? "abc");
+        hiveBox.put(HiveOpenBox.userZestyLite, userData!['user']['zestyLite'] ?? "false");
+        hiveBox.put(HiveOpenBox.userZestyMoney, userData!['user']['zestyMoney'] ?? "0");
 
 
         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen(address: box.get(HiveOpenBox.address, defaultValue: "abc"), subAddress: ""),), (Route<dynamic> route) => false,);

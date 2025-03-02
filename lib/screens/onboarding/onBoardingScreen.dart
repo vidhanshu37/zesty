@@ -127,7 +127,7 @@ class _onbordingState extends State<onbording> {
                 height: 3,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(11),
-                  color: currentIndex == index ? ZMediaQuery(context).isDarkMode ? TColors.grey : TColors.darkerGrey : ZMediaQuery(context).isDarkMode ? TColors.darkerGrey : TColors.grey ,)),),
+                  color: currentIndex == index ?  TColors.darkerGrey :  TColors.grey ,)),),
                 ),
 
         ),

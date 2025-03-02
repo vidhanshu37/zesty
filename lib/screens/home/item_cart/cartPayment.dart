@@ -1,18 +1,34 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
 import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
-
+import 'package:http/http.dart' as http;
 import '../../../utils/constants/colors.dart';
+import '../../../utils/constants/media_query.dart';
 
 class CartPayment extends StatefulWidget {
 
   final String restaurantName;
+  final String restaurantId;
   final String deliveryTime;
   final String totalPrice;
-  const CartPayment({super.key, required this.restaurantName, required this.deliveryTime, required this.totalPrice});
+  final String couponCode;
+  final List foodItemId;
+  final List foodItemQty;
+  final String totalItemValue;
+
+  const CartPayment(
+      {super.key, required this.restaurantName,
+        required this.restaurantId, required this.deliveryTime, required this.totalPrice,
+        required this.couponCode,
+        required this.foodItemQty,
+        required this.foodItemId,
+        required this.totalItemValue,
+      });
 
   @override
   State<CartPayment> createState() => _CartPaymentState();
@@ -26,7 +42,7 @@ class _CartPaymentState extends State<CartPayment> {
 
   String selectedOption = 'COD';
 
-  void openCheckout(amount) async {
+  void openCheckout(int amount) async {
     amount = amount * 100;
     var options = {
       'key': 'rzp_test_1DP5mmOlF5G5ag',
@@ -49,15 +65,13 @@ class _CartPaymentState extends State<CartPayment> {
     ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
       content: new Text("Payment Successfull"),
     ));
-    setState(() {
-      // ZestyMoney.walletAmount += int.parse(_amountController.text);
-    });
+    storeOrderData();
     //ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ZestyMoney.walletAmount.toString())));
   }
 
   void handlePaymentFailure(PaymentFailureResponse res) {
     ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
-      content: new Text("Payment Fail, Something went to wrong!" ),
+      content: new Text("Payment Fail, Something went to wrong!"),
     ));
   }
 
@@ -67,9 +81,47 @@ class _CartPaymentState extends State<CartPayment> {
     ));
   }
 
+  List<Map<String, dynamic>> orderList = [];
+
+  Future<void> storeOrderData() async {
+    final url = Uri.parse('https://zesty-backend.onrender.com/order/add-order');
+    try {
+      final response = await http.post(
+        url,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        body: jsonEncode({
+          "restaurantId": widget.restaurantId,
+          "restaurantName": widget.restaurantName,
+          "userId": box.get(HiveOpenBox.userId),
+          "order": orderList,
+          "totalAmountUser": widget.totalPrice,
+          "totalAmountRestaurant": widget.totalItemValue,
+          "coupon": widget.couponCode,
+          "paymentMode": selectedOption,
+        })
+      );
+
+      if(response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("DONE ORDER")));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.statusCode.toString())));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+
+    orderList = List.generate(widget.foodItemQty.length, (index) => {
+      "itemId": widget.foodItemId[index],
+      "quantity": widget.foodItemQty[index],
+    });
+
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentFailure);
@@ -84,8 +136,14 @@ class _CartPaymentState extends State<CartPayment> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text("Payment Options", style: Theme.of(context).textTheme.bodyLarge,),
-            Text("Total: ₹${widget.totalPrice}", style: Theme.of(context).textTheme.labelMedium,),
+            Text("Payment Options", style: Theme
+                .of(context)
+                .textTheme
+                .bodyLarge,),
+            Text("Total: ₹${widget.totalPrice}", style: Theme
+                .of(context)
+                .textTheme
+                .labelMedium,),
           ],
         ),
       ),
@@ -112,23 +170,46 @@ class _CartPaymentState extends State<CartPayment> {
                         children: [
                           Icon(Icons.arrow_downward_rounded, size: 20,),
                           SizedBox(width: 15,),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(widget.restaurantName, style: Theme.of(context).textTheme.bodyLarge!.copyWith(overflow: TextOverflow.ellipsis), maxLines: 1,),
-                              SizedBox(height: 10,),
-                              Text("box.get(HiveOpenBox.storeAddress)", style: Theme.of(context).textTheme.bodyLarge!.copyWith(overflow: TextOverflow.ellipsis), maxLines: 1,)
-                            ],
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(widget.restaurantName, style: Theme
+                                    .of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .copyWith(overflow: TextOverflow.ellipsis),
+                                  maxLines: 1,),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5.0),
+                                  child: Divider(color: TColors.grey,),
+                                ),
+                                Text(box.get(HiveOpenBox.storeAddressTitle),
+                                  softWrap: true,
+                                  style: Theme
+                                      .of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .copyWith(
+                                      overflow: TextOverflow.ellipsis),
+                                  maxLines: 2,)
+                              ],
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                  SizedBox(height: 20,),
+                  SizedBox(height: 30,),
 
 
                   /// payment option
-                  Text("\t\t\tPreferred Payment", style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: TColors.darkerGrey),),
+                  Text("\t\t\tPreferred Payment", style: Theme
+                      .of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(color: TColors.darkerGrey),),
                   SizedBox(height: 8,),
 
                   /// COD, Online
@@ -138,43 +219,66 @@ class _CartPaymentState extends State<CartPayment> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Column(
-                        children: [
-                          ListTile(
-                            title: Text("Pay on Delivery (Cash/UPI)", style: Theme.of(context).textTheme.bodyLarge,),
-                            subtitle: Text("Pay cash or ask for QR code", style: Theme.of(context).textTheme.labelMedium,),
-                            trailing: Radio(
-                                activeColor: Colors.black,
-                                value: 'COD', groupValue: selectedOption, onChanged: (value){
-                              setState(() {
-                                selectedOption = value!;
-                              });
-                            }),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
-                            child: Divider(color: TColors.grey,),
-                          ),
-                          ListTile(
-                            title: Text("Pay online", style: Theme.of(context).textTheme.bodyLarge,),
-                            subtitle: Text("Pay via google pay or card or netbanking", style: Theme.of(context).textTheme.labelMedium,),
-                            trailing: Radio(
-                                activeColor: Colors.black,
-                                value: 'ONLINE',
-                                groupValue: selectedOption,
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedOption = value!;
-                                  });
-                            }),
-                          ),
-                        ],
-                      )
+                        padding: const EdgeInsets.all(5.0),
+                        child: Column(
+                          children: [
+                            ListTile(
+                              title: Text(
+                                "Pay on Delivery (Cash/UPI)", style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .bodyLarge,),
+                              subtitle: Text(
+                                "Pay cash or ask for QR code", style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .labelMedium,),
+                              trailing: Radio(
+                                  activeColor: Colors.black,
+                                  value: 'COD',
+                                  groupValue: selectedOption,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedOption = value!;
+                                    });
+                                  }),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20.0, vertical: 0.0),
+                              child: Divider(color: TColors.grey,),
+                            ),
+                            ListTile(
+                              title: Text("Pay online", style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .bodyLarge,),
+                              subtitle: Text(
+                                "Pay via google pay or card or netbanking",
+                                style: Theme
+                                    .of(context)
+                                    .textTheme
+                                    .labelMedium,),
+                              trailing: Radio(
+                                  activeColor: Colors.black,
+                                  value: 'ONLINE',
+                                  groupValue: selectedOption,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedOption = value!;
+                                    });
+                                  }),
+                            ),
+                          ],
+                        )
                     ),
                   ),
                   SizedBox(height: 30,),
-                  Text("\t\t\tMore Payment Options", style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: TColors.darkerGrey),),
+                  Text("\t\t\tMore Payment Options", style: Theme
+                      .of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(color: TColors.darkerGrey),),
                   SizedBox(height: 8,),
 
                   /// Wallet
@@ -186,15 +290,23 @@ class _CartPaymentState extends State<CartPayment> {
                     child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: ListTile(
-                          title: Text("Wallet", style: Theme.of(context).textTheme.bodyLarge,),
-                          subtitle: Text("Pay via zesty wallet", style: Theme.of(context).textTheme.labelMedium,),
+                          title: Text("Wallet", style: Theme
+                              .of(context)
+                              .textTheme
+                              .bodyLarge,),
+                          subtitle: Text("Pay via zesty wallet", style: Theme
+                              .of(context)
+                              .textTheme
+                              .labelMedium,),
                           trailing: Radio(
                               activeColor: Colors.black,
-                              value: 'WALLET', groupValue: selectedOption, onChanged: (value){
-                            setState(() {
-                              selectedOption = value!;
-                            });
-                          }),
+                              value: 'WALLET',
+                              groupValue: selectedOption,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedOption = value!;
+                                });
+                              }),
                         )
                     ),
                   ),
@@ -203,17 +315,18 @@ class _CartPaymentState extends State<CartPayment> {
               ),
             ),
             Positioned(
-              bottom: 20,
+                bottom: 20,
                 right: 0,
                 left: 0,
-                child: ZElevatedButton(title: "Pay Now", onPress: (){
-                  // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(selectedOption)));
+                child: ZElevatedButton(title: "Pay Now", onPress: () {
+                  // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  //     content: Text("helo : " + int.parse(widget.totalPrice).toString())));
 
-                  if ( selectedOption == "COD") {
+                  if (selectedOption == "COD") {
 
-                  } else if ( selectedOption == "ONLINE" ) {
-                    openCheckout(200.0);
-                  } else if ( selectedOption == "WALLET" ) {
+                  } else if (selectedOption == "ONLINE") {
+                    openCheckout(200);
+                  } else if (selectedOption == "WALLET") {
 
                   }
                 }))

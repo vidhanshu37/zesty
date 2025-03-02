@@ -175,14 +175,16 @@ class _ShowGoogleMapState extends State<ShowGoogleMap> {
                     title: _isFetchingLocation
                         ? const ShimmerEffectsLocation()
                         : Text(
-                      address ?? "Fetching address...",
+                      "$address $subAddress" ?? "Fetching address...",
                       style: Theme.of(context).textTheme.headlineSmall,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 3,
                     ),
-                    subtitle: _isFetchingLocation ? null
-                        : Text(
-                      subAddress ?? "",
-                      style: Theme.of(context).textTheme.labelLarge,
-                    ),
+                    // subtitle: _isFetchingLocation ? null
+                    //     : Text(
+                    //    ?? "",
+                    //   style: Theme.of(context).textTheme.labelLarge,
+                    // ),
                     trailing: InkWell(
                       onTap: () {
                         Navigator.pop(context);

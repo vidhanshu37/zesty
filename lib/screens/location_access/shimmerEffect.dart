@@ -17,12 +17,8 @@ class ShimmerEffects extends StatelessWidget {
           Expanded(
             // Wrap the Shimmer content in Expanded
             child: Shimmer.fromColors(
-              baseColor: ZMediaQuery(context).isDarkMode
-                  ? TColors.darkerGrey
-                  : TColors.grey,
-              highlightColor: ZMediaQuery(context).isDarkMode
-                  ? TColors.darkGrey
-                  : TColors.shimmerGrey,
+              baseColor:  TColors.grey,
+              highlightColor:  TColors.shimmerGrey,
               child: ListView.builder(
                 itemCount: itemCount,
                 itemBuilder: (context, index) {
