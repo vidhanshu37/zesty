@@ -73,12 +73,9 @@ class _seachZestyMartState extends State<seachZestyMart> {
         children: [
           Padding(
             padding: const EdgeInsets.all(15.0),
-            child: Hero(
-              tag: "hero-search",
-              child: SearchBarHome(
-                searchController: searchController,
-                onChange: filterSearchResult,
-              ),
+            child: SearchBarHome(
+              searchController: searchController,
+              onChange: filterSearchResult,
             ),
           ),
 

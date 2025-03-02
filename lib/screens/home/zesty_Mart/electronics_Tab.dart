@@ -51,7 +51,7 @@ class _ElectronicsTabState extends State<ElectronicsTab> {
   }
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
+    return electronicsMartItem.isEmpty ? Center(child: CircularProgressIndicator(color: TColors.black,),) : CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
           child: Column(

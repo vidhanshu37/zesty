@@ -51,7 +51,7 @@ class _BeautyTabState extends State<BeautyTab> {
   }
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
+    return beautyMartItem.isEmpty ? Center(child: CircularProgressIndicator(color: TColors.black,),) : CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
           child: Column(

@@ -185,18 +185,12 @@ class _ZestyMartPageState extends State<ZestyMartPage>
                         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                         color: appBarColorTab(),
                         child: Center(
-                            child: Hero(
-                              tag: "hero-search",
-                              child: SearchBarHome(
-                                  searchController: searchController,
-                                readOnly: true,
-                                // onTap: (){
-                                //     Navigator.push(context, MaterialPageRoute(builder: (context) => seachZestyMart(),));
-                                // },
-                                onTap: () {
-                                    Navigator.of(context).push(_createRoute());
-                                },
-                              ),
+                            child: SearchBarHome(
+                                searchController: searchController,
+                              readOnly: true,
+                              onTap: () {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => seachZestyMart(),));
+                              },
                             )
                         )
                     ),
@@ -270,15 +264,6 @@ class _ZestyMartPageState extends State<ZestyMartPage>
           ]
         ),
       ),
-    );
-  }
-  Route _createRoute() {
-    return PageRouteBuilder(
-      transitionDuration: Duration(milliseconds: 500),
-      pageBuilder: (context, animation, secondaryAnimation) => seachZestyMart(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(opacity: animation, child: child);
-      },
     );
   }
 }

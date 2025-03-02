@@ -51,7 +51,7 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
+    return homeMartItem.isEmpty ? Center(child: CircularProgressIndicator(color: TColors.black,),) : CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
           child: Column(

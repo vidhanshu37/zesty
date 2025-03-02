@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_avif/flutter_avif.dart';
+import 'package:zesty/screens/home/Shimmer_home.dart';
 import 'package:zesty/screens/restaurants_side/custom_widget/mart_itemCard.dart';
 import 'package:http/http.dart' as http;
 
@@ -52,7 +53,7 @@ class _FreshTabState extends State<FreshTab> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
+    return freshMartItem.isEmpty ? Center(child: CircularProgressIndicator(color: TColors.black,),) : CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
           child: Column(
