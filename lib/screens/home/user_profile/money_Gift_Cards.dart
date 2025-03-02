@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:zesty/screens/home/user_profile/add_balance.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:zesty/utils/constants/zesty_money.dart';
+import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
 
 class MoneyGift extends StatefulWidget {
   const MoneyGift({super.key});
@@ -11,36 +13,24 @@ class MoneyGift extends StatefulWidget {
 }
 
 class _MoneyGiftState extends State<MoneyGift> {
+
+  var box = Hive.box(HiveOpenBox.storeAddress);
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-         // title: Row(
-         //   crossAxisAlignment: CrossAxisAlignment.center,
-         //   children: [
-         //     Text("Zesty",style: Theme.of(context).textTheme.headlineLarge,),
-         //     SizedBox(width: 5,),
-         //     Text("Money",style: TextStyle(fontSize: 18)),
-         //   ],
-         // ),
-        actions: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text("Zesty",style: Theme.of(context).textTheme.headlineLarge,),
-              SizedBox(width: 5,),
-              Text("Money",style: TextStyle(fontSize: 20),),
-              SizedBox(width: 150,),
-            ],
-          )
-        ],
+         title: Text("Zesty Money", style: TextStyle(color: Colors.black, fontSize: 18),),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
+      body: Stack(
+        children: [
+
+          /// Main card - show available balance
+          Positioned(
+            left: 0,
+            top: 10,
+            right: 0,
+            child: Padding(
               padding: const EdgeInsets.all(15.0),
               child: Container(
                 padding: EdgeInsets.all(16),
@@ -57,7 +47,10 @@ class _MoneyGiftState extends State<MoneyGift> {
                     SizedBox(height: 20,),
                     Text("Available Balance",style: TextStyle(fontSize: 16,color: Colors.white),),
                     SizedBox(height: 1,),
-                    Text("₹${ZestyMoney.walletAmount}",style: TextStyle(fontSize: 28,color: Colors.white,fontWeight: FontWeight.bold),),
+                    SizedBox(
+                      width: 120,
+                        height: 40,
+                        child: Text("₹${box.get(HiveOpenBox.userZestyMoney)}",style: TextStyle(fontSize: 28,color: Colors.white,fontWeight: FontWeight.bold),)),
                     Divider(),
                     SizedBox(height: 12,),
                     Text("Zesty money can be used for all your orders across categories ( Food, Zestymart & more )",style: TextStyle(color: Colors.white70,fontSize: 12),),
@@ -65,43 +58,22 @@ class _MoneyGiftState extends State<MoneyGift> {
                 ),
               ),
             ),
-            // Padding(
-            //   padding: const EdgeInsets.all(15.0),
-            //   child: Card(
-            //     shape: RoundedRectangleBorder(
-            //       borderRadius: BorderRadius.circular(12)
-            //     ),
-            //     child: Padding(
-            //       padding: const EdgeInsets.all(15.0),
-            //       child: Row(
-            //         children: [
-            //           Expanded(
-            //               child: Column(
-            //                 crossAxisAlignment: CrossAxisAlignment.start,
-            //                 children: [
-            //                   Text("Share love through e-gift vouchers!",style: TextStyle(fontWeight: FontWeight.bold),),
-            //                   SizedBox(height: 4,),
-            //                   Text("Celebrate special occasions with your loved ones"),
-            //                   SizedBox(height: 8,),
-            //                   Text("Buy a gift voucher",style: TextStyle(color: TColors.orange,fontWeight: FontWeight.bold),),
-            //                 ],
-            //               ),
-            //           ),
-            //           // Image.network('https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Gift_card.svg/512px-Gift_card.svg.png',height: 50,),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            SizedBox(height: 30,),
-            Text("Transition History",style: TextStyle(fontSize: 20,color: Colors.grey),),
-            SizedBox(height: 330,),
-            Container(
+          ),
+
+          /// Bottom button (sheet)
+          Positioned(
+            bottom: 0,
+            right: 0,
+            left: 0,
+            child: Container(
               height: 130,
-              color: Colors.grey.shade300,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0))
+              ),
               child: Column(
                 children: [
-                  SizedBox(height: 20,),
+                  SizedBox(height: 30,),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 15,vertical: 2),
                     width: double.infinity,
@@ -122,9 +94,9 @@ class _MoneyGiftState extends State<MoneyGift> {
                 ],
               ),
             ),
+          ),
 
-          ],
-        ),
+        ],
       ),
     );
   }

@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:zesty/utils/constants/zesty_money.dart';
+import 'package:http/http.dart' as http;
+import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
 
 class AddBalance extends StatefulWidget {
   const AddBalance({super.key});
@@ -41,12 +46,16 @@ class _AddBalanceState extends State<AddBalance> {
     }
   }
 
+  var box = Hive.box(HiveOpenBox.storeAddress);
+
   Future<void> handlePaymentSuccess(PaymentSuccessResponse res) async {
     // ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
     //   content: new Text("Payment Successfull"),
     // ));
     setState(() {
       ZestyMoney.walletAmount += int.parse(_amountController.text);
+      box.put(HiveOpenBox.userZestyMoney, ZestyMoney.walletAmount.toString());
+      storeMoney();
     });
     //ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ZestyMoney.walletAmount.toString())));
   }
@@ -61,6 +70,32 @@ class _AddBalanceState extends State<AddBalance> {
     ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
       content: new Text("External Wallet, Something went to wrong!"),
     ));
+  }
+
+
+  Future<void> storeMoney() async {
+    final url = Uri.parse('https://zesty-backend.onrender.com/user/update-zesty-money');
+
+    try {
+      final response = await http.post(
+          url,
+        headers: {
+          "Content-Type": "application/json",
+        },
+          body: jsonEncode({
+            "userId": box.get(HiveOpenBox.userId),
+            "zestyMoney": box.get(HiveOpenBox.userZestyMoney),
+          })
+      );
+
+      if(response.statusCode == 200 ) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("done")));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.statusCode.toString())));
+      }
+    } catch(e) {
+      print(e);
+    }
   }
 
   @override
@@ -87,95 +122,113 @@ class _AddBalanceState extends State<AddBalance> {
         ),
       ),
       backgroundColor: Colors.grey[200],
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 10,),
-              Text("Available balance: ₹${ZestyMoney.walletAmount}",style: TextStyle(color: TColors.darkerGrey,fontSize: 14),),
-              SizedBox(height: 13,),
-              Card(
-                color: TColors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)
-                ),
-                elevation: 2,
-                child: Padding(padding: EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Enter Amount :",style: TextStyle(color: TColors.black,fontSize: 14),),
-                      SizedBox(height: 8,),
-                      TextField(
-                        controller: _amountController,
-                        decoration: InputDecoration(
-                          prefixText: "₹ ",
-                          prefixStyle: TextStyle(fontSize: 18),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8)
-                          ),
-                        ),
-                        keyboardType: TextInputType.number,
-                      ),
-                      SizedBox(height: 16,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: Stack(
+          children: [
+
+            /// Top layout(enter amt, notes)
+            Positioned(
+              top: 10,
+              right: 0,
+              left: 0,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 10,),
+                  Text("\t\t\tAvailable balance: ₹${box.get(HiveOpenBox.userZestyMoney)}",style: TextStyle(color: TColors.darkerGrey,fontSize: 14),),
+                  SizedBox(height: 13,),
+                  Card(
+                    color: TColors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)
+                    ),
+                    elevation: 2,
+                    child: Padding(padding: EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _amountButton(250),
-                          _amountButton(500),
-                          _amountButton(2000),
-                          _amountButton(5000),
+                          Text("Enter Amount :",style: TextStyle(color: TColors.black,fontSize: 14),),
+                          SizedBox(height: 8,),
+                          TextField(
+                            controller: _amountController,
+                            decoration: InputDecoration(
+                              prefixText: "₹ ",
+                              prefixStyle: TextStyle(fontSize: 18),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8)
+                              ),
+                            ),
+                            keyboardType: TextInputType.number,
+                          ),
+                          SizedBox(height: 16,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _amountButton(250),
+                              _amountButton(500),
+                              _amountButton(2000),
+                              _amountButton(5000),
+                            ],
+                          ),
+                          SizedBox(height: 12,),
                         ],
                       ),
-                      SizedBox(height: 12,),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-        
-              SizedBox(height: 16,),
-              Card(
-                color: TColors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Note:",style: TextStyle(color: TColors.darkGreen,fontWeight: FontWeight.bold),),
-                      SizedBox(height: 8,),
-                      noteItem(text: "Zesty Money balances are valid for 1 year from credit on Zesty."),
-                      noteItem(text: "Zesty Money cannot be transferred to your bank account as per RBI fuidelines."),
-                      noteItem(text: "Zesty Money can be used for food deliveries and Zestymart."),
-                    ],
+
+                  SizedBox(height: 16,),
+                  Card(
+                    color: TColors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Note:",style: TextStyle(color: TColors.darkGreen,fontWeight: FontWeight.bold),),
+                          SizedBox(height: 8,),
+                          noteItem(text: "Zesty Money balances are valid for 1 year from credit on Zesty."),
+                          noteItem(text: "Zesty Money cannot be transferred to your bank account as per RBI fuidelines."),
+                          noteItem(text: "Zesty Money can be used for food deliveries and Zestymart."),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                  // SizedBox(height: 170,),
+                  // SizedBox(height: 16,),
+                ],
               ),
-              SizedBox(height: 170,),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(onPressed: (){
-                  int amount = int.parse(_amountController.text);
-                  openCheckout(amount);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TColors.darkGreen,
-                  side: BorderSide.none,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+            ),
+
+            /// Button proceed to pay
+            Positioned(
+              bottom: 40,
+              right: 0,
+              left: 0,
+              child: SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(onPressed: (){
+                int amount = int.parse(_amountController.text);
+                openCheckout(amount);
+              },
+                  onLongPress: () {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("local db:${box.get(HiveOpenBox.userZestyMoney)}, const: ${ZestyMoney.walletAmount}")));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: TColors.darkGreen,
+                    side: BorderSide.none,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-                ),
-                    child: Text("Proceed to Add Balance",style: TextStyle(fontSize: 16,color: Colors.white),)),
-              ),
-              SizedBox(height: 16,),
-            ],
-          ),
+                  child: Text("Proceed to Add Balance",style: TextStyle(fontSize: 16,color: Colors.white),)),
+            ),)
+          ],
         ),
       ),
     );

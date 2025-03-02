@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:zesty/screens/home/user_profile/editProfile.dart';
 import 'package:zesty/screens/home/user_profile/money_Gift_Cards.dart';
 import 'package:zesty/screens/home/user_profile/zesty1.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:zesty/utils/constants/media_query.dart';
+import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
 
 class profile extends StatefulWidget{
   @override
@@ -12,11 +14,16 @@ class profile extends StatefulWidget{
 }
 
 class _profileState extends State<profile> {
+
+  var box = Hive.box(HiveOpenBox.storeAddress);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(onPressed: (){}, icon: Icon(Icons.arrow_back,color: ZMediaQuery(context).isDarkMode ? Colors.white : Colors.black,)),
+        title: Text("USER PROFILE", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        backgroundColor: TColors.grey,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -26,7 +33,7 @@ class _profileState extends State<profile> {
             children: [
               SizedBox(height: 20,),
               Text("VISHU",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold)),
-              Text("+91 8734567890",style: TextStyle(color: TColors.darkerGrey,fontSize: 12)),
+              Text("+91 ${box.get(HiveOpenBox.userMobile)}",style: TextStyle(color: TColors.darkerGrey,fontSize: 12)),
               SizedBox(height: 10,),
               InkWell(onTap: (){
                 Navigator.push(context, MaterialPageRoute(builder: (context) => EditAccountScreen(),));
@@ -72,7 +79,7 @@ class _profileState extends State<profile> {
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 title: Text("Zesty Money",style: Theme.of(context).textTheme.titleLarge),
-                subtitle: Text("Account balance & Transaction History",style: Theme.of(context).textTheme.labelMedium),
+                subtitle: Text("Add zesty account balance",style: Theme.of(context).textTheme.labelMedium),
                 trailing: Icon(Icons.arrow_forward_ios,color: TColors.darkGrey,size: 16,),
                 onTap: (){
                   Navigator.push(context, MaterialPageRoute(builder: (context) => MoneyGift(),));
