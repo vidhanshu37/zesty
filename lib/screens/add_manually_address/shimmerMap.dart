@@ -14,12 +14,8 @@ class ShimmerEffectsLocation extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Shimmer.fromColors(
-            baseColor: ZMediaQuery(context).isDarkMode
-                ? TColors.darkerGrey
-                : TColors.grey,
-            highlightColor: ZMediaQuery(context).isDarkMode
-                ? TColors.darkGrey
-                : TColors.shimmerGrey,
+            baseColor:  TColors.grey,
+            highlightColor:  TColors.shimmerGrey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

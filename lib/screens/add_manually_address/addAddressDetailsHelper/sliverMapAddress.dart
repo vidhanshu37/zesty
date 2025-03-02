@@ -77,6 +77,7 @@ class _TopMapState extends State<TopMap> {
           // Hide the back arrow
           elevation: 0,
           pinned: true,
+          backgroundColor: TColors.bgLight,
           bottom: PreferredSize(
               preferredSize: Size.fromHeight(-15.0), child: SizedBox()),
           flexibleSpace: ListTile(
@@ -99,9 +100,7 @@ class _TopMapState extends State<TopMap> {
                   color: Colors.transparent,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: ZMediaQuery(context).isDarkMode
-                        ? TColors.bgLight
-                        : TColors.darkGrey,
+                    color: TColors.darkGrey,
                     width: 1,
                   ),
                 ),

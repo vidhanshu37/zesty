@@ -729,7 +729,12 @@ class _CartPageState extends State<CartPage> {
                   Navigator.push(context, MaterialPageRoute(builder: (builder) => CartPayment(
                       restaurantName: resName,
                       deliveryTime: widget.deliveryTime,
-                      totalPrice: getTotal()
+                      totalPrice: getTotal(),
+                    couponCode: couponData['promoCode'] ?? "",
+                    restaurantId: lastRestaurantId,
+                    foodItemQty: box.values.map((entry) => entry['qty'] as int).toList(),
+                    foodItemId: box.keys.toList(),
+                    totalItemValue: calculateTotalCartValue().toStringAsFixed(2),
                   )));
       
                   // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(couponDiscount.toString())));
