@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
+import 'package:zesty/screens/home/home.dart';
 import 'package:zesty/screens/login_process/signin.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:zesty/utils/constants/media_query.dart';
 import 'package:zesty/utils/constants/text_string.dart';
+import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
 
 class onbording extends StatefulWidget{
   @override
@@ -15,6 +18,7 @@ class _onbordingState extends State<onbording> {
 
   PageController pageController = PageController();
   int currentIndex = 0;
+  var box = Hive.box(HiveOpenBox.storeAddress);
 
   void nextpage(){
     if(currentIndex < 3){
@@ -23,6 +27,20 @@ class _onbordingState extends State<onbording> {
       Navigator.push(context, MaterialPageRoute(builder: (context) => signin(),));
     }
   }
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if(box.isNotEmpty) {
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => HomeScreen(address: box.get(HiveOpenBox.storeAddressTitle), subAddress: "")), (predicate) => false);
+      }
+    });
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

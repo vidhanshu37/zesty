@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_avif/flutter_avif.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:zesty/custom_widget/elevatedButton_cust.dart';
 import 'package:zesty/screens/home/Shimmer_home.dart';
 import 'package:zesty/screens/home/category_home.dart';
 import 'package:zesty/screens/home/custom_widget/appBarHome.dart';
+import 'package:zesty/screens/home/item_cart/trackDeliveryOrder.dart';
 import 'package:zesty/screens/home/reorder/reorder_page.dart';
 import 'package:zesty/screens/home/user_profile/profile.dart';
 import 'package:zesty/screens/home/zesty_Mart/zesty_mart_page.dart';
@@ -350,36 +352,51 @@ class _HomeScreenState extends State<HomeScreen>
                         })),
               ),
 
+              // SliverToBoxAdapter(
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(20.0),
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: [
+              //         Text(
+              //           "Top Rated Restaurants",
+              //           style: Theme.of(context).textTheme.titleLarge,
+              //         ),
+              //         SizedBox(
+              //           height: 5,
+              //         ),
+              //         Card(
+              //           elevation: 3,
+              //           child: Container(
+              //             height: 150,
+              //             width: 140,
+              //             decoration: BoxDecoration(
+              //                 color: Colors.amber,
+              //                 borderRadius: BorderRadius.circular(10)),
+              //           ),
+              //         ),
+              //         Text(
+              //           "    Radhe Dhokla",
+              //           style: Theme.of(context).textTheme.bodyLarge,
+              //         ),
+              //         SizedBox(height: 30,),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+
               SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Top Rated Restaurants",
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Card(
-                        elevation: 3,
-                        child: Container(
-                          height: 150,
-                          width: 140,
-                          decoration: BoxDecoration(
-                              color: Colors.amber,
-                              borderRadius: BorderRadius.circular(10)),
-                        ),
-                      ),
-                      Text(
-                        "    Radhe Dhokla",
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      SizedBox(height: 30,),
-                    ],
-                  ),
+                child: Padding(padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 40,),
+                    Text(
+                              "\t\tRestaurants just for you",
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                  ],
+                ),
                 ),
               ),
 
@@ -407,7 +424,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 fit: BoxFit.cover,
                                 loadingBuilder: (context, child, loadingProgress) {
                                   if (loadingProgress == null) return child;
-                                  return Center(child: CircularProgressIndicator());
+                                  return Center(child: CircularProgressIndicator(color: Colors.black,));
                                 },
                                 errorBuilder: (context, error, stackTrace) {
                                   return Icon(Icons.image_not_supported, size: 50, color: Colors.grey);

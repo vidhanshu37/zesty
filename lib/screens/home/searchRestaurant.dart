@@ -139,7 +139,7 @@ class _SearchrestaurantState extends State<Searchrestaurant> {
 
                                 SizedBox(height: 5,),
                                 Text(item['restaurantName'], style: TextStyle(fontSize: 18,fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis,),
-                                Text("${ApiConstants.calculateDistance(box.get(HiveOpenBox.storeAddressLat) ?? 21.2049, box.get(HiveOpenBox.storeAddressLong) ?? 21.8411, item['latitude'] ?? 21.70, item['longitude'] ?? 71.12)} "
+                                Text("${ApiConstants.calculateDistance(double.parse(box.get(HiveOpenBox.storeAddressLat)) ?? 21.2049, double.parse(box.get(HiveOpenBox.storeAddressLong)) ?? 21.8411, item['latitude'] ?? 21.70, item['longitude'] ?? 71.12).toStringAsFixed(2)} km "
                                   ,style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500,overflow: TextOverflow.ellipsis),maxLines: 2,),
                                 Text(
                                   "Fast Food, South Indian Ramanagar",
