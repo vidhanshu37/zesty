@@ -54,9 +54,13 @@ class _carouselBannerState extends State<carouselBanner> {
       imageadv.length,
           (index) => ClipRRect(
             borderRadius: BorderRadius.circular(10.0),
-            child: Image.network(
-              '${imageadv[index]['image']}',
-              fit: BoxFit.cover,
+            child: SizedBox(
+              height: 175,
+              width: ZMediaQuery(context).width - 50,
+              child: Image.network(
+                '${imageadv[index]['image']}',
+                fit: BoxFit.cover,
+              ),
             ),
           ),
     ),

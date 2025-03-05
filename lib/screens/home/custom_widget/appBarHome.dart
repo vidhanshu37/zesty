@@ -37,29 +37,18 @@ class AppBarHome extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              ListTile(
-                title: Text(
+              Container(
+                width: ZMediaQuery(context).width - 200,
+                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                child: Text(
                   widget.address,
                   // style: Theme.of(context).textTheme.titleMedium,
                   style: TextStyle(
-                      fontSize: 16,
-                      color: colorAnimationAddress.value, overflow: TextOverflow.ellipsis,),
-                  maxLines: 1,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: colorAnimationAddress.value, overflow: TextOverflow.ellipsis,),
+                  maxLines: 2,
                 ),
-                subtitle: Container(
-                  padding: EdgeInsets.only(right: ZMediaQuery(context).width - 230),
-                  child: Text(
-                    widget.subAddress,
-                    // style: Theme.of(context).textTheme.labelLarge,
-                    maxLines: 1,
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: colorAnimationAddress.value, overflow: TextOverflow.ellipsis),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 0,
               ),
 
               /// searchbar

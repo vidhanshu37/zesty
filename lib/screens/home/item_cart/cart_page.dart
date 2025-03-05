@@ -248,12 +248,16 @@ class _CartPageState extends State<CartPage> {
   }
 
   double calculateDeliveryCharge() {
-    if( total > 0 && total < 2) {
-      return 20;
-    } else if (total > 2 && total < 5) {
-      return 40;
+    if ( checkDeliveryOption == false ) {
+      return 0;
+    } else {
+      if( total > 0 && total < 2) {
+        return 20;
+      } else if (total > 2 && total < 5) {
+        return 40;
+      }
+      return total * 10;
     }
-    return total * 10;
   }
 
   /// Count grand total include all charges, tax, etc.
@@ -275,6 +279,7 @@ class _CartPageState extends State<CartPage> {
     setState(() {});
   }
 
+  bool checkDeliveryOption = true;
 
   @override
   Widget build(BuildContext context) {
@@ -312,9 +317,65 @@ class _CartPageState extends State<CartPage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-      
+
+                /// select delivery or pick
+                Center(
+                  child: Container(
+                    width: ZMediaQuery(context).width - 40,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(29.0),
+                      border: Border.all(color: TColors.darkerGrey, width: 1.5)
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(7.0),
+                      child: Row(
+                        children: [
+                          Flexible(
+                            flex: 1,
+                            child: InkWell(
+                              onTap: () {
+                                checkDeliveryOption = true;
+                                setState(() {});
+                              },
+                              child: Container(
+                                height: 70,
+                                decoration: BoxDecoration(
+                                    color: checkDeliveryOption == true ? TColors.black : Colors.grey[200],
+                                    borderRadius: BorderRadius.circular(25.0)
+                                ),
+                                child: Center(child: Text("Deliver to My Location", style: TextStyle(color: checkDeliveryOption == true ? TColors.white : Colors.black, fontSize: 13),)),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 10,),
+                          Flexible(
+                            flex: 1,
+                            child: InkWell(
+                              onTap: (){
+                                checkDeliveryOption = false;
+                                setState(() {});
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: checkDeliveryOption == false ? TColors.black : Colors.grey[200],
+                                    borderRadius: BorderRadius.circular(25.0)
+                                ),
+                                child: Center(child: Text("I'll Pick It Up", style: TextStyle(color: checkDeliveryOption == false ? TColors.white : Colors.black, fontSize: 13),)),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 20,),
+
                 /// Location address select
-              Card(
+                checkDeliveryOption == false ? SizedBox.shrink() : Card(
                 color: TColors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -324,8 +385,8 @@ class _CartPageState extends State<CartPage> {
                   child: ListTile(
                     leading: Icon(Icons.location_on_rounded),
                     title: Text("Delivery Address", style: Theme.of(context).textTheme.bodyLarge,),
-                    subtitle: Text("${boxAddress.get(HiveOpenBox.storeAddressTitle)}, ${boxAddress.get(HiveOpenBox.storeAddressSubTitle)}", style: Theme.of(context).textTheme.labelMedium, maxLines: 1,),
-                    trailing: Icon(Icons.arrow_forward_ios_outlined, size: 16, color: TColors.darkerGrey,),
+                    subtitle: Text("${boxAddress.get(HiveOpenBox.storeAddressTitle)}", style: Theme.of(context).textTheme.labelMedium, maxLines: 1,),
+                    // trailing: Icon(Icons.arrow_forward_ios_outlined, size: 16, color: TColors.darkerGrey,),
                   ),
                 ),
               ),
@@ -522,7 +583,7 @@ class _CartPageState extends State<CartPage> {
 
 
                               /// Delivery fees - price
-                              Padding(
+                              checkDeliveryOption == false ? SizedBox.shrink() : Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -735,6 +796,9 @@ class _CartPageState extends State<CartPage> {
                     foodItemQty: box.values.map((entry) => entry['qty'] as int).toList(),
                     foodItemId: box.keys.toList(),
                     totalItemValue: calculateTotalCartValue().toStringAsFixed(2),
+                    latitude: latitude,
+                    longitude: longitude,
+                    deliveryOption: checkDeliveryOption,
                   )));
       
                   // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(couponDiscount.toString())));

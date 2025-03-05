@@ -79,7 +79,7 @@ class _MoneyGiftState extends State<MoneyGift> {
                     width: double.infinity,
                     height: 53,
                     child: ElevatedButton(onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => AddBalance(),));
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AddBalance(),));
                     },
                         style: ElevatedButton.styleFrom(
                           side: BorderSide.none,
