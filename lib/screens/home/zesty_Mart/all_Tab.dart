@@ -6,6 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_avif/flutter_avif.dart';
 import 'package:http/http.dart' as http;
 import 'package:zesty/screens/home/Shimmer_home.dart';
+import 'package:zesty/screens/home/zesty_Mart/beauty_Tab.dart';
+import 'package:zesty/screens/home/zesty_Mart/category_Item/beautyCategory.dart';
+import 'package:zesty/screens/home/zesty_Mart/category_Item/electronicCategory.dart';
+import 'package:zesty/screens/home/zesty_Mart/category_Item/freshCategory.dart';
+import 'package:zesty/screens/home/zesty_Mart/category_Item/groceryCategory.dart';
+import 'package:zesty/screens/home/zesty_Mart/category_Item/homeCategory.dart';
+import 'package:zesty/screens/home/zesty_Mart/category_Item/kidsCategory.dart';
+import 'package:zesty/screens/home/zesty_Mart/electronics_Tab.dart';
+import 'package:zesty/screens/home/zesty_Mart/home_Tab.dart';
+import 'package:zesty/screens/home/zesty_Mart/kids_Tab.dart';
 import 'package:zesty/screens/home/zesty_Mart/zesty_mart_page.dart';
 import 'package:zesty/utils/constants/media_query.dart';
 import '../../../utils/constants/colors.dart';
@@ -32,18 +42,6 @@ class _AllTabState extends State<AllTab> {
     {"name": "Vegetable", "image": "assets/images/Fresh.png"},
     {"name": "Biscuits", "image": "assets/images/Grocerry2.png"},
   ];
-
-  final Map<String, int> CategoryIndexs = {
-    "All" : 0,
-    "Fruits" : 1,
-    "Grocery" : 2,
-    "Electronics" : 3,
-    "Skin Care" : 4,
-    "Home" : 5,
-    "Kids" : 6,
-    "Vegetable" : 1,
-    "Biscuits" : 2
-  };
 
   final List<String> imageList = [
     'assets/images/adv1.avif',
@@ -151,17 +149,20 @@ class _AllTabState extends State<AllTab> {
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onTap: () {
-                            // Navigate to ZestyMartPage and pass the selected category index
-                            int selectedTabIndex = CategoryIndexs[items[index] ['name']] ?? 0;
-                    // Navigate to ZestyMartPage and pass the selected category index
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ZestyMartPage(address: "Your Address",
-                                    subAddress: "Your Sub Address",selectedTabIndex: selectedTabIndex // Pass selected tab index
-                                ),
-                              ),
-                            );
+                            String selectedCategory = items[index]["name"]!;
+                            if (selectedCategory == "Fruits" || selectedCategory == "Vegetable"){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => Freshcategory()));
+                            } else if (selectedCategory == 'Grocery' || selectedCategory == "Biscuits"){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => Grocerycategory()));
+                            } else if (selectedCategory == 'Skin Care'){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => Beautycategory()));
+                            } else if (selectedCategory == 'Electronics'){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => Electroniccategory()));
+                            } else if (selectedCategory == 'Home'){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => Homecategory()));
+                            } else{
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => Kidscategory()));
+                            }
                           },
                           child: Column(
                             children: [
