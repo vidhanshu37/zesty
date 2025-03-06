@@ -30,6 +30,7 @@ class _TopMapState extends State<TopMap> {
   var roadName = TextEditingController();
   var directionToReach = TextEditingController();
   var contactNumber = TextEditingController();
+  var userName = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +45,10 @@ class _TopMapState extends State<TopMap> {
           elevation: 0,
           pinned: true,
           centerTitle: false,
+          backgroundColor: TColors.bgLight,
           expandedHeight: ZMediaQuery(context).height / 4,
+          collapsedHeight: 30,
+          toolbarHeight: 30,
           flexibleSpace: FlexibleSpaceBar(
             background: GoogleMap(
               zoomControlsEnabled: false,
@@ -124,6 +128,7 @@ class _TopMapState extends State<TopMap> {
             address: widget.address,
           subAddress: widget.subAddress,
           formKey: _formKey,
+          userName: userName,
         )
       ],
     ));

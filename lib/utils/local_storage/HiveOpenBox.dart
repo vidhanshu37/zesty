@@ -14,6 +14,7 @@ class HiveOpenBox {
   static String userMobile = "userMobile";
   static String userZestyLite = "userZestyLite";
   static String userZestyMoney = "userZestyMoney";
+  static String userName = "userName";
 
 
 

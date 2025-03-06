@@ -32,7 +32,7 @@ class _profileState extends State<profile> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 20,),
-              Text("VISHU",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold)),
+              Text(box.get(HiveOpenBox.userName, defaultValue: "Zesty"),style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold)),
               Text("+91 ${box.get(HiveOpenBox.userMobile)}",style: TextStyle(color: TColors.darkerGrey,fontSize: 12)),
               SizedBox(height: 10,),
               InkWell(onTap: (){

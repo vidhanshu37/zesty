@@ -61,14 +61,12 @@ class _AddtocartbuttonState extends State<Addtocartbutton> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _retrieveCartData();
   }
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     _retrieveCartData();
   }
@@ -381,7 +379,7 @@ class _AddtocartbuttonState extends State<Addtocartbutton> {
                     onPressed: () {
                       // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(box.toMap().toString())));
                       if(box.isNotEmpty) {
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => Zestymartcart()));
+                        Navigator.push(context, MaterialPageRoute(builder: (builder) => Zestymartcart()));
                       }
                     },
                     style: ElevatedButton.styleFrom(

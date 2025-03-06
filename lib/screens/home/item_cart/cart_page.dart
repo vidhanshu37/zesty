@@ -269,9 +269,9 @@ class _CartPageState extends State<CartPage> {
         .fold(0.0, (sum, element) => sum + element); // Sum all packaging charges
     double tax = totalCartValue * 0.05; // Calculate 5% tax
 
-    double totalValue = (totalCartValue + deliveryCharge + totalPackagingCharge + tax - couponDiscount) ?? 0.0;
+    double totalValue = (totalCartValue + deliveryCharge + totalPackagingCharge + tax - couponDiscount).roundToDouble() ?? 0.0;
     // double totalValue = ( 0 + deliveryCharge + 0 + 0) ?? 0.0;
-    String formattedTotalValue = totalValue.toStringAsFixed(2);
+    String formattedTotalValue = totalValue.toStringAsFixed(0);
     return formattedTotalValue;
   }
 
@@ -496,7 +496,7 @@ class _CartPageState extends State<CartPage> {
                           children: [
                             SizedBox(height: 10,),
                             Text(
-                              "To Pay " + getTotal(),
+                              "To Pay ₹" + getTotal(),
                               style:
                               Theme.of(context).textTheme.bodyLarge,
                             ),

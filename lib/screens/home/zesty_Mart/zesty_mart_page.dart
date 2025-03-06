@@ -157,16 +157,16 @@ class _ZestyMartPageState extends State<ZestyMartPage>
               collapsedHeight: 10,
               toolbarHeight: 10,
               flexibleSpace: FlexibleSpaceBar(
-                background: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 15),
-                      Text(widget.address, style: TextStyle(fontSize: 16,color: TColors.black)),
-                      Text(widget.subAddress, style: TextStyle(fontSize: 12,color: TColors.black))
-                    ],
+                background: Container(
+                  width: ZMediaQuery(context).width - 200,
+                  padding: EdgeInsets.only(right: 200.0, top: 40.0, left: 20.0, ),
+                  child: Text(
+                    widget.address,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                       overflow: TextOverflow.ellipsis,),
+                    maxLines: 2,
                   ),
                 ),
               ),

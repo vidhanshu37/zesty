@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:zesty/screens/home/home.dart';
+import 'package:zesty/utils/constants/colors.dart';
 import 'package:zesty/utils/http/userExistAPI.dart';
 import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
 import '../../../custom_widget/elevatedButton_cust.dart';
@@ -17,10 +18,14 @@ class addressTextFields extends StatefulWidget {
     required this.houseNumber,
     required this.roadName,
     required this.directionToReach,
-    required this.contactNumber, required this.address, required this.subAddress,
+    required this.contactNumber,
+    required this.address,
+    required this.subAddress,
+    required this.userName,
     required this.formKey,
   });
 
+  final TextEditingController userName;
   final TextEditingController houseNumber;
   final TextEditingController roadName;
   final TextEditingController directionToReach;
@@ -72,6 +77,7 @@ class _addressTextFieldsState extends State<addressTextFields> {
         hiveBox.put(HiveOpenBox.userEmail, userData!['user']['email'] ?? "abc");
         hiveBox.put(HiveOpenBox.userZestyLite, userData!['user']['zestyLite'] ?? "false");
         hiveBox.put(HiveOpenBox.userZestyMoney, userData!['user']['zestyMoney'] ?? "0");
+        hiveBox.put(HiveOpenBox.userName, widget.userName.text);
 
 
         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen(address: box.get(HiveOpenBox.address, defaultValue: "abc"), subAddress: ""),), (Route<dynamic> route) => false,);
@@ -108,7 +114,7 @@ class _addressTextFieldsState extends State<addressTextFields> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "House number is required!";
-                  } else if (!RegExp(r'^[a-zA-z0-9]+$').hasMatch(value)){
+                  } else if (!RegExp(r'^[a-zA-z0-9 \-&]+$').hasMatch(value)){
                     return "Only letters and numbers allowed";
                   }
                   return null;
@@ -141,11 +147,44 @@ class _addressTextFieldsState extends State<addressTextFields> {
                 ),
               ),
               const SizedBox(height: 12),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text("\t\tPersonal information", style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w600),),
+                  Divider(color: TColors.darkerGrey, height: 2)
+                ],
+              ),
+              const SizedBox(height: 20,),
+
+
+              /// User name
+              Text(
+                "User name",
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              const SizedBox(height: 5),
+              ZCustomTextField(
+                controller: widget.userName,
+                hintText: "RECEIVER's NAME",
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Name is required!";
+                  } else if (!RegExp(r'^[a-zA-z ]+$').hasMatch(value)){
+                    return "Only letters and space allowed";
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 25),
+
+              /// Contact number
               Text(
                 "Contact number",
                 style: Theme.of(context).textTheme.labelLarge,
               ),
-              const SizedBox(height: 5),
+              SizedBox(height: 5,),
               ZCustomTextField(
                 controller: widget.contactNumber,
                 hintText: "00000 00000",
@@ -161,6 +200,8 @@ class _addressTextFieldsState extends State<addressTextFields> {
                 },
               ),
               const SizedBox(height: 25),
+
+              /// Address type
               Text(
                 "Address type",
                 style: Theme.of(context).textTheme.labelLarge,
