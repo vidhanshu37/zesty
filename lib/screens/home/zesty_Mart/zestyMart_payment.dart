@@ -1,59 +1,31 @@
-import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'package:zesty/custom_widget/elevatedButton_cust.dart';
 import 'package:zesty/screens/home/item_cart/trackDeliveryOrder.dart';
-import 'package:zesty/screens/home/item_cart/trackOrder.dart';
 import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
-import 'package:http/http.dart' as http;
+
+import '../../../custom_widget/elevatedButton_cust.dart';
 import '../../../utils/constants/colors.dart';
-import '../../../utils/constants/media_query.dart';
 
-class CartPayment extends StatefulWidget {
-  final String restaurantName;
-  final String restaurantId;
-  final String deliveryTime;
+class ZestyMartPayment extends StatefulWidget {
+  
   final String totalPrice;
-  final String couponCode;
-  final List foodItemId;
-  final List foodItemQty;
-  final String totalItemValue;
-  final double latitude;
-  final double longitude;
-  final bool deliveryOption;
-
-  const CartPayment(
-      {super.key,
-      required this.restaurantName,
-      required this.restaurantId,
-      required this.deliveryTime,
-      required this.totalPrice,
-      required this.couponCode,
-      required this.foodItemQty,
-      required this.foodItemId,
-      required this.totalItemValue,
-      required this.latitude,
-      required this.longitude,
-        required this.deliveryOption,
-      });
+  
+  const ZestyMartPayment({super.key, required this.totalPrice});
 
   @override
-  State<CartPayment> createState() => _CartPaymentState();
+  State<ZestyMartPayment> createState() => _ZestyMartPaymentState();
 }
 
-class _CartPaymentState extends State<CartPayment> {
+class _ZestyMartPaymentState extends State<ZestyMartPayment> {
+  
   var box = Hive.box(HiveOpenBox.storeAddress);
-
+  var boxZesty = Hive.box(HiveOpenBox.storeZestyMartItem);
+  String selectedOption = "COD";
+  
   late Razorpay _razorpay;
-
-  // int price = 0;
-
-  String selectedOption = 'COD';
-
+  
   void openCheckout(int amount) async {
     amount = amount * 100;
     var options = {
@@ -72,16 +44,13 @@ class _CartPaymentState extends State<CartPayment> {
       debugPrint('Error: $e');
     }
   }
-
-  /// create food cart box object (if success empty whole cart)
-  var boxCart = Hive.box(HiveOpenBox.zestyFoodCart);
-
+  
   Future<void> handlePaymentSuccess(PaymentSuccessResponse res) async {
-    // ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
-    //   content: new Text("Payment Successfull"),
-    // ));
-    boxCart.clear();
-    storeOrderData();
+    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+      content: new Text("Payment Successfull"),
+    ));
+    boxZesty.clear();
+    // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => TrackDeliveryOrder(ResLongitude: ResLongitude, ResLatitude: ResLatitude, restaurantId: restaurantId, totalCartValue: totalCartValue)), (route) => route.isFirst);
     //ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ZestyMoney.walletAmount.toString())));
   }
 
@@ -96,78 +65,16 @@ class _CartPaymentState extends State<CartPayment> {
       content: new Text("External Wallet, Something went to wrong!"),
     ));
   }
-
-  List<Map<String, dynamic>> orderList = [];
-
-  Future<void> storeOrderData() async {
-    boxCart.clear();
-    final url = Uri.parse('https://zesty-backend.onrender.com/order/add-order');
-    try {
-      final response = await http.post(url,
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: jsonEncode({
-            "restaurantId": widget.restaurantId,
-            "restaurantName": widget.restaurantName,
-            "userId": box.get(HiveOpenBox.userId),
-            "order": orderList,
-            "totalAmountUser": widget.totalPrice,
-            "totalAmountRestaurant": widget.totalItemValue,
-            "coupon": widget.couponCode,
-            "paymentMode": selectedOption,
-          }));
-
-      if (response.statusCode == 200) {
-        // ScaffoldMessenger.of(context)
-        //     .showSnackBar(SnackBar(content: Text("DONE ORDER")));
-
-        if (widget.deliveryOption == false) {
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => TrackOrder(
-                    restaurantId: widget.restaurantId,
-                    longitude: widget.longitude,
-                    latitude: widget.latitude,
-                  )),
-              (route) => route.isFirst,
-          );
-        } else {
-          Navigator.pushAndRemoveUntil(context,
-              MaterialPageRoute(builder: (builder) =>
-                  TrackDeliveryOrder(ResLatitude: widget.latitude, ResLongitude: widget.longitude,
-                      restaurantId: widget.restaurantId, totalCartValue: widget.totalPrice)
-              ), (route) => route.isFirst);
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(response.statusCode.toString())));
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
-    }
-  }
-
+  
   @override
   void initState() {
     super.initState();
-
-    orderList = List.generate(
-        widget.foodItemQty.length,
-        (index) => {
-              "itemId": widget.foodItemId[index],
-              "quantity": widget.foodItemQty[index],
-            });
-
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentFailure);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWallet);
   }
-
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -187,6 +94,7 @@ class _CartPaymentState extends State<CartPayment> {
           ],
         ),
       ),
+      
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Stack(
@@ -200,7 +108,7 @@ class _CartPaymentState extends State<CartPayment> {
                   ),
 
                   /// source to destination card
-                  widget.deliveryOption == false ? Card(
+                  Card(
                     color: TColors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -222,7 +130,7 @@ class _CartPaymentState extends State<CartPayment> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "You will pick (your location)",
+                                  "Zesty Warehouse",
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge!
@@ -238,66 +146,13 @@ class _CartPaymentState extends State<CartPayment> {
                                   ),
                                 ),
                                 Text(
-                                  widget.restaurantName,
-                                  softWrap: true,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                      overflow: TextOverflow.ellipsis),
-                                  maxLines: 2,
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ) : Card(
-                    color: TColors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.arrow_downward_rounded,
-                            size: 20,
-                          ),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.restaurantName,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                          overflow: TextOverflow.ellipsis),
-                                  maxLines: 1,
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 5.0),
-                                  child: Divider(
-                                    color: TColors.grey,
-                                  ),
-                                ),
-                                Text(
                                   box.get(HiveOpenBox.storeAddressTitle),
                                   softWrap: true,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge!
                                       .copyWith(
-                                          overflow: TextOverflow.ellipsis),
+                                      overflow: TextOverflow.ellipsis),
                                   maxLines: 2,
                                 )
                               ],
@@ -434,25 +289,26 @@ class _CartPaymentState extends State<CartPayment> {
                   title: "Pay Now",
                   onPress: () {
                     if (selectedOption == "COD") {
-                      storeOrderData();
+                      // storeOrderData();
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Order done via cash")));
                     } else if (selectedOption == "ONLINE") {
                       openCheckout(int.parse(widget.totalPrice));
                     } else if (selectedOption == "WALLET") {
                       double zestyWallet =
-                          double.parse(box.get(HiveOpenBox.userZestyMoney));
+                      double.parse(box.get(HiveOpenBox.userZestyMoney));
                       double price = double.parse(widget.totalPrice);
                       if (zestyWallet >= price) {
                         zestyWallet = zestyWallet - price;
                         box.put(HiveOpenBox.userZestyMoney,
                             zestyWallet.toStringAsFixed(2));
-                        storeOrderData();
+                        // storeOrderData();
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text("Not enough balance")));
                       }
                     }
                   }
-                  ),
+              ),
             )
           ],
         ),
