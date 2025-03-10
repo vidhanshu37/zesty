@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:zesty/screens/onboarding/onBoardingScreen.dart';
 import 'package:zesty/utils/constants/colors.dart';
+
+import '../../utils/local_storage/HiveOpenBox.dart';
+import '../home/home.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -10,6 +14,8 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+  var box = Hive.box(HiveOpenBox.storeAddress);
+
 
   @override
   void initState() {
@@ -27,10 +33,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     _controller.forward();
 
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => onbording()),
-      );
+        if(box.isNotEmpty) {
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => HomeScreen(address: box.get(HiveOpenBox.storeAddressTitle), subAddress: "")), (predicate) => false);
+        } else {
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => onbording()), (predicate) => false);
+        }
     });
   }
 

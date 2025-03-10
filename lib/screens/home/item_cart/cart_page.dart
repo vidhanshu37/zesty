@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
+import 'package:zesty/screens/home/custom_widget/multi_address_card.dart';
 import 'package:zesty/screens/home/item_cart/cartPayment.dart';
 import 'package:zesty/screens/home/item_cart/coupons.dart';
 import 'package:zesty/screens/restaurants_side/restaurants_home.dart';
@@ -11,6 +12,7 @@ import 'package:zesty/utils/constants/colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:zesty/utils/constants/media_query.dart';
 import '../../../utils/local_storage/HiveOpenBox.dart';
+import '../user_profile/add_new_address.dart';
 
 class CartPage extends StatefulWidget {
 
@@ -21,7 +23,7 @@ class CartPage extends StatefulWidget {
   State<CartPage> createState() => _CartPageState();
 }
 
-class _CartPageState extends State<CartPage> {
+class _CartPageState extends State<CartPage> with WidgetsBindingObserver {
   bool isExpanded = false;
 
   bool checkCouponDiscount = false;
@@ -80,31 +82,6 @@ class _CartPageState extends State<CartPage> {
     } catch (e) {
       print(e);
     }
-  }
-  
-  @override
-  void initState() {
-    super.initState();
-    getQuantity();
-    fetchCartData();
-    getRestaurantData(); // get restaurant data
-    // calculateDistance(); // calculate distance
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (box.isNotEmpty && quantityItemList.length >= box.length) {
-        counters = List.generate(box.length, (index) => quantityItemList[index] ?? 1);
-      } else {
-        counters = List.generate(box.length, (index) => 1); // Default all to 1 if empty
-      }
-      setState(() {}); // Ensure UI updates after list is initialized
-    });
-
-
-    // if (box.length > 0 && quantityItemList.isNotEmpty) {
-    //   counters = List.generate(box.length, (index) => quantityItemList[index] ?? 1);
-    // } else {
-    //   counters = []; // Initialize as empty list if no items are present
-    // }
   }
 
   void incrementCounter(int index) {
@@ -281,6 +258,107 @@ class _CartPageState extends State<CartPage> {
 
   bool checkDeliveryOption = true;
 
+  List addresses = [];
+  Future<void> fetchAddress() async {
+    Map<String, dynamic> userAllData = {};
+    final url = Uri.parse('https://zesty-backend.onrender.com/user/get/${boxAddress.get(HiveOpenBox.userId)}');
+    try{
+      final response = await http.get(url);
+      if ( response.statusCode == 200 ) {
+        userAllData = jsonDecode(response.body);
+        addresses = userAllData['address'];
+        setState(() {});
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void showAddressDialog() async {
+    showModalBottomSheet(context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        backgroundColor: TColors.bgLight,
+        builder: (builder) {
+          return SizedBox(
+            width: ZMediaQuery(context).width,
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("SELECT ADDRESS", style: Theme.of(context).textTheme.titleMedium,),
+                  SizedBox(height: 20,),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: addresses.length,
+                        itemBuilder: (context, index) {
+                          return MultiAddressCard(address: addresses[index], box: boxAddress, index: index, context: context, onSelect: () {
+                            setState(() {});
+                          },);
+                    }),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    fetchAddress();
+    getQuantity();
+    fetchCartData();
+    getRestaurantData(); // get restaurant data
+    // calculateDistance(); // calculate distance
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (box.isNotEmpty && quantityItemList.length >= box.length) {
+        counters = List.generate(box.length, (index) => quantityItemList[index] ?? 1);
+      } else {
+        counters = List.generate(box.length, (index) => 1); // Default all to 1 if empty
+      }
+      setState(() {}); // Ensure UI updates after list is initialized
+    });
+
+
+    // if (box.length > 0 && quantityItemList.isNotEmpty) {
+    //   counters = List.generate(box.length, (index) => quantityItemList[index] ?? 1);
+    // } else {
+    //   counters = []; // Initialize as empty list if no items are present
+    // }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      // The app is in the foreground and visible to the user.
+      // This is similar to Android's onResume.
+      print("resume");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("resume")));
+    } else if (state == AppLifecycleState.paused) {
+      // The app is in the background and not visible to the user.
+      // This is similar to Android's onPause.
+      print("paused");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("App is paused")));
+    } else if (state == AppLifecycleState.inactive) {
+      // The app is in an inactive state and is not receiving user input.
+      // This can happen when the app is transitioning between states.
+      print("inactive");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("App is inactive")));
+    } else if (state == AppLifecycleState.detached) {
+      // The app is still hosted on a flutter engine but is detached from any host views.
+      // This is a rare state.
+      print("detached");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("App is detached")));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -386,7 +464,9 @@ class _CartPageState extends State<CartPage> {
                     leading: Icon(Icons.location_on_rounded),
                     title: Text("Delivery Address", style: Theme.of(context).textTheme.bodyLarge,),
                     subtitle: Text("${boxAddress.get(HiveOpenBox.storeAddressTitle)}", style: Theme.of(context).textTheme.labelMedium, maxLines: 1,),
-                    // trailing: Icon(Icons.arrow_forward_ios_outlined, size: 16, color: TColors.darkerGrey,),
+                    trailing: IconButton(onPressed: (){
+                      showAddressDialog();
+                    }, icon: Icon(Icons.arrow_forward_ios_outlined, size: 16, color: TColors.darkerGrey,),),
                   ),
                 ),
               ),

@@ -438,13 +438,13 @@ class _CartPaymentState extends State<CartPayment> {
                     } else if (selectedOption == "ONLINE") {
                       openCheckout(int.parse(widget.totalPrice));
                     } else if (selectedOption == "WALLET") {
-                      double zestyWallet =
-                          double.parse(box.get(HiveOpenBox.userZestyMoney));
-                      double price = double.parse(widget.totalPrice);
+                      int zestyWallet =
+                          int.parse(box.get(HiveOpenBox.userZestyMoney));
+                      int price = int.parse(widget.totalPrice);
                       if (zestyWallet >= price) {
                         zestyWallet = zestyWallet - price;
                         box.put(HiveOpenBox.userZestyMoney,
-                            zestyWallet.toStringAsFixed(2));
+                            zestyWallet.toStringAsFixed(0));
                         storeOrderData();
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(

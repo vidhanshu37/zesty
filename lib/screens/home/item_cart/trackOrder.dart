@@ -65,7 +65,7 @@ class _TrackOrderState extends State<TrackOrder> {
 
   late IO.Socket socket;
   String display = "Order received! Waiting for restaurant acceptance.";
-  String? _eta;
+  String _eta = "";
 
 
   @override
@@ -236,7 +236,21 @@ class _TrackOrderState extends State<TrackOrder> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      appBar: AppBar(title: Text("Track order")),
+      appBar: AppBar(
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, icon: Icon(Icons.arrow_back, color: Colors.white,)),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text("Estimated arrival at the restaurant", style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w600, color: Colors.white),),
+            Text(_eta, style: Theme.of(context).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.w600, color: Colors.white))
+          ],
+        ),
+        backgroundColor: TColors.ligthGreen,
+        toolbarHeight: 80,
+        centerTitle: true,
+      ),
       body: _isLoading || _driverLocation == null || restaurantData == null
           ? Center(child: CircularProgressIndicator(color: Colors.black,))
           : Padding(
@@ -248,10 +262,11 @@ class _TrackOrderState extends State<TrackOrder> {
             ClipRRect(
               borderRadius: BorderRadius.circular(15.0),
               child: SizedBox(
-                height: ZMediaQuery(context).height - 400,
+                height: ZMediaQuery(context).height - 450,
                 width: ZMediaQuery(context).width,
                 child: GoogleMap(
                   zoomGesturesEnabled: true,
+                  zoomControlsEnabled: false,
                   onMapCreated: (GoogleMapController controller) {
                     _controller.complete(controller);
                     // Focus on the user's current location
@@ -268,21 +283,9 @@ class _TrackOrderState extends State<TrackOrder> {
             ),
             SizedBox(height: 20),
 
-             Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // display != "Delivered" ? Text("Order Status: $display", style: Theme.of(context).textTheme.bodyLarge) :
-                // Text("Order Status: Ready to pick", style: Theme.of(context).textTheme.bodyLarge),
-                SizedBox(
-                  width: ZMediaQuery(context).width - 50,
-                    child: Text("Order Status: $display", style: Theme.of(context).textTheme.bodyLarge)),
-                SizedBox(height: 5),
-                Text("ETA: $_eta", style: Theme.of(context).textTheme.bodyLarge),
-
-
-              ],
-            ),
+             SizedBox(
+               width: ZMediaQuery(context).width - 50,
+                 child: Text("Order Status: $display", style: Theme.of(context).textTheme.bodyLarge)),
             SizedBox(height: 20),
 
             LinearProgressIndicator(

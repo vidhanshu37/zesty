@@ -32,12 +32,13 @@ class _ReorderPageState extends State<ReorderPage> {
         await fetchAllItemNames(); // Fetch item names before updating UI
       } else {
         print("Error: ${response.statusCode}");
-        showErrorMessage("Failed to fetch orders.");
+        // showErrorMessage("Failed to fetch orders.");
       }
     } catch (e) {
       print("Exception: $e");
-      showErrorMessage("Something went wrong.");
+      // showErrorMessage("Something went wrong.");
     } finally {
+
       setState(() {
         isLoading = false;
       });
@@ -279,10 +280,16 @@ class _ReorderPageState extends State<ReorderPage> {
                                   ),
                               ],
                             ),
-                            Text(
-                              "Delivered",
+
+                            filteredOrders[index]['orderStatus'] == "Delivered" ? Text(
+                              filteredOrders[index]['orderStatus'],
                               style: TextStyle(
                                   fontSize: 12, color: TColors.darkGreen),
+                            ) :
+                            Text(
+                              filteredOrders[index]['orderStatus'],
+                              style: TextStyle(
+                                  fontSize: 12, color: TColors.error),
                             )
                           ],
                         ),

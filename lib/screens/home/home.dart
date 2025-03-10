@@ -70,7 +70,6 @@ class _HomeScreenState extends State<HomeScreen>
     fetchDataRestaurant(); // for restaurant
   }
 
-
   /// get API for category name and image
   Future<void> fetchDataCategory() async {
     final url = Uri.parse(ApiConstants.getAllcategory);
@@ -405,38 +404,51 @@ class _HomeScreenState extends State<HomeScreen>
                   itemCount: restaurantData.length,
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: EdgeInsets.all(20.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          GestureDetector(
-                            onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantsHome(id: restaurantData[index]["_id"],),));
-                            },
-                            child: Container(
-                              width: double.infinity,
-                              height: 200,
-                              decoration: BoxDecoration(
-                                  color: TColors.lightGrey,
-                                  borderRadius: BorderRadius.circular(12.0)
-                              ),
-                              child: Image.network('${restaurantData[index]['logoImg']}',
-                                fit: BoxFit.cover,
-                                loadingBuilder: (context, child, loadingProgress) {
-                                  if (loadingProgress == null) return child;
-                                  return Center(child: CircularProgressIndicator(color: Colors.black,));
-                                },
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Icon(Icons.image_not_supported, size: 50, color: Colors.grey);
-                                },
+                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                      child: Card(
+                        elevation: 1,
+                        color: TColors.white,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: (){
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantsHome(id: restaurantData[index]["_id"],),));
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.only(topRight: Radius.circular(12), topLeft: Radius.circular(12)),
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 200,
+                                  decoration: BoxDecoration(
+                                      color: TColors.lightGrey,
+                                      borderRadius: BorderRadius.circular(12.0)
+                                  ),
+                                  child: Image.network('${restaurantData[index]['logoImg']}',
+                                    fit: BoxFit.cover,
+                                    loadingBuilder: (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(child: CircularProgressIndicator(color: Colors.black,));
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Icon(Icons.image_not_supported, size: 50, color: Colors.grey);
+                                    },
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(height: 5,),
-                          Text(restaurantData[index]['restaurantName'], style: Theme.of(context).textTheme.titleMedium, maxLines: 1, overflow: TextOverflow.ellipsis,),
-                          Text("Tag-line which include dish name on display", style: Theme.of(context).textTheme.labelMedium, maxLines: 1, overflow: TextOverflow.ellipsis,),
-                          SizedBox(height: 15,),
-                        ],
+                            SizedBox(height: 15,),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 2),
+                              child: Text(restaurantData[index]['restaurantName'], style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w500), maxLines: 1, overflow: TextOverflow.ellipsis,),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                              child: Text(restaurantData[index]['cuisines'] ?? "(Burger, Pizza, Fast Food)", style: Theme.of(context).textTheme.labelMedium, maxLines: 1, overflow: TextOverflow.ellipsis,),
+                            ),
+                            SizedBox(height: 15,),
+                          ],
+                        ),
                       ),
                     );
                   }),

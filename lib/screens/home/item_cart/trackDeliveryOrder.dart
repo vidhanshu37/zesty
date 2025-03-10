@@ -6,6 +6,7 @@ import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:zesty/custom_widget/elevatedButton_cust.dart';
 import 'package:zesty/screens/home/home.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:zesty/utils/constants/media_query.dart';
@@ -80,6 +81,7 @@ class _TrackDeliveryOrderState extends State<TrackDeliveryOrder>{
     super.initState();
 
     fetchRestaurantData();
+    _calculateETA(widget.ResLatitude, widget.ResLongitude);
 
     setState(() {
       _userLocation = LatLng(
@@ -152,7 +154,7 @@ class _TrackDeliveryOrderState extends State<TrackDeliveryOrder>{
         markerId: MarkerId("SourceMarker"),
         position: _sourceMarkerLocation!,
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen), // Green marker for source
-        infoWindow: const InfoWindow(title: "Restaurant", snippet: "Moving..."),
+        infoWindow: const InfoWindow(title: "Delivery partner", snippet: "Moving..."),
       ));
 
       // Update the polyline to show the remaining path
@@ -191,7 +193,7 @@ class _TrackDeliveryOrderState extends State<TrackDeliveryOrder>{
     // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("tushar")));
     _sourceMarkerMovementTimer?.cancel(); // Cancel any existing timer
 
-    _sourceMarkerMovementTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _sourceMarkerMovementTimer = Timer.periodic(Duration(milliseconds: 500), (timer) {
       if (_currentPointIndex < _polylineCoordinates.length - 1) {
         setState(() {
           _currentPointIndex++;
@@ -234,6 +236,27 @@ class _TrackDeliveryOrderState extends State<TrackDeliveryOrder>{
     }
   }
 
+  String _eta = "";
+
+  Future<void> _calculateETA(resLatitude, resLongitude) async {
+    var box = Hive.box(HiveOpenBox.storeAddress);
+    final url = Uri.parse(
+        'https://router.project-osrm.org/route/v1/driving/$resLongitude,$resLatitude;${double.parse(box.get(HiveOpenBox.storeAddressLong))},${double.parse(box.get(HiveOpenBox.storeAddressLat))}?overview=false');
+
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final duration = (data['routes'][0]['duration'] / 60) + 10; // Convert seconds to minutes
+      setState(() {
+        _eta = "${duration.toStringAsFixed(0)} mins";
+      });
+    } else {
+      setState(() {
+        _eta = "Calculating...";
+      });
+    }
+  }
+
 
   /// show alert - order is delivered!
   void showDeliveredDialog() {
@@ -261,7 +284,19 @@ class _TrackDeliveryOrderState extends State<TrackDeliveryOrder>{
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Track order"),
+          leading: IconButton(onPressed: (){
+            Navigator.pop(context);
+          }, icon: Icon(Icons.arrow_back, color: Colors.white,)),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text("Your order delivering in", style: Theme.of(context).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.w500, color: Colors.white),),
+              Text(_eta, style: Theme.of(context).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.w600, color: Colors.white))
+            ],
+          ),
+          backgroundColor: TColors.ligthGreen,
+          toolbarHeight: 80,
+          centerTitle: true,
         ),
         body: restaurantData == null ? Center(child: CircularProgressIndicator(color: Colors.black,),) : Padding(
           padding: const EdgeInsets.all(16.0),
@@ -271,10 +306,14 @@ class _TrackDeliveryOrderState extends State<TrackDeliveryOrder>{
               ClipRRect(
                 borderRadius: BorderRadius.circular(15.0),
                 child: SizedBox(
-                  height: ZMediaQuery(context).height - 400,
+                  height: ZMediaQuery(context).height - 450,
                   width: ZMediaQuery(context).width,
                   child: GoogleMap(
                     zoomGesturesEnabled: true,
+                    zoomControlsEnabled: false,
+                    // liteModeEnabled: true,
+                    // trafficEnabled: true,
+                    // zoomControlsEnabled: true,
                     onMapCreated: (GoogleMapController controller) {
                       _controller.complete(controller);
                     },
@@ -288,7 +327,7 @@ class _TrackDeliveryOrderState extends State<TrackDeliveryOrder>{
                 ),
               ),
               // Button to start source marker movement
-              SizedBox(height: 10,),
+              SizedBox(height: 30,),
 
               /// order status and total cart price
               SizedBox(
