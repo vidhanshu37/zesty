@@ -190,7 +190,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                                     SizedBox(
                                       height: 8,
                                     ),
-                                    Text("Tagline set by restaurant", style: Theme.of(context).textTheme.labelMedium,),
+                                    Text(restaurantData?['cuisines'] ?? "(Burger, Pizza, Fast Food)", style: Theme.of(context).textTheme.labelMedium,),
                                     SizedBox(
                                       height: 10,
                                     )
@@ -226,7 +226,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                         return ItemCard(
                           itemName: itemList[index]['name'] ?? "Zesty",
                           itemDescription: itemList[index]['description'] ?? "Zesty description",
-                          itemPrice: itemList[index]['price'] ?? "100",
+                          itemPrice: (double.parse(itemList[index]['price']).roundToDouble()).toStringAsFixed(0) ?? "100",
                           itemImageId: itemList[index]['_id'] ?? "",
                           updateCartState: updateCartState,
                           restaurantId: restaurantData!['_id'],
@@ -237,6 +237,13 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                       },
                       childCount: searchbarController.text.isEmpty ? allMenuItem.length : filteredItemDetails.length,
                     ),
+                  ),
+
+                  SliverToBoxAdapter(
+                    child: searchbarController.text.isNotEmpty && filteredItemDetails.length == 0 ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 30.0),
+                      child: Text('No results found for "${searchbarController.text}"', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w600),),
+                    ) : SizedBox.shrink() ,
                   ),
 
 

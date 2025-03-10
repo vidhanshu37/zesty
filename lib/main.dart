@@ -9,6 +9,7 @@ import 'package:zesty/screens/home/item_cart/cartPayment.dart';
 import 'package:zesty/screens/home/item_cart/coupons.dart';
 // import 'package:zesty/screens/home/item_cart/trackDeliveryOrder.dart';
 import 'package:zesty/screens/home/rough.dart';
+import 'package:zesty/screens/home/user_profile/add_new_address.dart';
 import 'package:zesty/screens/home/user_profile/zesty1.dart';
 import 'package:zesty/screens/home/zesty_Mart/zesty_mart_page.dart';
 import 'package:zesty/screens/location_access/locationAccess.dart';
@@ -16,6 +17,7 @@ import 'package:zesty/screens/location_access/shimmerEffect.dart';
 import 'package:zesty/screens/login_process/otpscreen.dart';
 import 'package:zesty/screens/login_process/signin.dart';
 import 'package:zesty/screens/onboarding/onBoardingScreen.dart';
+import 'package:zesty/screens/onboarding/splashScreen.dart';
 import 'package:zesty/screens/restaurants_side/item_card.dart';
 import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
 import 'package:zesty/utils/theme/theme.dart';
@@ -60,9 +62,9 @@ class MyApp extends StatelessWidget {
       // home: ItemCard(itemName: "itemName", itemDescription: "itemDescription", itemPrice: "itemPrice", itemMenuId: "itemMenuId", updateCartState: () {}, restaurantId: "restaurantId", onIncrement: (){}, onDecrement: (){}, counter: 0),
       // home: MartItemImagesScreen(martItemId: '67b9c261b10e67aa58074037',),
       // home: TrackDeliveryOrder(ResLongitude: 72.8411, ResLatitude: 21.2049),
-      home: onbording(),
-      // home: TopMap(lat: 12, lng: 12, address: "address", subAddress: "subAddress"),
-      // home: TopMap(lat: 21, lng: 71, address: "address", subAddress: "subAddress"),
+      home: SplashScreen(),
+      // home: AddNewAddress(),
+      // home: LocationAccess(),
     );
   }
 }

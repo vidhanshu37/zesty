@@ -129,6 +129,8 @@ class _TopMapState extends State<TopMap> {
           subAddress: widget.subAddress,
           formKey: _formKey,
           userName: userName,
+          userLat: widget.lat,
+          userLong: widget.lng,
         )
       ],
     ));

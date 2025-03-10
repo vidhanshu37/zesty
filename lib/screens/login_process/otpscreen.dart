@@ -128,7 +128,6 @@ class _otpverifyState extends State<otpverify> {
       if (response.statusCode == 200) {
         var responseBody = jsonDecode(response.body);
         /// SUCCESS
-
         if(responseCode == 200) {
             var box = Hive.box(HiveOpenBox.storeAddress);
             box.put(HiveOpenBox.storeAddressTitle, userExistData?['userExist']['address']);
@@ -140,7 +139,7 @@ class _otpverifyState extends State<otpverify> {
             box.put(HiveOpenBox.userMobile, userExistData?['userExist']['mobile']);
             box.put(HiveOpenBox.userZestyLite, userExistData?['userExist']['zestyLite']);
             box.put(HiveOpenBox.userZestyMoney, userExistData?['userExist']['zestyMoney']);
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => HomeScreen(address: userExistData?['userExist']['address'], subAddress: "")), (predicate) => false);
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => HomeScreen(address: userExistData?['userExist']['address'][0], subAddress: "")), (predicate) => false);
         } else if (responseCode == 405) {
           var box = Hive.box(HiveOpenBox.storeLatLongTable);
           box.put(HiveOpenBox.mobile, widget.phone);

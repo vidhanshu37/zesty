@@ -29,19 +29,6 @@ class _onbordingState extends State<onbording> {
   }
 
   @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if(box.isNotEmpty) {
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => HomeScreen(address: box.get(HiveOpenBox.storeAddressTitle), subAddress: "")), (predicate) => false);
-      }
-    });
-
-
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(

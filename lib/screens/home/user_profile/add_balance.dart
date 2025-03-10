@@ -53,11 +53,11 @@ class _AddBalanceState extends State<AddBalance> {
   var box = Hive.box(HiveOpenBox.storeAddress);
 
   Future<void> handlePaymentSuccess(PaymentSuccessResponse res) async {
-    // ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
-    //   content: new Text("Payment Successfull"),
-    // ));
+    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+      content: new Text("Payment Successfull"),
+    ));
     setState(() {
-      var zestyAmt = int.parse(box.get(HiveOpenBox.userZestyMoney));
+      var zestyAmt = int.parse((box.get(HiveOpenBox.userZestyMoney)));
       zestyAmt += int.parse(_amountController.text);
       box.put(HiveOpenBox.userZestyMoney, zestyAmt.toString());
       // widget.updateSetState;
@@ -230,9 +230,12 @@ class _AddBalanceState extends State<AddBalance> {
                 child: ElevatedButton(onPressed: (){
                   int amount = int.parse(_amountController.text);
                   openCheckout(amount);
+                  // box.put(HiveOpenBox.userZestyMoney, "0");
+                  // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("local db: ${int.parse(box.get(HiveOpenBox.userZestyMoney))}")));
+
                 },
                     onLongPress: () {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("local db:${box.get(HiveOpenBox.userZestyMoney)}, const: ${int.parse(box.get(HiveOpenBox.userZestyMoney))}")));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("local db: ${double.parse(box.get(HiveOpenBox.userZestyMoney))}")));
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: TColors.darkGreen,

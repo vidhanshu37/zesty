@@ -39,17 +39,23 @@ class _ShowGoogleMapState extends State<ShowGoogleMap> {
   }
 
   /// Store address and subAddress
+  var box = Hive.box(HiveOpenBox.storeLatLongTable);
   void storeAddress(title, subTitle) {
     // var box = Hive.box(HiveOpenBox.storeAddress);
     // box.put(HiveOpenBox.storeAddressTitle, title);
     // box.put(HiveOpenBox.storeAddressSubTitle, subTitle);
-    var box = Hive.box(HiveOpenBox.storeLatLongTable);
     box.put(HiveOpenBox.address, title);
   }
 
 
   // fetching address for location and show street name etc from geolocation
+  var userLat = 0.0;
+  var userLong = 0.0;
+
   Future<void> _fetchAddress(double latitude, double longitude) async {
+    userLat = latitude;
+    userLong = longitude;
+    _userLocation = LatLng(latitude, longitude);
     try {
       setState(() {
         _isFetchingLocation = true;
@@ -206,12 +212,13 @@ class _ShowGoogleMapState extends State<ShowGoogleMap> {
                     child: ZElevatedButton(
                       title: "Confirm Location",
                       onPress: () {
+                        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("lat: $userLat and long: $userLong}")));
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => TopMap(
-                              lat: _userLocation.latitude,
-                              lng: _userLocation.longitude,
+                              lat: userLat,
+                              lng: userLong,
                               address: address ?? "",
                               subAddress: subAddress ?? "",
                             ),

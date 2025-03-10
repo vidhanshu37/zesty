@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:zesty/screens/home/home.dart';
+import 'package:zesty/screens/home/user_profile/add_new_address.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:zesty/utils/http/userExistAPI.dart';
 import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
@@ -23,8 +24,12 @@ class addressTextFields extends StatefulWidget {
     required this.subAddress,
     required this.userName,
     required this.formKey,
+    required this.userLat,
+    required this.userLong,
   });
 
+  final double userLat;
+  final double userLong;
   final TextEditingController userName;
   final TextEditingController houseNumber;
   final TextEditingController roadName;
@@ -40,16 +45,23 @@ class addressTextFields extends StatefulWidget {
 
 class _addressTextFieldsState extends State<addressTextFields> {
   var box = Hive.box(HiveOpenBox.storeLatLongTable);
+  var checkExist = Hive.box(HiveOpenBox.storeAddress);
   Map<String, dynamic>? userData = {};
 
   void _validation(BuildContext context) async {
     if (widget.formKey.currentState!.validate()) {
-      userRegisterAPI(context);
+      if(checkExist.isEmpty) {
+        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("pella")));
+        userRegisterAPI(context);
+      } else {
+        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("data")));
+        updateAddress(context);
+      }
     }
   }
 
   Future<void> userRegisterAPI(context) async {
-    final url = Uri.parse('https://zesty-backend.onrender.com/user/register');
+      final url = Uri.parse('https://zesty-backend.onrender.com/user/register');
     try {
       final response = await http.post(
           url,
@@ -59,17 +71,17 @@ class _addressTextFieldsState extends State<addressTextFields> {
           body: jsonEncode({
             "mobile": box.get(HiveOpenBox.mobile, defaultValue: "1234567890"),
             "email": box.get(HiveOpenBox.email, defaultValue: "abc"),
-            "address": box.get(HiveOpenBox.address, defaultValue: "abc"),
-            "latitute": box.get(HiveOpenBox.lat, defaultValue: "21.2049"),
-            "longitude": box.get(HiveOpenBox.long, defaultValue: "72.8411")
+            "address": "${box.get(HiveOpenBox.address)}*${widget.contactNumber.text}*${box.get(HiveOpenBox.lat, defaultValue: "21.2049")}*${box.get(HiveOpenBox.long, defaultValue: "72.8411")}",
+            "latitute": widget.userLat,
+            "longitude": widget.userLat,
           }));
 
       userData = jsonDecode(response.body);
 
       if(response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User register")));
+        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User register")));
         var hiveBox = Hive.box(HiveOpenBox.storeAddress);
-        hiveBox.put(HiveOpenBox.storeAddressTitle, userData!['user']['address'] ?? "surat");
+        hiveBox.put(HiveOpenBox.storeAddressTitle, box.get(HiveOpenBox.address) ?? "surat");
         hiveBox.put(HiveOpenBox.storeAddressLat, userData!['user']['latitute'] ?? "21.2049");
         hiveBox.put(HiveOpenBox.storeAddressLong, userData!['user']['longitude'] ?? "72.8411");
         hiveBox.put(HiveOpenBox.userMobile, userData!['user']['mobile'] ?? "1234567890");
@@ -78,7 +90,6 @@ class _addressTextFieldsState extends State<addressTextFields> {
         hiveBox.put(HiveOpenBox.userZestyLite, userData!['user']['zestyLite'] ?? "false");
         hiveBox.put(HiveOpenBox.userZestyMoney, userData!['user']['zestyMoney'] ?? "0");
         hiveBox.put(HiveOpenBox.userName, widget.userName.text);
-
 
         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen(address: box.get(HiveOpenBox.address, defaultValue: "abc"), subAddress: ""),), (Route<dynamic> route) => false,);
       } else if (response.statusCode == 405) {
@@ -91,6 +102,35 @@ class _addressTextFieldsState extends State<addressTextFields> {
       print(e);
     }
   }
+
+  Future<void> updateAddress(context) async {
+    final url = Uri.parse('https://zesty-backend.onrender.com/user/update-user');
+
+    try {
+      final response = await http.post(
+          url,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: jsonEncode({
+            "address": "${box.get(HiveOpenBox.address)}*${widget.contactNumber.text}*${widget.userLat}*${widget.userLong}",
+            "id": checkExist.get(HiveOpenBox.userId),
+          }));
+
+
+      if(response.statusCode == 200) {
+        var hiveBox = Hive.box(HiveOpenBox.storeAddress);
+        hiveBox.put(HiveOpenBox.storeAddressTitle,  box.get(HiveOpenBox.address));
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => AddNewAddress()), (route) => route.isFirst);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.statusCode.toString())));
+      }
+    } catch(e) {
+      print("error");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("e.toString()")));
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -211,12 +251,7 @@ class _addressTextFieldsState extends State<addressTextFields> {
               const SizedBox(height: 50),
               ZElevatedButton(title: "Add Address", onPress: () {
                 _validation(context);
-                // Navigator.of(context).pushAndRemoveUntil(
-                //     MaterialPageRoute(builder: (context) => HomeScreen(
-                //       address: address,
-                //       subAddress: subAddress,
-                //     )),
-                //       (Route<dynamic> route) => false,);
+                // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(widget.userLat.toString())));
               }),
               const SizedBox(height: 30),
 
