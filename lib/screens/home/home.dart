@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_avif/flutter_avif.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:hive/hive.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
 import 'package:zesty/screens/home/Shimmer_home.dart';
 import 'package:zesty/screens/home/category_home.dart';
@@ -16,6 +17,7 @@ import 'package:zesty/screens/home/zesty_Mart/zesty_mart_page.dart';
 import 'package:zesty/screens/restaurants_side/restaurants_home.dart';
 import 'package:zesty/utils/constants/api_constants.dart';
 import 'package:zesty/utils/constants/media_query.dart';
+import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
 import 'custom_widget/appBarBanner.dart';
 import '../../utils/constants/colors.dart';
 import 'custom_widget/carouselBanner.dart';
@@ -399,6 +401,11 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
               ),
 
+              SliverToBoxAdapter(
+                child: ElevatedButton(onPressed: (){
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("hi: Hive.box(HiveOpenBox.storeAddress).get(HiveOpenBox.storeAddressTitle)")));
+                }, child: Text("data")),
+              ),
               /// main home page vertical restaurant
               SliverList.builder(
                   itemCount: restaurantData.length,

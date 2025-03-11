@@ -75,13 +75,20 @@ class _AddNewAddressState extends State<AddNewAddress> {
                 }),
               ),
             ),
-            ZElevatedButton(title: "ADD ADDRESS", onPress: (){
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ConfirmLocation()));
+            Container(
+              height: 80,
+              width: double.infinity,
+              color: TColors.bgLight,
+              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+              child: ZElevatedButton(title: "ADD ADDRESS", onPress: (){
+                // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(addresses.length.toString())));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ConfirmLocation()));
 
-            })
+              }),
+            )
           ],
         ),
       ),
@@ -128,6 +135,7 @@ class _addressCardState extends State<addressCard> {
 
       if(response.statusCode == 200) {
         ScaffoldMessenger.of(widget.context).showSnackBar(SnackBar(content: Text("Deleted!")));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => AddNewAddress()));
       } else {
         ScaffoldMessenger.of(widget.context).showSnackBar(SnackBar(content: Text(response.statusCode.toString())));
       }

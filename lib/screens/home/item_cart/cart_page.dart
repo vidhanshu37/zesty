@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
 import 'package:zesty/screens/home/custom_widget/multi_address_card.dart';
 import 'package:zesty/screens/home/item_cart/cartPayment.dart';
@@ -23,7 +24,7 @@ class CartPage extends StatefulWidget {
   State<CartPage> createState() => _CartPageState();
 }
 
-class _CartPageState extends State<CartPage> with WidgetsBindingObserver {
+class _CartPageState extends State<CartPage> {
   bool isExpanded = false;
 
   bool checkCouponDiscount = false;
@@ -309,7 +310,6 @@ class _CartPageState extends State<CartPage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     fetchAddress();
     getQuantity();
     fetchCartData();
@@ -333,31 +333,6 @@ class _CartPageState extends State<CartPage> with WidgetsBindingObserver {
     // }
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.resumed) {
-      // The app is in the foreground and visible to the user.
-      // This is similar to Android's onResume.
-      print("resume");
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("resume")));
-    } else if (state == AppLifecycleState.paused) {
-      // The app is in the background and not visible to the user.
-      // This is similar to Android's onPause.
-      print("paused");
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("App is paused")));
-    } else if (state == AppLifecycleState.inactive) {
-      // The app is in an inactive state and is not receiving user input.
-      // This can happen when the app is transitioning between states.
-      print("inactive");
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("App is inactive")));
-    } else if (state == AppLifecycleState.detached) {
-      // The app is still hosted on a flutter engine but is detached from any host views.
-      // This is a rare state.
-      print("detached");
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("App is detached")));
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -460,13 +435,18 @@ class _CartPageState extends State<CartPage> with WidgetsBindingObserver {
                 ),
                 child: Padding(
                     padding: const EdgeInsets.all(0.0),
-                  child: ListTile(
-                    leading: Icon(Icons.location_on_rounded),
-                    title: Text("Delivery Address", style: Theme.of(context).textTheme.bodyLarge,),
-                    subtitle: Text("${boxAddress.get(HiveOpenBox.storeAddressTitle)}", style: Theme.of(context).textTheme.labelMedium, maxLines: 1,),
-                    trailing: IconButton(onPressed: (){
-                      showAddressDialog();
-                    }, icon: Icon(Icons.arrow_forward_ios_outlined, size: 16, color: TColors.darkerGrey,),),
+                  child: ValueListenableBuilder(
+                    valueListenable: Hive.box(HiveOpenBox.storeAddress).listenable(),
+                    builder: (context, Box box, _) {
+                      return ListTile(
+                        leading: Icon(Icons.location_on_rounded),
+                        title: Text("Delivery Address", style: Theme.of(context).textTheme.bodyLarge,),
+                        subtitle: Text("${box.get(HiveOpenBox.storeAddressTitle, defaultValue: "No address found!")}", style: Theme.of(context).textTheme.labelMedium, maxLines: 1,),
+                        trailing: IconButton(onPressed: (){
+                          showAddressDialog();
+                        }, icon: Icon(Icons.arrow_forward_ios_outlined, size: 16, color: TColors.darkerGrey,),),
+                      );
+                    },
                   ),
                 ),
               ),

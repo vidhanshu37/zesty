@@ -34,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     Future.delayed(const Duration(seconds: 3), () {
         if(box.isNotEmpty) {
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => HomeScreen(address: box.get(HiveOpenBox.storeAddressTitle), subAddress: "")), (predicate) => false);
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => HomeScreen(address: "", subAddress: "")), (predicate) => false);
         } else {
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => onbording()), (predicate) => false);
         }
