@@ -121,7 +121,8 @@ class _addressTextFieldsState extends State<addressTextFields> {
       if(response.statusCode == 200) {
         var hiveBox = Hive.box(HiveOpenBox.storeAddress);
         hiveBox.put(HiveOpenBox.storeAddressTitle,  box.get(HiveOpenBox.address));
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => AddNewAddress()), (route) => route.isFirst);
+        // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => AddNewAddress()), (route) => route.isFirst);
+        Navigator.popUntil(context, (route) => route.isFirst);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.statusCode.toString())));
       }
@@ -251,6 +252,7 @@ class _addressTextFieldsState extends State<addressTextFields> {
               const SizedBox(height: 50),
               ZElevatedButton(title: "Add Address", onPress: () {
                 _validation(context);
+                // box.get(HiveOpenBox.address);
                 // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(widget.userLat.toString())));
               }),
               const SizedBox(height: 30),

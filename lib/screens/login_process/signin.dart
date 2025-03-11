@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
 import 'package:zesty/screens/login_process/otpscreen.dart';
+import 'package:zesty/utils/constants/colors.dart';
 import 'package:zesty/utils/constants/media_query.dart';
 import 'package:zesty/utils/constants/text_string.dart';
 
@@ -17,6 +18,7 @@ class signin extends StatefulWidget {
 class _signinState extends State<signin> {
   //final formkey = GlobalKey<FormState>();
   String phnNumber = '';
+  FocusNode _focusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -58,16 +60,31 @@ class _signinState extends State<signin> {
               left: 5,
               right: 5,
               child: IntlPhoneField(
+                focusNode: _focusNode,
                 decoration: InputDecoration(
                   hintText: "00000 00000",
                   border: OutlineInputBorder(
                     borderSide: BorderSide(),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: TColors.error
+                    )
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: TColors.error
+                      ),
                   ),
                 ),
                 initialCountryCode: 'IN',
                 onChanged: (phone) {
                   print(phone.completeNumber);
                   phnNumber = phone.number.toString();
+                  if(phone.number.length == 10) {
+                    _focusNode.unfocus();
+                    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("data")));
+                  }
                   // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(phone.completeNumber.toString())));
                 },
               ),

@@ -128,9 +128,11 @@ class _otpverifyState extends State<otpverify> {
       if (response.statusCode == 200) {
         var responseBody = jsonDecode(response.body);
         /// SUCCESS
+        String fullAddress = userExistData?['userExist']['address'][0];
+        List address = fullAddress.split("*");
         if(responseCode == 200) {
             var box = Hive.box(HiveOpenBox.storeAddress);
-            box.put(HiveOpenBox.storeAddressTitle, userExistData?['userExist']['address']);
+            box.put(HiveOpenBox.storeAddressTitle, address[0]);
             box.put(HiveOpenBox.storeAddressSubTitle, "");
             box.put(HiveOpenBox.storeAddressLat, userExistData?['userExist']['latitute']);
             box.put(HiveOpenBox.storeAddressLong, userExistData?['userExist']['longitude']);
@@ -223,7 +225,12 @@ class _otpverifyState extends State<otpverify> {
         textAlign: TextAlign.center,
         maxLength: 1,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        onChanged: (value) => _handleotpinput(value,index),
+        onChanged: (value) {
+          _handleotpinput(value,index);
+          if(index == 3) {
+            focusnode[3].unfocus();
+          }
+        },
         decoration: InputDecoration(
           border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),

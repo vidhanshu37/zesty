@@ -252,7 +252,7 @@ class _ZestymartcartState extends State<Zestymartcart> {
                         children: [
                           SizedBox(height: 10,),
                           Text(
-                            "To Pay ₹${(calculateCartTotal() + int.parse(countDeliveryCharge()) + (calculateCartTotal() * 0.05)).round()}",
+                            "To Pay ₹${(calculateCartTotal() + double.parse(countDeliveryCharge()) + (calculateCartTotal() * 0.05)).round()}",
                             // "To Pay ₹${(double.parse(calculateTotalCartValue().toStringAsFixed(2)) + double.parse(calculateDeliveryCharge().toStringAsFixed(2)) + packagingCharge.map((e) => double.tryParse(e) ?? 0.0) // Convert each item to double
                             //     .fold(0.0, (sum, element) => sum + element) + calculateTotalCartValue() * 0.05).toStringAsFixed(2)}",
 
@@ -470,7 +470,7 @@ class _ZestymartcartState extends State<Zestymartcart> {
                                     .bodyLarge,
                               ),
                               Text(
-                                "₹${(calculateCartTotal() + int.parse(countDeliveryCharge()) + (calculateCartTotal() * 0.05)).round()}",
+                                "₹${(calculateCartTotal() + double.parse(countDeliveryCharge()) + (calculateCartTotal() * 0.05)).round()}",
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyLarge,
@@ -490,7 +490,7 @@ class _ZestymartcartState extends State<Zestymartcart> {
 
               ZElevatedButton(title: "Make Payment", onPress: () {
                 // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(box.values.toString())));
-                Navigator.push(context, MaterialPageRoute(builder: (builder) => ZestyMartPayment(totalPrice: (calculateCartTotal() + int.parse(countDeliveryCharge()) + (calculateCartTotal() * 0.05)).round().toString())));
+                Navigator.push(context, MaterialPageRoute(builder: (builder) => ZestyMartPayment(totalPrice: (calculateCartTotal() + double.parse(countDeliveryCharge()) + (calculateCartTotal() * 0.05)).round().toString())));
               })
 
             ],
