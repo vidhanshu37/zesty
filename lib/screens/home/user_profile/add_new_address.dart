@@ -134,7 +134,7 @@ class _addressCardState extends State<addressCard> {
       );
 
       if(response.statusCode == 200) {
-        ScaffoldMessenger.of(widget.context).showSnackBar(SnackBar(content: Text("Deleted!")));
+        // ScaffoldMessenger.of(widget.context).showSnackBar(SnackBar(content: Text("Deleted!")));
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => AddNewAddress()));
       } else {
         ScaffoldMessenger.of(widget.context).showSnackBar(SnackBar(content: Text(response.statusCode.toString())));

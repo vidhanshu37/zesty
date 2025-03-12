@@ -174,7 +174,7 @@ class _AppBarHomeState extends State<AppBarHome> {
                           },
                         ),
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(height: 80),
                     ],
                   ),
                   Positioned(
@@ -207,7 +207,6 @@ class _AppBarHomeState extends State<AppBarHome> {
       },
     );
   }
-
 
   @override
   void initState() {

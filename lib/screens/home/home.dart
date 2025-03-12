@@ -401,11 +401,6 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
               ),
 
-              SliverToBoxAdapter(
-                child: ElevatedButton(onPressed: (){
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("hi: Hive.box(HiveOpenBox.storeAddress).get(HiveOpenBox.storeAddressTitle)")));
-                }, child: Text("data")),
-              ),
               /// main home page vertical restaurant
               SliverList.builder(
                   itemCount: restaurantData.length,
