@@ -10,6 +10,7 @@ import 'package:zesty/utils/constants/api_constants.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:http/http.dart' as http;
 
+import '../../myHomePage.dart';
 import '../../utils/local_storage/HiveOpenBox.dart';
 import '../home/item_cart/cart_page.dart';
 import '../home/restaurantSingleItemCard.dart';
@@ -28,6 +29,8 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
   final TextEditingController searchbarController = TextEditingController();
   Map<String, dynamic>? restaurantData;
 
+
+
   List allMenuItem = [];
   List filteredItemDetails = [];
 
@@ -37,11 +40,18 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
 
   var box = Hive.box(HiveOpenBox.zestyFoodCart);
 
+
   @override
   void initState() {
     super.initState();
     retriveData();
     getRestaurantData(widget.id); //fetch data of restaurant
+  }
+
+  List allCategory = [];
+  void getAllCategory() {
+    allCategory = allMenuItem.map((item) => item['category']).toSet().toList();
+    allCategory.insert(0, "All");
   }
 
   Future<void> getRestaurantData(String id) async {
@@ -53,6 +63,8 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
         allMenuItem = restaurantData?['menu'];
         // print("Success");
         setState(() {});
+        getAllCategory();
+        selectCategoryData();
       } else {
         // print("Fail");
       }
@@ -63,7 +75,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
 
   void filterSearchResult(String query){
     if (query.isEmpty){
-      filteredItemDetails = List.from(allMenuItem);
+      filteredItemDetails = allMenuItem;
     } else {
       setState(() {
         filteredItemDetails = allMenuItem.where((item) {
@@ -72,6 +84,24 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
         },).toList();
       });
     }
+  }
+
+  String nameSelectCategory = "All";
+
+  void selectCategoryData() {
+      if (nameSelectCategory == "All") {
+      setState(() {
+        filteredItemDetails = allMenuItem.toList();
+      });
+    } else {
+      setState(() {
+        filteredItemDetails = allMenuItem.where((item) {
+          String categoryName = item['category'].toString();
+          return categoryName.contains(nameSelectCategory);
+        }).toList();
+      });
+    }
+
   }
 
   void updateCartState() {
@@ -96,6 +126,15 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
     } else {
       return "45-50 mins";
     }
+  }
+
+
+  void _showFloatingMenu(BuildContext context) async {
+       nameSelectCategory = await Navigator.of(context).push(PageRouteBuilder(
+      opaque: false,
+      pageBuilder: (_, __, ___) => FloatingMenuScreen(categoryItems: allCategory.toList(), bottom: box.isEmpty ? 20 : 100 ),
+    ));
+       selectCategoryData();
   }
 
   @override
@@ -222,7 +261,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
                           (context, index) {
-                            final itemList = searchbarController.text.isEmpty ? allMenuItem : filteredItemDetails;
+                            final itemList = filteredItemDetails;
                         return ItemCard(
                           itemName: itemList[index]['name'] ?? "Zesty",
                           itemDescription: itemList[index]['description'] ?? "Zesty description",
@@ -235,7 +274,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                           foodType: itemList[index]['foodType'],
                         );
                       },
-                      childCount: searchbarController.text.isEmpty ? allMenuItem.length : filteredItemDetails.length,
+                      childCount: filteredItemDetails.length,
                     ),
                   ),
 
@@ -324,9 +363,9 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                         width: constraints.maxWidth - 40, // Use constraints from LayoutBuilder
                         child: ElevatedButton(
                           onPressed: () {
-                            // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(box.toMap().toString())));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(nameSelectCategory)));
                             if(box.isNotEmpty) {
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => CartPage(deliveryTime: countDeliveryTime())));
+                              // Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => CartPage(deliveryTime: countDeliveryTime())));
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -335,7 +374,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
+                            children: <Widget>[
                               Text("Total item - ${box.values
                                   .map((order) => order['qty'] as int) // Extract 'qty' from each item
                                   .fold(0, (sum, qty) => sum + qty)}"), // Sum all quantities
@@ -350,6 +389,34 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
             ],
           );
         },
+      ),
+
+      floatingActionButton: Stack(
+        children: [
+          Positioned(
+            bottom: box.isNotEmpty ? 100 : 20 ,
+            right: 20,
+            child: SizedBox(
+              height: 80,
+              width: 80,
+              child: FloatingActionButton(onPressed: (){
+                _showFloatingMenu(context);
+                // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(nameSelectCategory)));
+              },
+              elevation: 5.0,
+                shape: CircleBorder(),
+              backgroundColor: Colors.black,
+                child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.event_note_rounded, color: Colors.white,),
+                  SizedBox(height: 5,),
+                  Text("MENU", style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Colors.white),)
+                ],
+                      ),),
+            ),
+          ),
+        ],
       ),
     );
   }
