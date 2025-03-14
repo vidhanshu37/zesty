@@ -62,8 +62,8 @@ class MyApp extends StatelessWidget {
       // home: ItemCard(itemName: "itemName", itemDescription: "itemDescription", itemPrice: "itemPrice", itemMenuId: "itemMenuId", updateCartState: () {}, restaurantId: "restaurantId", onIncrement: (){}, onDecrement: (){}, counter: 0),
       // home: MartItemImagesScreen(martItemId: '67b9c261b10e67aa58074037',),
       // home: TrackDeliveryOrder(ResLongitude: 72.8411, ResLatitude: 21.2049),
-      // home: SplashScreen(),
-      home:  FloatingHeroMenu(),
+      home: SplashScreen(),
+      // home:  FloatingHeroMenu(),
       // home: LocationAccess(),
     );
   }

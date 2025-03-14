@@ -36,6 +36,7 @@ class SearchBarHomeState extends State<SearchBarHome> {
   int currentIndex = 0;
   Timer? _timer;
   bool isTyping = false;
+  FocusNode focusNode = FocusNode();
 
   @override
   void initState() {
@@ -43,6 +44,9 @@ class SearchBarHomeState extends State<SearchBarHome> {
     _startSuggestionLoop();
     widget.searchController.addListener(() {
       setState(() {
+        if(widget.searchController.text.isEmpty) {
+          focusNode.unfocus();
+        }
         isTyping = widget.searchController.text.isNotEmpty;
       });
     });
@@ -79,6 +83,8 @@ class SearchBarHomeState extends State<SearchBarHome> {
           ),
           Expanded(
             child: TextField(
+              focusNode: focusNode,
+              cursorColor: Colors.black,
               readOnly: widget.readOnly,
               onTap: widget.onTap,
               onChanged: widget.onChange,
@@ -93,16 +99,16 @@ class SearchBarHomeState extends State<SearchBarHome> {
               style: TextStyle(fontSize: 13),
             ),
           ),
-          if (widget.searchController.text.isNotEmpty)
-            IconButton(
-              icon: Icon(Icons.clear, size: 20, color: TColors.darkGrey,),
-              onPressed: () {
-                widget.searchController.clear();
-                setState(() {
-                  isTyping = false;
-                });
-              },
-            ),
+          // if (widget.searchController.text.isNotEmpty)
+            // IconButton(
+            //   icon: Icon(Icons.clear, size: 20, color: TColors.darkGrey,),
+            //   onPressed: () {
+            //     widget.searchController.clear();
+            //     setState(() {
+            //       isTyping = false;
+            //     });
+            //   },
+            // ),
         ]));
   }
 }
