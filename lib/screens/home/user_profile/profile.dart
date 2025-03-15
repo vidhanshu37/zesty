@@ -72,8 +72,8 @@ class _profileState extends State<profile> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => zesty1(),));
               },
             ),
-              Divider(),
-              menuItem("My Account", "Favourites"),
+              // Divider(),
+              // menuItem("My Account", "Favourites"),
               Divider(),
               ListTile(
                 contentPadding: EdgeInsets.zero,
@@ -94,8 +94,8 @@ class _profileState extends State<profile> {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => MoneyGift(),));
                 },
               ),
-              Divider(),
-              menuItem("Past Order", "Track Your Previous Order"),
+              // Divider(),
+              // menuItem("Past Order", "Track Your Previous Order"),
               // Text("PAST ORDER",style: TextStyle(fontSize: 16),),
               // SizedBox(height: 10,),
               // Card(
@@ -127,7 +127,7 @@ class _profileState extends State<profile> {
               //   ),
               // ),
 
-              SizedBox(height: 20,),
+              SizedBox(height: 180,),
               // ListTile(
               //   title: Text("LOGOUT OPTION",style: Theme.of(context).textTheme.headlineSmall),
               //   trailing: Icon(Icons.arrow_forward_ios,color: Colors.grey,size: 16,),
