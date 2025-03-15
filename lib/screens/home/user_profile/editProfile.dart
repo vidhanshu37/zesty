@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:zesty/utils/constants/colors.dart';
+import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
 
 
 class EditAccountScreen extends StatefulWidget {
@@ -10,7 +12,8 @@ class EditAccountScreen extends StatefulWidget {
 }
 
 class _EditAccountScreenState extends State<EditAccountScreen> {
-  String savedName = "abc xyz";
+  var box = Hive.box(HiveOpenBox.storeAddress);
+  String savedName = "abc";
   String savedEmail = "abc@gmail.com";
   String savedPhone = "9876543210";
 
@@ -24,6 +27,8 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
   @override
   void initState() {
     super.initState();
+    savedName = box.get(HiveOpenBox.userName, defaultValue: "Zesty");
+    savedPhone = box.get(HiveOpenBox.userMobile);
     nameController.text = savedName;
     emailController.text = savedEmail;
     phoneController.text = savedPhone;
@@ -79,7 +84,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
           "EDIT ACCOUNT",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: TColors.grey,
         elevation: 1,
       ),
       body: Padding(

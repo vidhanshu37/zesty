@@ -363,9 +363,9 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                         width: constraints.maxWidth - 40, // Use constraints from LayoutBuilder
                         child: ElevatedButton(
                           onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(nameSelectCategory)));
+                            // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(nameSelectCategory)));
                             if(box.isNotEmpty) {
-                              // Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => CartPage(deliveryTime: countDeliveryTime())));
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => CartPage(deliveryTime: countDeliveryTime())));
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -397,8 +397,8 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
             bottom: box.isNotEmpty ? 100 : 20 ,
             right: 20,
             child: SizedBox(
-              height: 80,
-              width: 80,
+              height: 75,
+              width: 75,
               child: FloatingActionButton(onPressed: (){
                 _showFloatingMenu(context);
                 // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(nameSelectCategory)));
