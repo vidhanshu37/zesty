@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
+import 'package:http/http.dart' as http;
 
 
 class EditAccountScreen extends StatefulWidget {
@@ -29,6 +32,11 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     super.initState();
     savedName = box.get(HiveOpenBox.userName, defaultValue: "Zesty");
     savedPhone = box.get(HiveOpenBox.userMobile);
+    if(box.get(HiveOpenBox.userEmail) != "abc") {
+      savedEmail = box.get(HiveOpenBox.userEmail, defaultValue: "Please register your email");
+    } else {
+      savedEmail = "Register your email";
+    }
     nameController.text = savedName;
     emailController.text = savedEmail;
     phoneController.text = savedPhone;
@@ -50,15 +58,55 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     });
   }
 
-  void updateValues() {
-    setState(() {
-      if (editingField == "Name") savedName = nameController.text;
-      if (editingField == "Email") savedEmail = emailController.text;
-      if (editingField == "Phone") savedPhone = phoneController.text;
+  /// Update user data
+  Future<void> updateAddress(context) async {
+    var box = Hive.box(HiveOpenBox.storeAddress);
+    final url = Uri.parse('https://zesty-backend.onrender.com/user/update-user');
 
-      editingField = null;
-      isUpdateEnabled = false;
-    });
+    try {
+      final response = await http.post(
+          url,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: jsonEncode({
+            "name": savedName,
+            "email": savedEmail,
+            "mobile": savedPhone,
+            "id": box.get(HiveOpenBox.userId),
+          }));
+
+
+      if(response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Updated!")));
+        box.put(HiveOpenBox.userName, savedName);
+        box.put(HiveOpenBox.userMobile, savedPhone);
+        box.put(HiveOpenBox.userEmail, savedEmail);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.statusCode.toString())));
+      }
+    } catch(e) {
+      print("error");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("e.toString()")));
+    }
+  }
+
+
+  void updateValues() {
+    if(nameController.text.trim().isNotEmpty && emailController.text.trim().isNotEmpty && phoneController.text.trim().isNotEmpty) {
+      updateAddress(context);
+      setState(() {
+        if (editingField == "Name") savedName = nameController.text;
+        if (editingField == "Email") savedEmail = emailController.text;
+        if (editingField == "Phone") savedPhone = phoneController.text;
+
+        editingField = null;
+        isUpdateEnabled = false;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Not Valid!")));
+    }
+
   }
 
   void cancelEditing() {

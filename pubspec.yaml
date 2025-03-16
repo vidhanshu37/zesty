@@ -55,6 +55,7 @@ dependencies:
   intl: ^0.20.2
   location: ^8.0.0
   url_launcher: ^6.3.1
+  flutter_launcher_icons: ^0.14.3
 
 
 dev_dependencies:
@@ -121,3 +122,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/ZestyLogo.png"
+  remove_alpha_ios: true
