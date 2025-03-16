@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:zesty/screens/home/user_profile/add_new_address.dart';
 import 'package:zesty/screens/home/user_profile/editProfile.dart';
 import 'package:zesty/screens/home/user_profile/money_Gift_Cards.dart';
 import 'package:zesty/screens/home/user_profile/zesty1.dart';
+import 'package:zesty/screens/login_process/signin.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:zesty/utils/constants/media_query.dart';
 import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
@@ -17,6 +17,26 @@ class profile extends StatefulWidget{
 class _profileState extends State<profile> {
 
   var box = Hive.box(HiveOpenBox.storeAddress);
+
+  void showLogoutDialog() {
+    showDialog(context: context, builder: (builder) => AlertDialog(
+      title: Text("Are you sure want to logout?"),
+      content: Text("You will be logged out of your account. You can log in again anytime."),
+      actions: [
+        TextButton(onPressed: (){
+          Navigator.pop(context);
+          box.clear(); // storeAddress
+          Hive.box(HiveOpenBox.zestyFoodCart).clear();
+          Hive.box(HiveOpenBox.storeZestyMartItem).clear();
+          Hive.box(HiveOpenBox.storeLatLongTable).clear();
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => signin()), (_) =>  false);
+        }, child: Text("Logout", style: TextStyle(color: TColors.error),)),
+        TextButton(onPressed: (){
+          Navigator.pop(context);
+        }, child: Text("Cancel", style: TextStyle(color: Colors.black),))
+      ],
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +53,17 @@ class _profileState extends State<profile> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 20,),
-              Text(box.get(HiveOpenBox.userName, defaultValue: "Zesty"),style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold)),
-              Text("+91 ${box.get(HiveOpenBox.userMobile)}",style: TextStyle(color: TColors.darkerGrey,fontSize: 12)),
+              ValueListenableBuilder(
+                  valueListenable: Hive.box(HiveOpenBox.storeAddress).listenable(),
+                  builder: (context, Box box, _) {
+                    return Column(
+                      children: [
+                        Text(box.get(HiveOpenBox.userName, defaultValue: "Zesty"),style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold)),
+                        Text("+91 ${box.get(HiveOpenBox.userMobile)}",style: TextStyle(color: TColors.darkerGrey,fontSize: 12)),
+                      ],
+                    );
+                  },
+              ),
               SizedBox(height: 10,),
               InkWell(onTap: (){
                 Navigator.push(context, MaterialPageRoute(builder: (context) => EditAccountScreen(),));
@@ -135,16 +164,18 @@ class _profileState extends State<profile> {
               // )
               Container(
                   height: 55,
-                  width: 350,
+                  width: ZMediaQuery(context).width,
                   child: OutlinedButton(
                       style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Colors.red,width: 2),
-                          foregroundColor: Colors.red,
+                          side: BorderSide(color: TColors.error,width: 2),
+                          foregroundColor: TColors.error,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           )
                       ),
-                      onPressed: (){}, child: Text("LOGOUT OPTION",style: TextStyle(fontSize: 17,color: Colors.red),))),
+                      onPressed: (){
+                        showLogoutDialog();
+                      }, child: Text("LOGOUT",style: TextStyle(fontSize: 17,color: TColors.error),))),
             ],
           ),
         ),

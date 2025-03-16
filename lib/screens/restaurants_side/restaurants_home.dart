@@ -109,9 +109,9 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
   }
 
   void retriveData() {
-    var hiveBox = Hive.box("zestyBox");
-    lat = hiveBox.get("latitude", defaultValue: 21.2049);
-    long = hiveBox.get("longitude", defaultValue: 72.8411);
+    var hiveBox = Hive.box(HiveOpenBox.storeAddress);
+    lat = double.parse(hiveBox.get(HiveOpenBox.storeAddressLat, defaultValue: "21.2049"));
+    long = double.parse(hiveBox.get(HiveOpenBox.storeAddressLong, defaultValue: "72.8411"));
   }
 
 
