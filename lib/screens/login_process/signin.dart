@@ -23,40 +23,41 @@ class _signinState extends State<signin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: TColors.white,
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Stack(
           //mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Positioned(
-                top: 20,
+                top: 70,
                 left: 20,
                 right: 20,
                 child: Image.asset(
-                  "assets/images/pic1.jpg",
+                  "assets/images/mobile.jpeg",
                   height: ZMediaQuery(context).height * 0.30,
                 )),
             Positioned(
-                top: ZMediaQuery(context).height * 0.30 + 40,
+                top: ZMediaQuery(context).height * 0.30 + 80,
                 left: 5,
                 child: Text(
                   ZText.startApp,
                   style: Theme.of(context).textTheme.headlineLarge,
                 )),
             Positioned(
-                top: ZMediaQuery(context).height * 0.30 + 68,
+                top: ZMediaQuery(context).height * 0.30 + 108,
                 left: 5,
                 child: Text(ZText.loginOrSignup,
                     style: Theme.of(context).textTheme.labelMedium)),
             Positioned(
-                top: ZMediaQuery(context).height * 0.30 + 120,
+                top: ZMediaQuery(context).height * 0.30 + 160,
                 left: 5,
                 child: Text(
                   "Enter phone number",
                   style: Theme.of(context).textTheme.bodyLarge,
                 )),
             Positioned(
-              top: ZMediaQuery(context).height * 0.30 + 145,
+              top: ZMediaQuery(context).height * 0.30 + 185,
               left: 5,
               right: 5,
               child: IntlPhoneField(

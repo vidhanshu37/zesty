@@ -31,6 +31,7 @@ class _onbordingState extends State<onbording> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: TColors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -47,23 +48,13 @@ class _onbordingState extends State<onbording> {
                 },
                 children: [
                   buildOnboardingPage(
-                    imagePath: "assets/images/pic1.jpg",
+                    imagePath: "assets/images/onbording1.jpeg",
                     title: ZText.title1,
                     subtitle: ZText.subTitle,
                   ),
                   buildOnboardingPage(
-                    imagePath: "assets/images/pic1.jpg",
+                    imagePath: "assets/images/onbording2.jpeg",
                     title: ZText.title2,
-                    subtitle: ZText.subTitle,
-                  ),
-                  buildOnboardingPage(
-                    imagePath: "assets/images/pic1.jpg",
-                    title: ZText.title3,
-                    subtitle: ZText.subTitle,
-                  ),
-                  buildOnboardingPage(
-                    imagePath: "assets/images/pic1.jpg",
-                    title: ZText.title4,
                     subtitle: ZText.subTitle,
                   ),
                 ],
@@ -81,10 +72,10 @@ class _onbordingState extends State<onbording> {
       child: Stack(
         children: [
           Positioned(
-            top: 50,
+            top: 10,
               left: 5,
               right: 5,
-              child: Image.asset(imagePath, height: ZMediaQuery(context).height * 0.30,)
+              child: Image.asset(imagePath, height: ZMediaQuery(context).height * 0.50,)
           ),
           //SizedBox(height: 40,),
           Positioned(
@@ -104,8 +95,8 @@ class _onbordingState extends State<onbording> {
             bottom: 55,
             left: 5,
             right: 5,
-            child: ZElevatedButton(title: currentIndex < 3 ? 'Next' : 'Get Started', onPress: (){
-              nextpage();
+            child: ZElevatedButton(title: currentIndex < 1 ? 'Next' : 'Get Started', onPress: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => signin(),));
             }),
           ),
           Positioned(
@@ -114,7 +105,7 @@ class _onbordingState extends State<onbording> {
             right: 5,
             child: InkWell(onTap: (){
               Navigator.push(context, MaterialPageRoute(builder: (context) => signin(),));
-            }, child: Text(currentIndex == 3 ? "" : "Skip" ,style: Theme.of(context).textTheme.titleMedium,textAlign: TextAlign.center,) ,),
+            }, child: Text(currentIndex == 1 ? "" : "Skip" ,style: Theme.of(context).textTheme.titleMedium,textAlign: TextAlign.center,) ,),
           ),
           ],
       ),
@@ -126,7 +117,7 @@ class _onbordingState extends State<onbording> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
-          children: List.generate(4, (index) => Expanded(
+          children: List.generate(2, (index) => Expanded(
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 4),
                 height: 3,

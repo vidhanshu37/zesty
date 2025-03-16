@@ -128,9 +128,11 @@ class _otpverifyState extends State<otpverify> {
       if (response.statusCode == 200) {
         var responseBody = jsonDecode(response.body);
         /// SUCCESS
-        String fullAddress = userExistData?['userExist']['address'][0];
-        List address = fullAddress.split("*");
+
+        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(responseCode.toString())));
         if(responseCode == 200) {
+          String fullAddress = userExistData?['userExist']['address'][0];
+          List address = fullAddress.split("*");
             var box = Hive.box(HiveOpenBox.storeAddress);
             box.put(HiveOpenBox.storeAddressTitle, address[0]);
             box.put(HiveOpenBox.storeAddressSubTitle, "");
