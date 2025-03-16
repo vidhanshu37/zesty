@@ -21,11 +21,20 @@ class _LocationAccessState extends State<LocationAccess> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: TColors.white,
       body: SafeArea(
           child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Stack(
           children: [
+
+            Positioned(
+              top: 40,
+                left: 20,
+                right: 20,
+                child: Image.asset('assets/images/location.jpeg')
+            ),
+
             /// current location button
             Positioned(
               bottom: 85,
