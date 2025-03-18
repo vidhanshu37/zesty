@@ -241,13 +241,15 @@ class _CartPageState extends State<CartPage> {
   /// Count grand total include all charges, tax, etc.
   String getTotal() {
     double totalCartValue = double.parse(calculateTotalCartValue().toStringAsFixed(2)) ?? 0.0;
-    double deliveryCharge = double.parse(calculateDeliveryCharge().toStringAsFixed(2)) ?? 0.0;
+    double deliveryCharge = boxAddress.get(HiveOpenBox.userZestyLite) == "true" && calculateDistance() <=  7 ? 0 : double.parse(calculateDeliveryCharge().toStringAsFixed(2)) ?? 0.0;
     double totalPackagingCharge = packagingCharge
         .map((e) => double.tryParse(e) ?? 0.0) // Convert each item to double
         .fold(0.0, (sum, element) => sum + element); // Sum all packaging charges
-    double tax = totalCartValue * 0.05; // Calculate 5% tax
+    double tax = totalCartValue * 0.09; // Calculate 5% tax
 
-    double totalValue = (totalCartValue + deliveryCharge + totalPackagingCharge + tax - couponDiscount).roundToDouble() ?? 0.0;
+    double zestyLiteDiscount = boxAddress.get(HiveOpenBox.userZestyLite) == "true" ? totalCartValue * 0.05 : 0;
+
+    double totalValue = (totalCartValue + deliveryCharge + totalPackagingCharge + tax - couponDiscount - zestyLiteDiscount).roundToDouble() ?? 0.0;
     // double totalValue = ( 0 + deliveryCharge + 0 + 0) ?? 0.0;
     String formattedTotalValue = totalValue.toStringAsFixed(0);
     return formattedTotalValue;
@@ -365,7 +367,7 @@ class _CartPageState extends State<CartPage> {
           centerTitle: false,
         ),
         // backgroundColor: Color(0xffefeef3),
-        body: restaurantDetails.isEmpty || quantityItemList.isEmpty || resName == "" ? Center(child: CircularProgressIndicator()) : Padding(
+        body: restaurantDetails.isEmpty || quantityItemList.isEmpty || resName == "" ? Center(child: CircularProgressIndicator(color: Colors.black,)) : Padding(
           padding: const EdgeInsets.all(10.0),
           child: SingleChildScrollView(
             child: Column(
@@ -398,7 +400,7 @@ class _CartPageState extends State<CartPage> {
                                     color: checkDeliveryOption == true ? TColors.black : Colors.grey[200],
                                     borderRadius: BorderRadius.circular(25.0)
                                 ),
-                                child: Center(child: Text("Deliver to My Location", style: TextStyle(color: checkDeliveryOption == true ? TColors.white : Colors.black, fontSize: 13),)),
+                                child: Center(child: Text("Deliver to My Location", style: TextStyle(color: checkDeliveryOption == true ? TColors.white : Colors.black, fontSize: 11,),textAlign: TextAlign.center,)),
                               ),
                             ),
                           ),
@@ -415,7 +417,7 @@ class _CartPageState extends State<CartPage> {
                                     color: checkDeliveryOption == false ? TColors.black : Colors.grey[200],
                                     borderRadius: BorderRadius.circular(25.0)
                                 ),
-                                child: Center(child: Text("I'll Pick It Up", style: TextStyle(color: checkDeliveryOption == false ? TColors.white : Colors.black, fontSize: 13),)),
+                                child: Center(child: Text("I'll Pick It Up", style: TextStyle(color: checkDeliveryOption == false ? TColors.white : Colors.black, fontSize: 11),textAlign: TextAlign.center)),
                               ),
                             ),
                           ),
@@ -643,7 +645,34 @@ class _CartPageState extends State<CartPage> {
 
 
                               /// Delivery fees - price
-                              checkDeliveryOption == false ? SizedBox.shrink() : Padding(
+                              checkDeliveryOption == false ? SizedBox.shrink() : boxAddress.get(HiveOpenBox.userZestyLite) == "true" && calculateDistance() <= 7 ? Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Delivery Fee | ${calculateDistance().toStringAsFixed(1)} kms",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "₹ ${calculateDeliveryCharge().toStringAsFixed(2)}",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelMedium!.copyWith(decoration: TextDecoration.lineThrough),
+                                        ),
+                                        SizedBox(width: 8,),
+                                        Text("Free", style: Theme.of(context)
+                                            .textTheme
+                                            .labelLarge?.copyWith(color: TColors.darkGreen, fontWeight: FontWeight.bold),)
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ) : Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -663,6 +692,29 @@ class _CartPageState extends State<CartPage> {
                                   ],
                                 ),
                               ),
+
+                              /// ZestyLite extra 5% discount
+                              SizedBox(
+                                height: boxAddress.get(HiveOpenBox.userZestyLite) == "true" ? 10 : 0,
+                              ),
+                              boxAddress.get(HiveOpenBox.userZestyLite) == "true" ? Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "ZestyLite Extra 5% discount",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall,
+                                    ),
+                                    Text("- ₹${(calculateTotalCartValue() * 0.05).toStringAsFixed(2)}", style: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge,)
+                                  ],
+                                ),
+                              ) : SizedBox.shrink(),
+
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Divider(
@@ -670,33 +722,7 @@ class _CartPageState extends State<CartPage> {
                                 ),
                               ),
       
-                              /// Delivery tips
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "Delivery Tip",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall,
-                                    ),
-      
-                                    InkWell(
-                                      onTap: () {},
-                                      child: Text(
-                                        "Add tip",
-                                        style: TextStyle(color: Colors.red),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-      
+
                               /// Packaging charge - price
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -737,7 +763,7 @@ class _CartPageState extends State<CartPage> {
                                           .bodySmall,
                                     ),
                                     Text(
-                                      "₹${(calculateTotalCartValue() * 0.05).toStringAsFixed(2)}", // Sum all elements}",
+                                      "₹${(calculateTotalCartValue() * 0.09).toStringAsFixed(2)}", // Sum all elements}",
                                       style: Theme.of(context)
                                           .textTheme
                                           .labelLarge,
@@ -861,27 +887,8 @@ class _CartPageState extends State<CartPage> {
                     deliveryOption: checkDeliveryOption,
                   )));
       
-                  // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(couponDiscount.toString())));
-
-                      // item total
-                  // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(
-                  //     "${(double.parse(calculateTotalCartValue().toStringAsFixed(2)))}")));
-      
-                  //delivery charge
-                  // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(
-                  //     "${(double.parse(calculateDeliveryCharge().toStringAsFixed(2)))}")));
-      
-      
-                  // packaging charge
-                  // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(
-                  //         "${packagingCharge}")));
-      
-                  // GST & charge
-                  // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(
-                  //         "${(calculateTotalCartValue() * 0.05)}")));
-      
-      
-                  })
+                  }),
+                SizedBox(height: 20,),
               ],
             ),
           ),

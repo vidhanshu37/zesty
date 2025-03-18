@@ -31,7 +31,7 @@ class _AddressTypeButtonState extends State<AddressTypeButton> {
               width: 70,
               height: 30,
               decoration: BoxDecoration(
-                  color: selectedIndex == index ? TColors.ligthGreen.withOpacity(0.4) : ZMediaQuery(context).isDarkMode ? TColors.darkerGrey : TColors.softGrey,
+                  color: selectedIndex == index ? TColors.ligthGreen.withOpacity(0.4) : TColors.softGrey,
                   borderRadius: BorderRadius.circular(20)),
               child: Center(
                 child: Text(

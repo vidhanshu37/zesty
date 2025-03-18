@@ -4,6 +4,7 @@ import 'package:zesty/screens/home/user_profile/add_new_address.dart';
 import 'package:zesty/screens/home/user_profile/editProfile.dart';
 import 'package:zesty/screens/home/user_profile/money_Gift_Cards.dart';
 import 'package:zesty/screens/home/user_profile/zesty1.dart';
+import 'package:zesty/screens/home/user_profile/zestyLiteActive.dart';
 import 'package:zesty/screens/login_process/signin.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:zesty/utils/constants/media_query.dart';
@@ -70,7 +71,10 @@ class _profileState extends State<profile> {
               },child: Text("Edit Profile  >",style: TextStyle(color: TColors.darkGreen,fontWeight: FontWeight.bold,fontSize: 15),),),
               Divider(),
               SizedBox(height: 10,),
-              Row(
+
+              /// zesty lite
+
+              box.get(HiveOpenBox.userZestyLite) == "true" ? SizedBox.shrink() : Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Container(
@@ -92,7 +96,15 @@ class _profileState extends State<profile> {
                   ),
                 ],
               ),
-            ListTile(
+            box.get(HiveOpenBox.userZestyLite) == "true" ?  ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text("ZestyLite",style: Theme.of(context).textTheme.titleLarge),
+              subtitle: Text("Tap to see your benefits",style: Theme.of(context).textTheme.labelMedium),
+              trailing: Icon(Icons.arrow_forward_ios,color: TColors.darkGrey,size: 16,),
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ZestyLiteActive(zestyMartOrder: 8, zestyOrder: box.get(HiveOpenBox.zestyLiteOrder, defaultValue: 0),),));
+              },
+            ) : ListTile(
               contentPadding: EdgeInsets.zero,
               title: Text("20 Free Deliveries on Food & Zesty Mart",style: Theme.of(context).textTheme.titleLarge),
               subtitle: Text("join now & unlock exclusive benefits",style: Theme.of(context).textTheme.labelMedium),
@@ -101,8 +113,8 @@ class _profileState extends State<profile> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => zesty1(),));
               },
             ),
-              // Divider(),
-              // menuItem("My Account", "Favourites"),
+
+              /// address
               Divider(),
               ListTile(
                 contentPadding: EdgeInsets.zero,

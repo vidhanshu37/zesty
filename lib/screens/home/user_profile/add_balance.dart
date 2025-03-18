@@ -96,7 +96,7 @@ class _AddBalanceState extends State<AddBalance> {
 
       if(response.statusCode == 200 ) {
         // widget.updateSetState;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("done")));
+        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("done")));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.statusCode.toString())));
       }

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:zesty/screens/home/home.dart';
 import 'package:zesty/screens/home/zesty_Mart/searchZestyMart.dart';
 import 'package:zesty/utils/constants/media_query.dart';
@@ -160,13 +161,22 @@ class _ZestyMartPageState extends State<ZestyMartPage>
                 background: Container(
                   width: ZMediaQuery(context).width - 200,
                   padding: EdgeInsets.only(right: 200.0, top: 40.0, left: 20.0, ),
-                  child: Text(
-                    widget.address,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                       overflow: TextOverflow.ellipsis,),
-                    maxLines: 2,
+                  child: ValueListenableBuilder(
+                    valueListenable: Hive.box(HiveOpenBox.storeAddress).listenable(),
+                    builder: (context, Box box, _) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          box.get(HiveOpenBox.storeAddressTitle),
+                          // style: Theme.of(context).textTheme.titleMedium,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black, overflow: TextOverflow.ellipsis,),
+                          maxLines: 2,
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),

@@ -212,7 +212,7 @@ class _ItemCardState extends State<ItemCard> {
                     /// Food Item name
                     Text(
                       widget.itemName,
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 15),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                     ),

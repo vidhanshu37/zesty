@@ -121,7 +121,9 @@ class _CartPaymentState extends State<CartPayment> {
       if (response.statusCode == 200) {
         // ScaffoldMessenger.of(context)
         //     .showSnackBar(SnackBar(content: Text("DONE ORDER")));
-
+        int zestyLiteOrder = box.get(HiveOpenBox.zestyLiteOrder, defaultValue: 0);
+        zestyLiteOrder++;
+        box.put(HiveOpenBox.zestyLiteOrder, zestyLiteOrder);
         if (widget.deliveryOption == false) {
           Navigator.pushAndRemoveUntil(
               context,

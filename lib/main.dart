@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:zesty/screens/add_manually_address/addAddressDetailsHelper/sliverMapAddress.dart';
@@ -11,6 +12,7 @@ import 'package:zesty/screens/home/item_cart/coupons.dart';
 import 'package:zesty/screens/home/rough.dart';
 import 'package:zesty/screens/home/user_profile/add_new_address.dart';
 import 'package:zesty/screens/home/user_profile/zesty1.dart';
+import 'package:zesty/screens/home/user_profile/zestyLiteActive.dart';
 import 'package:zesty/screens/home/zesty_Mart/zesty_mart_page.dart';
 import 'package:zesty/screens/location_access/locationAccess.dart';
 import 'package:zesty/screens/location_access/shimmerEffect.dart';
@@ -42,8 +44,14 @@ void main() async {
   /// Open hive box for storing zesty mart item
   await Hive.openBox(HiveOpenBox.storeZestyMartItem);
 
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp, // Only allows portrait mode
+  ]).then((_) {
+    runApp(MyApp());
+  });
 
-  runApp(const MyApp());
+
+  // runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -63,7 +71,7 @@ class MyApp extends StatelessWidget {
       // home: MartItemImagesScreen(martItemId: '67b9c261b10e67aa58074037',),
       // home: TrackDeliveryOrder(ResLongitude: 72.8411, ResLatitude: 21.2049),
       home: SplashScreen(),
-      // home:  FloatingHeroMenu(),
+      // home:  ZestyLiteActive(),
       // home: LocationAccess(),
     );
   }
