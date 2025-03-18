@@ -1,10 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_avif/flutter_avif.dart';
+import 'package:hive/hive.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:zesty/screens/home/user_profile/zestyLiteActive.dart';
 import 'package:zesty/utils/constants/colors.dart';
 
 import '../../../utils/constants/media_query.dart';
-
+import '../../../utils/local_storage/HiveOpenBox.dart';
+import 'package:http/http.dart' as http;
 
 class zesty1 extends StatefulWidget{
   @override
@@ -12,6 +18,8 @@ class zesty1 extends StatefulWidget{
 }
 
 class _zesty1State extends State<zesty1> {
+
+  late Razorpay _razorpay;
 
   final List<Map<String, String>> faqs = [
     {
@@ -32,12 +40,85 @@ class _zesty1State extends State<zesty1> {
     },
   ];
 
+  void openCheckout(int amount) async {
+    amount = amount * 100;
+    var options = {
+      'key': 'rzp_test_1DP5mmOlF5G5ag',
+      'amount': amount,
+      'name': 'Zesty',
+      'prefill': {'contact': '1234567890', 'email': 'test@gmail.com'},
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      debugPrint('Error: $e');
+    }
+  }
+
+  Future<void> updateAddress(context) async {
+    var box = Hive.box(HiveOpenBox.storeAddress);
+    final url = Uri.parse('https://zesty-backend.onrender.com/user/update-user');
+
+    try {
+      final response = await http.post(
+          url,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: jsonEncode({
+            "zestyLite": "true",
+            "id": box.get(HiveOpenBox.userId),
+          }));
+
+
+      if(response.statusCode == 200) {
+        box.put(HiveOpenBox.userZestyLite, "true");
+        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(box.get(HiveOpenBox.userZestyLite))));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.statusCode.toString())));
+      }
+    } catch(e) {
+      print("error");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("e.toString()")));
+    }
+  }
+  
+  var box = Hive.box(HiveOpenBox.storeAddress);
+  Future<void> handlePaymentSuccess(PaymentSuccessResponse res) async {
+    updateAddress(context);
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder) => ZestyLiteActive(zestyOrder: 0, zestyMartOrder: 0,)));
+  }
+
+  void handlePaymentFailure(PaymentFailureResponse res) {
+    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+      content: new Text("Payment Fail, Something went to wrong!"),
+    ));
+  }
+
+  void handleExternalWallet(ExternalWalletResponse res) {
+    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+      content: new Text("External Wallet, Something went to wrong!"),
+    ));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentFailure);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWallet);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
-
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
@@ -45,8 +126,10 @@ class _zesty1State extends State<zesty1> {
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("Zesty",style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: TColors.darkGreen),),
+                  // Text("Zesty",style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: TColors.darkGreen),),
+                  Text("Zesty",style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.w800, color: TColors.darkGreen),),
                   SizedBox(width: 6,),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 8,vertical: 2),
@@ -58,7 +141,7 @@ class _zesty1State extends State<zesty1> {
                   ),
                 ],
               ),
-              SizedBox(height: 3,),
+              SizedBox(height: 8,),
               Center(child: Text("Heavy Benefits, Lite Price!",style: TextStyle(fontSize: 17,color: Colors.black),)),
               SizedBox(height: 8,),
               Divider(),
@@ -67,37 +150,34 @@ class _zesty1State extends State<zesty1> {
                 elevation: 4,
                 child: Column(
                   children: [
-                    SizedBox(height: 3,),
+                    SizedBox(height: 8,),
                     Container(
                         width: double.infinity,
                         color: TColors.Green.withOpacity(0.5),
                         child: Center(child: Text("3 MONTHS PLAN",style: TextStyle(fontSize: 14,color: TColors.darkGreen),))
                     ),
                     SizedBox(height: 7,),
-                    SizedBox(
-                        height: 70,
-                        width: 100,
-                        child: AvifImage.asset('assets/icons/food_category/Pizza.avif', fit: BoxFit.cover,)
-                    ),
-                    SizedBox(height: 13,),
+                    Image.asset('assets/images/ZestyLogo.png', fit: BoxFit.cover, height: 100, width: 180,),
+                    // SizedBox(height: 10,),
                     Text("Unlock 20 Free Deliveries",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold,color: TColors.darkGreen),),
                     Text("10 on Food + 10 on Zestymart",style: TextStyle(fontSize: 15,color: TColors.darkerGrey),),
                     SizedBox(height: 22,),
-                    ElevatedButton(onPressed: (){},
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: TColors.darkGreen,
-                          side: BorderSide.none,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          )
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12,horizontal: 20),
-                        child: Column(
-                          children: [
-                            Text("Buy Zesty Lite at Rs.30",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.white),),
-                            Text("for 3 months (GST will apply)",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.white),)
-                          ],
+                    SizedBox(
+                      height: 50,
+                      width: ZMediaQuery(context).width - 80,
+                      child: ElevatedButton(onPressed: (){
+                        openCheckout(149);
+                      },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: TColors.darkGreen,
+                            side: BorderSide.none,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            )
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12,horizontal: 20),
+                          child: Text("Buy Zesty Lite at ₹149",style: TextStyle(fontSize: 17,fontWeight: FontWeight.w800,color: Colors.white),),
                         ),
                       ),
                     ),
@@ -106,7 +186,7 @@ class _zesty1State extends State<zesty1> {
                 ),
               ),
               SizedBox(height: 20,),
-              Text("ZESTY LITE BENEFITS",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: ZMediaQuery(context).isDarkMode ? TColors.white : TColors.darkerGrey),),
+              Text("ZESTY LITE BENEFITS",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: TColors.darkerGrey),),
               SizedBox(height: 10,),
               Container(
                 padding: EdgeInsets.all(16),
@@ -150,7 +230,7 @@ class _zesty1State extends State<zesty1> {
                     SizedBox(height: 3,),
                     Text("on orders above ₹199",style: TextStyle(fontSize: 13,color: Colors.grey),),
                     SizedBox(height: 10,),
-                    Text("Up to 30% extra discounts",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.black),),
+                    Text("Up to 5% extra discounts",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.black),),
                     SizedBox(height: 3,),
                     Text("over & above other offers",style: TextStyle(fontSize: 13,color: Colors.grey),),
                     SizedBox(height: 10,),
@@ -192,37 +272,38 @@ class _zesty1State extends State<zesty1> {
                   }).toList(),
                 ),
               ),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Text("YOU GOT A SPECIAL DISCOUNT",style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold,color: TColors.darkGreen),),
-                    SizedBox(height: 10,),
-                    Container(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                          onPressed: (){},
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: TColors.darkGreen,
-                              side: BorderSide.none,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              )
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            child: Column(
-                              children: [
-                                Text("Buy Zesty Lite at ₹30",style: TextStyle(fontSize: 16,color: Colors.white),),
-                                Text("for 3 months (GST will apply",style: TextStyle(fontSize: 11,color: Colors.white),),
-                              ],
-                            ),
-                          )),
-                    ),
-                  ],
-                ),
-              ),
+              SizedBox(height: 70,)
+              // Container(
+              //   width: double.infinity,
+              //   padding: EdgeInsets.all(16),
+              //   child: Column(
+              //     children: [
+              //       Text("YOU GOT A SPECIAL DISCOUNT",style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold,color: TColors.darkGreen),),
+              //       SizedBox(height: 10,),
+              //       Container(
+              //         width: double.infinity,
+              //         child: ElevatedButton(
+              //             onPressed: (){},
+              //             style: ElevatedButton.styleFrom(
+              //                 backgroundColor: TColors.darkGreen,
+              //                 side: BorderSide.none,
+              //                 shape: RoundedRectangleBorder(
+              //                   borderRadius: BorderRadius.circular(8),
+              //                 )
+              //             ),
+              //             child: Padding(
+              //               padding: const EdgeInsets.symmetric(vertical: 12),
+              //               child: Column(
+              //                 children: [
+              //                   Text("Buy Zesty Lite at ₹30",style: TextStyle(fontSize: 16,color: Colors.white),),
+              //                   Text("for 3 months (GST will apply",style: TextStyle(fontSize: 11,color: Colors.white),),
+              //                 ],
+              //               ),
+              //             )),
+              //       ),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
         ),

@@ -44,7 +44,6 @@ class _CategoryHomeState extends State<CategoryHome> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     FatchCategoryData();
   }
@@ -57,18 +56,7 @@ class _CategoryHomeState extends State<CategoryHome> {
           SliverAppBar(
             pinned: true,
             backgroundColor: TColors.white,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 60,vertical: 15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 20,),
-                    Text(widget.categoryName,style: TextStyle(color: TColors.black,fontWeight: FontWeight.bold,fontSize: 20),),
-                  ],
-                ),
-              ),
-            ),
+            title: Text(widget.categoryName,style: TextStyle(color: TColors.black,fontWeight: FontWeight.bold,fontSize: 20),),
           ),
 
           SliverToBoxAdapter(

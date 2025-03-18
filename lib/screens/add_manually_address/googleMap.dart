@@ -233,7 +233,7 @@ class _ShowGoogleMapState extends State<ShowGoogleMap> {
           ),
           // Current location button
           Positioned(
-              top: 530,
+              top: ZMediaQuery(context).height * 0.63,
               left: ZMediaQuery(context).width / 4,
               child: InkWell(
                 onTap: () {

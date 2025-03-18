@@ -20,6 +20,8 @@ class _ReorderPageState extends State<ReorderPage> {
   Map<String, String> itemNames = {}; // Store fetched item names
   String selectedFilter = "All"; // Track the selected filter
 
+  var box = Hive.box(HiveOpenBox.storeAddress);
+
   Future<void> fetchPastOrder(userId) async {
     final url = Uri.parse(
         'https://zesty-backend.onrender.com/order/get-all-orders-for-user/$userId');
@@ -32,13 +34,12 @@ class _ReorderPageState extends State<ReorderPage> {
         await fetchAllItemNames(); // Fetch item names before updating UI
       } else {
         print("Error: ${response.statusCode}");
-        // showErrorMessage("Failed to fetch orders.");
+        showErrorMessage("Failed to fetch orders.");
       }
     } catch (e) {
       print("Exception: $e");
-      // showErrorMessage("Something went wrong.");
+      showErrorMessage("Something went wrong.");
     } finally {
-
       setState(() {
         isLoading = false;
       });
@@ -131,12 +132,18 @@ class _ReorderPageState extends State<ReorderPage> {
     });
   }
 
-  var box = Hive.box(HiveOpenBox.storeAddress);
-
   @override
   void initState() {
     super.initState();
     fetchPastOrder(box.get(HiveOpenBox.userId));
+  }
+
+  Future<void> _onRefresh() async {
+    // Show loader while refreshing
+    setState(() {
+      isLoading = true;
+    });
+    await fetchPastOrder(box.get(HiveOpenBox.userId));
   }
 
   @override
@@ -144,182 +151,228 @@ class _ReorderPageState extends State<ReorderPage> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: isLoading
-          ? Center(child: CircularProgressIndicator()) // Show full-screen loader
+          ? Center(
+        child: CircularProgressIndicator(
+          color: Colors.black,
+        ),
+      )
           : pastOrder.isEmpty
-          ? Center(child: Text("No past orders found.", style: TextStyle(fontSize: 16)))
-          : CustomScrollView(
-        slivers: [
-          /// First SliverAppBar: Order History (Floating)
-          SliverAppBar(
-            snap: true,
-            centerTitle: true,
-            floating: true,
-            backgroundColor: TColors.grey,
-            toolbarHeight: 40,
-            title: Text("ORDER HISTORY",
-                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          ? Center(
+          child: Text(
+            "No past orders found.",
+            style: TextStyle(fontSize: 16),
+          ))
+          : RefreshIndicator(
+        color: Colors.black,
+        backgroundColor: Colors.white,
+        onRefresh: _onRefresh,
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            /// First SliverAppBar: Order History (Floating)
+            SliverAppBar(
+              snap: true,
+              centerTitle: true,
+              floating: true,
+              backgroundColor: TColors.grey,
+              toolbarHeight: 40,
+              title: Text("ORDER HISTORY",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold)),
+            ),
 
-          ),
+            /// Second SliverAppBar: Filter Options (Pinned)
+            SliverAppBar(
+              title: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    FilterChip(
+                      label: Text("All"),
+                      selected: selectedFilter == "All",
+                      onSelected: (_) => applyFilter("All"),
+                      selectedColor: Colors.grey[400],
+                      backgroundColor: TColors.bgLight,
+                    ),
+                    SizedBox(width: 8),
+                    FilterChip(
+                      label: Text("Price < 149"),
+                      selected: selectedFilter == "Price < 149",
+                      onSelected: (_) => applyFilter("Price < 149"),
+                      selectedColor: Colors.grey[400],
+                      backgroundColor: TColors.bgLight,
+                    ),
+                    SizedBox(width: 8),
+                    FilterChip(
+                      label: Text("Price 149 - 300"),
+                      selected: selectedFilter == "Price 149 - 300",
+                      onSelected: (_) => applyFilter("Price 149 - 300"),
+                      selectedColor: Colors.grey[400],
+                      backgroundColor: TColors.bgLight,
+                    ),
+                    SizedBox(width: 8),
+                    FilterChip(
+                      label: Text("Price > 300"),
+                      selected: selectedFilter == "Price > 300",
+                      onSelected: (_) => applyFilter("Price > 300"),
+                      selectedColor: Colors.grey[400],
+                      backgroundColor: TColors.bgLight,
+                    ),
+                    SizedBox(width: 8),
+                    FilterChip(
+                      label: Text("Today's Orders"),
+                      selected: selectedFilter == "Today's Orders",
+                      onSelected: (_) => applyFilter("Today's Orders"),
+                      selectedColor: Colors.grey[400],
+                      backgroundColor: TColors.bgLight,
+                    ),
+                    SizedBox(width: 8),
+                    FilterChip(
+                      label: Text("Last Week Orders"),
+                      selected: selectedFilter == "Last Week Orders",
+                      onSelected: (_) =>
+                          applyFilter("Last Week Orders"),
+                      selectedColor: Colors.grey[400],
+                      backgroundColor: TColors.bgLight,
+                    ),
+                  ],
+                ),
+              ),
+              pinned: true,
+              backgroundColor: TColors.grey,
+            ),
 
-          /// Second SliverAppBar: Filter Options (Pinned)
-          SliverAppBar(
-            title: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  FilterChip(
-                    label: Text("All"),
-                    selected: selectedFilter == "All",
-                    onSelected: (_) => applyFilter("All"),
-                    selectedColor: Colors.grey[400],
-                    backgroundColor: TColors.bgLight,
-                  ),
-                  SizedBox(width: 8),
-                  FilterChip(
-                    label: Text("Price < 149"),
-                    selected: selectedFilter == "Price < 149",
-                    onSelected: (_) => applyFilter("Price < 149"),
-                    selectedColor: Colors.grey[400],
-                    backgroundColor: TColors.bgLight,
-                  ),
-                  SizedBox(width: 8),
-                  FilterChip(
-                    label: Text("Price 149 - 300"),
-                    selected: selectedFilter == "Price 149 - 300",
-                    onSelected: (_) => applyFilter("Price 149 - 300"),
-                    selectedColor: Colors.grey[400],
-                    backgroundColor: TColors.bgLight,
-                  ),
-                  SizedBox(width: 8),
-                  FilterChip(
-                    label: Text("Price > 300"),
-                    selected: selectedFilter == "Price > 300",
-                    onSelected: (_) => applyFilter("Price > 300"),
-                    selectedColor: Colors.grey[400],
-                    backgroundColor: TColors.bgLight,
-                  ),
-                  SizedBox(width: 8),
-                  FilterChip(
-                    label: Text("Today's Orders"),
-                    selected: selectedFilter == "Today's Orders",
-                    onSelected: (_) => applyFilter("Today's Orders"),
-                    selectedColor: Colors.grey[400],
-                    backgroundColor: TColors.bgLight,
-                  ),
-                  SizedBox(width: 8),
-                  FilterChip(
-                    label: Text("Last Week Orders"),
-                    selected: selectedFilter == "Last Week Orders",
-                    onSelected: (_) => applyFilter("Last Week Orders"),
-                    selectedColor: Colors.grey[400],
-                    backgroundColor: TColors.bgLight,
-                  ),
-                ],
+            /// SliverList: Order List
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                  int reversedIndex = filteredOrders.length - 1 - index;
+                  DateTime apiDate = DateTime.parse(
+                      filteredOrders[reversedIndex]['updatedAt']);
+                  DateTime orderDate = apiDate.add(Duration(
+                      hours: 5, minutes: 30)); // convert API date to IST
+                  String formattedDate = DateFormat(
+                      'dd MMM yyyy, hh:mm a')
+                      .format(orderDate);
+
+                  return Card(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    margin: EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 5),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          /// Restaurant name and order status
+                          Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment:
+                            CrossAxisAlignment.start,
+                            children: [
+                              Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    filteredOrders[reversedIndex]
+                                    ['restaurantName'],
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    "Total spent: ₹${filteredOrders[reversedIndex]['totalAmountUser']}",
+                                    style: TextStyle(
+                                        color: TColors.darkerGrey,
+                                        fontSize: 12),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    "Ordered on: $formattedDate",
+                                    style: TextStyle(
+                                        color: TColors.darkerGrey,
+                                        fontSize: 12),
+                                  ),
+                                  SizedBox(height: 5),
+                                  if ((filteredOrders[reversedIndex]
+                                  ['coupon']
+                                      ?.isNotEmpty ??
+                                      false))
+                                    Row(
+                                      children: [
+                                        Icon(Icons.local_offer,
+                                            size: 16,
+                                            color: Colors.red),
+                                        SizedBox(width: 5),
+                                        Text(
+                                          "Applied '${filteredOrders[reversedIndex]['coupon']}' coupon!",
+                                          style: TextStyle(
+                                              color:
+                                              TColors.darkerGrey,
+                                              fontSize: 12),
+                                        ),
+                                      ],
+                                    ),
+                                ],
+                              ),
+                              filteredOrders[reversedIndex]
+                              ['orderStatus'] ==
+                                  "Delivered"
+                                  ? Text(
+                                filteredOrders[reversedIndex]
+                                ['orderStatus'],
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: TColors.darkGreen),
+                              )
+                                  : Text(
+                                filteredOrders[reversedIndex]
+                                ['orderStatus'],
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: TColors.error),
+                              )
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 15),
+                            child: Divider(color: TColors.grey),
+                          ),
+
+                          /// Order Items
+                          Column(
+                            crossAxisAlignment:
+                            CrossAxisAlignment.start,
+                            children: filteredOrders[reversedIndex]
+                            ['order']
+                                .map<Widget>((item) {
+                              return Text(
+                                "${item["quantity"]}x ${itemNames[item["itemId"]] ?? "Loading..."}",
+                                style: TextStyle(
+                                    color: TColors.darkerGrey,
+                                    fontSize: 12),
+                              );
+                            }).toList(),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                },
+                childCount: filteredOrders.length,
               ),
             ),
-            pinned: true,
-            backgroundColor: TColors.grey,
-          ),
-
-          /// SliverList: Order List
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                DateTime apiDate = DateTime.parse(filteredOrders[index]['updatedAt']);
-                DateTime orderDate = apiDate.add(Duration(hours: 5, minutes: 30));
-                String formattedDate = DateFormat('dd MMM yyyy, hh:mm a').format(orderDate);
-
-                return Card(
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        /// Restaurant name and order status
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  filteredOrders[index]['restaurantName'],
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                SizedBox(height: 5),
-                                Text("Total spent: ₹${filteredOrders[index]['totalAmountUser']}", style: TextStyle(
-                                    color: TColors.darkerGrey,
-                                    fontSize: 12)),
-                                SizedBox(height: 5),
-                                Text("Ordered on: $formattedDate", style: TextStyle(
-                                    color: TColors.darkerGrey,
-                                    fontSize: 12)),
-                                SizedBox(height: 5),
-
-                                if (filteredOrders[index]['coupon'].isNotEmpty)
-                                  Row(
-                                    children: [
-                                      Icon(Icons.local_offer,
-                                          size: 16, color: Colors.red),
-                                      SizedBox(width: 5),
-                                      Text(
-                                          "Applied '${filteredOrders[index]['coupon']}' coupon!",
-                                          style: TextStyle(
-                                              color: TColors.darkerGrey,
-                                              fontSize: 12)),
-                                    ],
-                                  ),
-                              ],
-                            ),
-
-                            filteredOrders[index]['orderStatus'] == "Delivered" ? Text(
-                              filteredOrders[index]['orderStatus'],
-                              style: TextStyle(
-                                  fontSize: 12, color: TColors.darkGreen),
-                            ) :
-                            Text(
-                              filteredOrders[index]['orderStatus'],
-                              style: TextStyle(
-                                  fontSize: 12, color: TColors.error),
-                            )
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          child: Divider(color: TColors.grey),
-                        ),
-
-                        /// Order Items
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: filteredOrders[index]['order']
-                              .map<Widget>((item) {
-                            return Text(
-                              "${item["quantity"]}x ${itemNames[item["itemId"]] ?? "Loading..."}",
-                              style: TextStyle(
-                                  color: TColors.darkerGrey,
-                                  fontSize: 12),
-                            );
-                          }).toList(),
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              },
-              childCount: filteredOrders.length,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
