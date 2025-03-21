@@ -47,7 +47,7 @@ class _ReorderPageState extends State<ReorderPage> {
   }
 
   void showErrorMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> fetchAllItemNames() async {

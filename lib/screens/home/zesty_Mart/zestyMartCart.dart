@@ -102,13 +102,13 @@ class _ZestymartcartState extends State<Zestymartcart> {
   var distanceKm;
   String countDeliveryCharge() {
     distanceKm = ApiConstants.calculateDistance(double.parse(boxAddress.get(HiveOpenBox.storeAddressLat)), double.parse(boxAddress.get(HiveOpenBox.storeAddressLong)), 21.2049, 72.8411);
-    if(distanceKm > 0 && distanceKm < 2) {
-       return "19";
-    } else if( distanceKm >= 2 && distanceKm < 5) {
-      return "39";
-    } else {
-      return (distanceKm * 10).toStringAsFixed(2);
-    }
+      if (distanceKm > 0 && distanceKm < 2) {
+        return "19";
+      } else if (distanceKm >= 2 && distanceKm < 5) {
+        return "39";
+      } else {
+        return (distanceKm * 10).toStringAsFixed(2);
+      }
   }
 
   /// count cart total
@@ -125,7 +125,6 @@ class _ZestymartcartState extends State<Zestymartcart> {
     //
     // });
     return cartTotal;
-
   }
 
   @override
@@ -251,7 +250,14 @@ class _ZestymartcartState extends State<Zestymartcart> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: 10,),
-                          Text(
+                          boxAddress.get(HiveOpenBox.userZestyLite) == "true" && distanceKm < 7 ? Text(
+                            "To Pay ₹${(calculateCartTotal()  + (calculateCartTotal() * 0.05)).round()}",
+                            // "To Pay ₹${(double.parse(calculateTotalCartValue().toStringAsFixed(2)) + double.parse(calculateDeliveryCharge().toStringAsFixed(2)) + packagingCharge.map((e) => double.tryParse(e) ?? 0.0) // Convert each item to double
+                            //     .fold(0.0, (sum, element) => sum + element) + calculateTotalCartValue() * 0.05).toStringAsFixed(2)}",
+
+                            style:
+                            Theme.of(context).textTheme.bodyLarge,
+                          ) : Text(
                             "To Pay ₹${(calculateCartTotal() + double.parse(countDeliveryCharge()) + (calculateCartTotal() * 0.05)).round()}",
                             // "To Pay ₹${(double.parse(calculateTotalCartValue().toStringAsFixed(2)) + double.parse(calculateDeliveryCharge().toStringAsFixed(2)) + packagingCharge.map((e) => double.tryParse(e) ?? 0.0) // Convert each item to double
                             //     .fold(0.0, (sum, element) => sum + element) + calculateTotalCartValue() * 0.05).toStringAsFixed(2)}",
@@ -317,18 +323,32 @@ class _ZestymartcartState extends State<Zestymartcart> {
                                   Text(
                                     "Delivery Fee | "
                                         "${distanceKm.toStringAsFixed(2)}"
-                                        "kms",
+                                        "km",
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodySmall,
                                   ),
-                                  Text(
-                                    "₹"+countDeliveryCharge(),
+                                  boxAddress.get(HiveOpenBox.userZestyLite) == "true" && distanceKm < 7 ? Row(
+                                    children: [
+                                      Text(
+                                        "₹"+countDeliveryCharge(),
                                         // "${calculateDeliveryCharge().toStringAsFixed(2)}"
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelLarge!.copyWith(decoration: TextDecoration.lineThrough),
+                                      ),
+                                      SizedBox(width: 8,),
+                                      Text("Free", style: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge?.copyWith(color: TColors.darkGreen, fontWeight: FontWeight.bold),)
+                                    ],
+                                  ) :  Text(
+                                    "₹"+countDeliveryCharge(),
+                                    // "${calculateDeliveryCharge().toStringAsFixed(2)}"
                                     style: Theme.of(context)
                                         .textTheme
                                         .labelLarge,
-                                  ),
+                                  ) ,
                                 ],
                               ),
                             ),
@@ -339,32 +359,32 @@ class _ZestymartcartState extends State<Zestymartcart> {
                               ),
                             ),
 
-                            /// Delivery tips
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Delivery Tip",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall,
-                                  ),
-
-                                  InkWell(
-                                    onTap: () {},
-                                    child: Text(
-                                      "Add tip",
-                                      style: TextStyle(color: Colors.red),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
+                            // /// Delivery tips
+                            // Padding(
+                            //   padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                            //   child: Row(
+                            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //     children: [
+                            //       Text(
+                            //         "Delivery Tip",
+                            //         style: Theme.of(context)
+                            //             .textTheme
+                            //             .bodySmall,
+                            //       ),
+                            //
+                            //       InkWell(
+                            //         onTap: () {},
+                            //         child: Text(
+                            //           "Add tip",
+                            //           style: TextStyle(color: Colors.red),
+                            //         ),
+                            //       )
+                            //     ],
+                            //   ),
+                            // ),
+                            // SizedBox(
+                            //   height: 10,
+                            // ),
 
                             /// GST charge
                             Padding(
@@ -379,7 +399,7 @@ class _ZestymartcartState extends State<Zestymartcart> {
                                         .bodySmall,
                                   ),
                                   Text(
-                                    "₹${calculateCartTotal() * 0.05}",
+                                    "₹${(calculateCartTotal() * 0.05).toStringAsFixed(2)}",
                                         // "${(calculateTotalCartValue() * 0.05).toStringAsFixed(2)}", // Sum all elements}",
                                     style: Theme.of(context)
                                         .textTheme
@@ -469,7 +489,12 @@ class _ZestymartcartState extends State<Zestymartcart> {
                                     .textTheme
                                     .bodyLarge,
                               ),
-                              Text(
+                              boxAddress.get(HiveOpenBox.userZestyLite) == "true" && distanceKm < 7 ? Text(
+                                "₹${(calculateCartTotal() + (calculateCartTotal() * 0.05)).round()}",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge,
+                              ) : Text(
                                 "₹${(calculateCartTotal() + double.parse(countDeliveryCharge()) + (calculateCartTotal() * 0.05)).round()}",
                                 style: Theme.of(context)
                                     .textTheme
@@ -490,7 +515,11 @@ class _ZestymartcartState extends State<Zestymartcart> {
 
               ZElevatedButton(title: "Make Payment", onPress: () {
                 // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(box.values.toString())));
-                Navigator.push(context, MaterialPageRoute(builder: (builder) => ZestyMartPayment(totalPrice: (calculateCartTotal() + double.parse(countDeliveryCharge()) + (calculateCartTotal() * 0.05)).round().toString())));
+                boxAddress.get(HiveOpenBox.userZestyLite) == "true" && distanceKm < 7 ?
+                Navigator.push(context, MaterialPageRoute(builder: (builder) => ZestyMartPayment(totalPrice: (calculateCartTotal() + (calculateCartTotal() * 0.05)).round().toString())))
+               : Navigator.push(context, MaterialPageRoute(builder: (builder) => ZestyMartPayment(totalPrice: (calculateCartTotal() + double.parse(countDeliveryCharge()) + (calculateCartTotal() * 0.05)).round().toString())))
+
+                ;
               })
 
             ],
