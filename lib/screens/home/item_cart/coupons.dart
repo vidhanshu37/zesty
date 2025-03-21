@@ -24,6 +24,7 @@ class _CouponsState extends State<Coupons> {
   TextEditingController searchCoupon = TextEditingController();
 
   List couponData = [];
+  List filterCouponData = [];
 
   @override
   void initState() {
@@ -36,12 +37,25 @@ class _CouponsState extends State<Coupons> {
     final url = Uri.parse(ApiConstants.getCouponData);
     try{
       final response = await http.get(url);
-      if(response.statusCode == 200) {
-        couponData = jsonDecode(response.body);
-      }
+      couponData = jsonDecode(response.body);
       setState(() {});
     } catch(e) {
       print(e);
+    }
+  }
+
+  void filterSearchResult(String query){
+    if (query.isEmpty){
+       setState(() {
+         filterCouponData = couponData;
+       });
+    } else {
+      setState(() {
+        filterCouponData = couponData.where((item) {
+          String itemName = item['promoCode'].toString();
+          return itemName.contains(query.toUpperCase());
+        },).toList();
+      });
     }
   }
 
@@ -74,19 +88,11 @@ class _CouponsState extends State<Coupons> {
             Stack(children: [
               ZCustomTextField(
                 controller: searchCoupon,
+                prefixIcon: Icons.search,
+                prefixIconColor: TColors.darkGrey,
                 hintText: "Enter Coupon Code",
+                onChanged: filterSearchResult,
               ),
-              Positioned(
-                  right: 0,
-                  child: Container(
-                    height: 55,
-                    width: ZMediaQuery(context).width * 0.27,
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.only(topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
-                    ),
-                    child: Center(child: Text("Apply", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),)),
-                  ))
             ]),
             SizedBox(height: 40,),
 
@@ -95,22 +101,43 @@ class _CouponsState extends State<Coupons> {
 
             /// Coupon content
             Expanded(
-              child: ListView.builder(
+              child: searchCoupon.text == ""
+                  ? ListView.builder(
+                      physics: BouncingScrollPhysics(),
+                      itemCount: couponData.length,
+                      itemBuilder: (context, index) {
+                        return CouponCard(
+                          promoCode: couponData[index]['promoCode'],
+                          discountUpto: couponData[index]['discountUpto'],
+                          minAmtReq: couponData[index]['minAmtReq'],
+                          discountPercentage: couponData[index]['discountPercentage'],
+                          description: couponData[index]['description'],
+                          updateCartUI: widget.updateCartUI,
+                          calculateTotalCartValue: widget.calculateTotalCartValue,
+                        );
+                      })
+                  :  ListView.builder(
                 physics: BouncingScrollPhysics(),
-                itemCount: couponData.length,
+                itemCount: filterCouponData.length,
                   itemBuilder: (context, index) {
+                    final itemList = filterCouponData;
                     return CouponCard(
-                        promoCode: couponData[index]['promoCode'],
-                        discountUpto: couponData[index]['discountUpto'],
-                        minAmtReq: couponData[index]['minAmtReq'],
-                        discountPercentage: couponData[index]['discountPercentage'],
-                        description: couponData[index]['description'],
+                        promoCode: itemList[index]['promoCode'],
+                        discountUpto: itemList[index]['discountUpto'],
+                        minAmtReq: itemList[index]['minAmtReq'],
+                        discountPercentage: itemList[index]['discountPercentage'],
+                        description: itemList[index]['description'],
                         updateCartUI: widget.updateCartUI,
                         calculateTotalCartValue: widget.calculateTotalCartValue,
                     );
               }),
-            )
+            ),
 
+
+            searchCoupon.text.isNotEmpty && filterCouponData.length == 0 ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 30.0),
+                child: Text('No results found for "${searchCoupon.text}"', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w600),),
+              ) : SizedBox.shrink() ,
           ],
         ),
       ),

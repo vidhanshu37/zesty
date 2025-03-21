@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
-import 'package:zesty/screens/home/home.dart';
 import 'package:zesty/screens/login_process/signin.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:zesty/utils/constants/media_query.dart';
@@ -96,7 +95,11 @@ class _onbordingState extends State<onbording> {
             left: 5,
             right: 5,
             child: ZElevatedButton(title: currentIndex < 1 ? 'Next' : 'Get Started', onPress: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => signin(),));
+              if (currentIndex < 1){
+                nextpage();
+              } else{
+                Navigator.push(context, MaterialPageRoute(builder: (context) => signin(),));
+              }
             }),
           ),
           Positioned(
