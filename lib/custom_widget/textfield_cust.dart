@@ -44,7 +44,7 @@ class ZCustomTextField extends StatelessWidget {
       onChanged: onChanged,
       validator: validator,
       maxLength: maxLength,
-      cursorColor: ZMediaQuery(context).isDarkMode ? TColors.white : TColors.black ,
+      cursorColor: TColors.black ,
       decoration: InputDecoration(
         errorStyle: TextStyle(fontSize: 12),
 

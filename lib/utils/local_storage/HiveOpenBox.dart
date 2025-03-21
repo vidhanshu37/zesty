@@ -31,4 +31,9 @@ class HiveOpenBox {
   /// Hive for store Zesty mart item
   static String storeZestyMartItem = "ZestyMart";
 
+
+  ///Hive for store Search item
+  static String searchItem = "SearchItem";
+  static String searchItemSuggestion = "searchItemSuggestion";
+
 }

@@ -57,66 +57,6 @@ class _AppBarHomeState extends State<AppBarHome> {
     }
   }
 
-  // void showAddressDialog() async {
-  //   showModalBottomSheet(context: context,
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-  //       ),
-  //       // elevation: 1,
-  //       // isScrollControlled: true,
-  //       transitionAnimationController: AnimationController(
-  //         vsync: Navigator.of(context),
-  //         duration: Duration(milliseconds: 500), // Adjust speed
-  //       ),
-  //       backgroundColor: TColors.bgLight,
-  //       builder: (builder) {
-  //         return SizedBox(
-  //           width: ZMediaQuery(context).width,
-  //           child: Padding(
-  //             padding: EdgeInsets.all(16.0),
-  //             child: Stack(
-  //               children: [
-  //                 Column(
-  //                   crossAxisAlignment: CrossAxisAlignment.start,
-  //                   children: [
-  //                     Row(
-  //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                       children: [
-  //                         Text("SELECT ADDRESS", style: Theme.of(context).textTheme.titleMedium,),
-  //                         IconButton(onPressed: (){
-  //                           Navigator.pop(context);
-  //                         }, icon: Icon(Icons.close))
-  //                       ],
-  //                     ),
-  //                     SizedBox(height: 20,),
-  //                     Expanded(
-  //                       child: ListView.builder(
-  //                           itemCount: addresses.length,
-  //                           itemBuilder: (context, index) {
-  //                             return MultiAddressCard(address: addresses[index], box: box, index: index, context: context, onSelect: () {
-  //                               setState(() {});
-  //                             },);
-  //                           }),
-  //                     ),
-  //                     SizedBox(height: 100,),
-  //                   ],
-  //                 ),
-  //                 Positioned(
-  //                   bottom: 0,
-  //                     left: 0,
-  //                     right: 0,
-  //                     child: Container(
-  //                       width: ZMediaQuery(context).width,
-  //                         padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-  //                         // color: TColors.Green,
-  //                         child: Center(child: ZElevatedButton(title: "ADD ADDRESS", onPress: (){}))))
-  //               ],
-  //             ),
-  //           ),
-  //         );
-  //       });
-  // }
-
   void showAddressDialog() async {
     showModalBottomSheet(
       context: context,

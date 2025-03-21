@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:zesty/screens/home/zesty_Mart/single_Product/singleProduct.dart';
 
+import '../../../utils/constants/api_constants.dart';
 import '../custom_widget/searchbarHome.dart';
 import 'package:http/http.dart' as http;
 
@@ -15,17 +16,17 @@ class seachZestyMart extends StatefulWidget {
 
 class _seachZestyMartState extends State<seachZestyMart> {
   TextEditingController searchController = TextEditingController();
-  List<Map<String, dynamic>> allItemDetail = [];
-  List<Map<String, dynamic>> filteredItemDetail = [];
+  List<Map<String, dynamic>> allCouponCode = [];
+  List<Map<String, dynamic>> filterCouponCode = [];
 
   Future<void> FetchItemData() async {
-    final url = Uri.parse("https://zesty-backend.onrender.com/zestyMart/get-all-martItem");
+    final url = Uri.parse(ApiConstants.getCouponData);
 
     try{
       final response = await http.get(url);
       final List<dynamic> data = jsonDecode(response.body);
       setState(() {
-        allItemDetail = List<Map<String, dynamic>>.from(data);
+        allCouponCode = List<Map<String, dynamic>>.from(data);
         // filteredItemDetail = allItemDetail;
       });
     } catch (e){
@@ -36,15 +37,15 @@ class _seachZestyMartState extends State<seachZestyMart> {
   void filterSearchResult(String query){
     setState(() {
       if (query.isEmpty){
-         filteredItemDetail = List.from(allItemDetail);
+        filterCouponCode = List.from(allCouponCode);
       } else {
-      setState(() {
-        filteredItemDetail = allItemDetail.where((item) {
-          String itemName = item['name'].toString().toLowerCase();
-          return itemName.contains(query.toLowerCase());
-        },).toList();
-      });
-    }
+        setState(() {
+          filterCouponCode = allCouponCode.where((item) {
+            String itemName = item['promoCode'].toString().toLowerCase();
+            return itemName.contains(query.toLowerCase());
+          },).toList();
+        });
+      }
     });
   }
 
@@ -80,9 +81,9 @@ class _seachZestyMartState extends State<seachZestyMart> {
 
           Expanded(
               child:  ListView.builder(
-                itemCount: filteredItemDetail.length,
+                itemCount: filterCouponCode.length,
                 itemBuilder: (context, index) {
-                  var item = filteredItemDetail[index];
+                  var item = filterCouponCode[index];
 
                   // Extract first image from the list
                   List<dynamic> images = item["images"] ?? [];

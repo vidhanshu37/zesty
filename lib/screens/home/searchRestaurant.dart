@@ -38,7 +38,7 @@ class _SearchrestaurantState extends State<Searchrestaurant> {
 
   void filterSearchResult(String query){
     if (query.isEmpty){
-
+      filteredRestaurantDetail = allRestaurantData;
     } else {
       setState(() {
         filteredRestaurantDetail = allRestaurantData.where((item) {
@@ -72,8 +72,8 @@ class _SearchrestaurantState extends State<Searchrestaurant> {
           Padding(
             padding: const EdgeInsets.all(15.0),
             child: SearchBarHome(
-              searchController: searchController,
               onChange: filterSearchResult,
+              searchController: searchController,
             ),
           ),
           Expanded(
