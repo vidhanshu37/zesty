@@ -102,7 +102,7 @@ class _profileState extends State<profile> {
               subtitle: Text("Tap to see your benefits",style: Theme.of(context).textTheme.labelMedium),
               trailing: Icon(Icons.arrow_forward_ios,color: TColors.darkGrey,size: 16,),
               onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ZestyLiteActive(zestyMartOrder: 8, zestyOrder: box.get(HiveOpenBox.zestyLiteOrder, defaultValue: 0),),));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ZestyLiteActive(zestyMartOrder: box.get(HiveOpenBox.zestyMartLiteOrder, defaultValue: 0), zestyOrder: box.get(HiveOpenBox.zestyLiteOrder, defaultValue: 0),),));
               },
             ) : ListTile(
               contentPadding: EdgeInsets.zero,

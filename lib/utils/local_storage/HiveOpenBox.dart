@@ -16,6 +16,7 @@ class HiveOpenBox {
   static String userZestyMoney = "userZestyMoney";
   static String userName = "userName";
   static String zestyLiteOrder = "zestyLiteOrder";
+  static String zestyMartLiteOrder = "zestyMartLiteOrder";
 
 
 

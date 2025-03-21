@@ -46,12 +46,18 @@ class _ZestyMartPaymentState extends State<ZestyMartPayment> {
   }
   
   Future<void> handlePaymentSuccess(PaymentSuccessResponse res) async {
-    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
-      content: new Text("Payment Successfull"),
-    ));
+    // ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+    //   content: new Text("Payment Successfull"),
+    // ));
     boxZesty.clear();
+    int zestyMartLiteOrder = box.get(HiveOpenBox.zestyMartLiteOrder, defaultValue: 0);
+    zestyMartLiteOrder++;
+    box.put(HiveOpenBox.zestyMartLiteOrder, zestyMartLiteOrder);
+    Navigator.popUntil(context, (route) => route.isFirst);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Order Confirm")));
+
     // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => TrackDeliveryOrder(ResLongitude: ResLongitude, ResLatitude: ResLatitude, restaurantId: restaurantId, totalCartValue: totalCartValue)), (route) => route.isFirst);
-    //ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ZestyMoney.walletAmount.toString())));
+    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ZestyMoney.walletAmount.toString())));
   }
 
   void handlePaymentFailure(PaymentFailureResponse res) {
@@ -290,7 +296,12 @@ class _ZestyMartPaymentState extends State<ZestyMartPayment> {
                   onPress: () {
                     if (selectedOption == "COD") {
                       // storeOrderData();
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Order done via cash")));
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Order Confirm")));
+                      int zestyMartLiteOrder = box.get(HiveOpenBox.zestyMartLiteOrder, defaultValue: 0);
+                      zestyMartLiteOrder++;
+                      box.put(HiveOpenBox.zestyMartLiteOrder, zestyMartLiteOrder);
+                      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Order done via cash")));
+                      Navigator.popUntil(context, (route) => route.isFirst);
                     } else if (selectedOption == "ONLINE") {
                       openCheckout(int.parse(widget.totalPrice));
                     } else if (selectedOption == "WALLET") {
@@ -298,9 +309,14 @@ class _ZestyMartPaymentState extends State<ZestyMartPayment> {
                       double.parse(box.get(HiveOpenBox.userZestyMoney));
                       double price = double.parse(widget.totalPrice);
                       if (zestyWallet >= price) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Order Confirm")));
                         zestyWallet = zestyWallet - price;
                         box.put(HiveOpenBox.userZestyMoney,
                             zestyWallet.toStringAsFixed(2));
+                        int zestyMartLiteOrder = box.get(HiveOpenBox.zestyMartLiteOrder, defaultValue: 0);
+                        zestyMartLiteOrder++;
+                        box.put(HiveOpenBox.zestyMartLiteOrder, zestyMartLiteOrder);
+                        Navigator.popUntil(context, (route) => route.isFirst);
                         // storeOrderData();
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
