@@ -37,4 +37,7 @@ class HiveOpenBox {
   static String searchItem = "SearchItem";
   static String searchItemSuggestion = "searchItemSuggestion";
 
+  ///Hive for LikeResturants
+  static String likedResturants = 'likedResturants';
+
 }

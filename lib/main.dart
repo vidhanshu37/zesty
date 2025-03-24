@@ -43,6 +43,9 @@ void main() async {
   /// Open hive box for storing zesty mart item
   await Hive.openBox(HiveOpenBox.storeZestyMartItem);
 
+  /// Open hive box for storing likedResturants
+  await Hive.openBox(HiveOpenBox.likedResturants);
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp, // Only allows portrait mode
   ]).then((_) {
