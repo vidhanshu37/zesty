@@ -37,7 +37,7 @@ class _LocationAccessState extends State<LocationAccess> {
 
             /// current location button
             Positioned(
-              bottom: 85,
+              bottom: 25,
               right: 0,
               left: 0,
               child: ZElevatedButton(
@@ -51,19 +51,19 @@ class _LocationAccessState extends State<LocationAccess> {
             ),
 
             /// enter manually button
-            Positioned(
-                bottom: 20,
-                left: 0,
-                right: 0,
-                child: ZElevatedButton(
-                  bgColor:
-                       TColors.grey,
-                  btnTextColor:  TColors.black,
-                  title: "Enter manually",
-                  onPress: () {
-                    showFloatingSheet(context);
-                  },
-                )),
+            // Positioned(
+            //     bottom: 20,
+            //     left: 0,
+            //     right: 0,
+            //     child: ZElevatedButton(
+            //       bgColor:
+            //            TColors.grey,
+            //       btnTextColor:  TColors.black,
+            //       title: "Enter manually",
+            //       onPress: () {
+            //         showFloatingSheet(context);
+            //       },
+            //     )),
 
             /// title text
             Positioned(

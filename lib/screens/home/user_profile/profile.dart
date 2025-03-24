@@ -60,6 +60,7 @@ class _profileState extends State<profile> {
                   valueListenable: Hive.box(HiveOpenBox.storeAddress).listenable(),
                   builder: (context, Box box, _) {
                     return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(box.get(HiveOpenBox.userName, defaultValue: "Zesty"),style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold)),
                         Text("+91 ${box.get(HiveOpenBox.userMobile)}",style: TextStyle(color: TColors.darkerGrey,fontSize: 12)),

@@ -184,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen>
     return Scaffold(
       bottomNavigationBar: AnimatedContainer(
         duration: const Duration(milliseconds: 400),
-        height: isVisible ? 65.0 : 0.0,
+        height: isVisible ? 70.0 : 0.0,
         // margin: const EdgeInsets.symmetric(horizontal: 24.0),
         decoration: BoxDecoration(
           color: TColors.bgLight,
@@ -516,21 +516,23 @@ class _HomeScreenState extends State<HomeScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      RichText(
-                        text: TextSpan(
-                          style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold, color: TColors.darkGrey),
-                          children: [
-                            TextSpan(text: "Live \n"),
-                            TextSpan(text: "it up!", style: TextStyle(fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                        textHeightBehavior: TextHeightBehavior(
-                          applyHeightToFirstAscent: false, // Reduces extra spacing above the first line
-                          applyHeightToLastDescent: false, // Reduces extra spacing below the last line
-                        ),
-                      ),
-                      SizedBox(height: 5,),
+                      // RichText(
+                      //   text: TextSpan(
+                      //     style: TextStyle(fontSize: 60, fontWeight: FontWeight.w900, color: TColors.darkGrey),
+                      //     children: [
+                      //       TextSpan(text: "Live \n"),
+                      //       TextSpan(text: "it up!", style: TextStyle(fontWeight: FontWeight.bold)),
+                      //     ],
+                      //   ),
+                      //   textHeightBehavior: TextHeightBehavior(
+                      //     applyHeightToFirstAscent: false, // Reduces extra spacing above the first line
+                      //     applyHeightToLastDescent: false, // Reduces extra spacing below the last line
+                      //   ),
+                      // ),
+                      Text("Live\nit up!", style: TextStyle(fontSize: 60, fontWeight: FontWeight.w800, color: TColors.darkGrey),),
+                      SizedBox(height: 10,),
                       Text("Crafted with ❤ in Gujarat, India",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,color: TColors.darkGrey)),
+                      SizedBox(height: 15,),
                     ],
                   ),
                 ),
