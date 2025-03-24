@@ -426,15 +426,71 @@ class _HomeScreenState extends State<HomeScreen>
                                       color: TColors.lightGrey,
                                       borderRadius: BorderRadius.circular(12.0)
                                   ),
-                                  child: Image.network('${restaurantData[index]['logoImg']}',
-                                    fit: BoxFit.cover,
-                                    loadingBuilder: (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Center(child: CircularProgressIndicator(color: Colors.black,));
-                                    },
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Icon(Icons.image_not_supported, size: 50, color: Colors.grey);
-                                    },
+                                  child: Stack(
+                                    children: [
+                                      Image.network('${restaurantData[index]['logoImg']}',
+                                      fit: BoxFit.cover,width: double.infinity,
+                                      loadingBuilder: (context, child, loadingProgress) {
+                                        if (loadingProgress == null) return child;
+                                        return Center(child: CircularProgressIndicator(color: Colors.black,));
+                                      },
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Icon(Icons.image_not_supported, size: 50, color: Colors.grey);
+                                      },
+                                    ),
+
+                                      Positioned.fill(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            // borderRadius: BorderRadius.circular(16),
+                                            gradient: RadialGradient(
+                                              colors: [
+                                                Colors.transparent,             // Fade out towards bottom
+                                                Colors.black.withOpacity(0.6),  // Darker shade at the top
+                                              ],
+                                              center: Alignment.center,
+                                              radius: 1.3, // Spread the gradient to cover edges
+                                              stops: [0.5, 1.0], // Keep the middle part clear
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
+                                      Positioned(
+                                        top: 4,
+                                        right: 2,  
+                                          child: IconButton(onPressed: (){
+                                            Box likedbox = Hive.box(HiveOpenBox.storeAddress);
+
+                                            List likeRestaurant = List<String>.from(
+                                              likedbox.get(HiveOpenBox.likedResturants, defaultValue: []),
+                                            );
+
+                                            String restaurantId = restaurantData[index]['_id'];
+
+                                            if (likeRestaurant.contains(restaurantId)) {
+                                                    likeRestaurant.remove(restaurantId); // Unlike (remove from list)likeRestaurant.add(restaurantData[index]['_id']);
+                                            } else {Hive.box(HiveOpenBox.storeAddress).put(HiveOpenBox.likedResturants, likeRestaurant);
+                                                    likeRestaurant.add(restaurantId); // Like (add to list)
+                                            }
+
+                                            likedbox.put(HiveOpenBox.likedResturants, likeRestaurant);
+
+                                            setState(() {
+
+                                            });
+                                          }, 
+                                              icon: Icon(
+                                                Hive.box(HiveOpenBox.storeAddress).get(HiveOpenBox.likedResturants, defaultValue: []).contains(restaurantData[index]['_id'])
+                                                    ? Icons.favorite
+                                                    : Icons.favorite_border_outlined,
+                                                  color: Hive.box(HiveOpenBox.storeAddress).get(HiveOpenBox.likedResturants,defaultValue: []).contains(restaurantData[index]['_id'])
+                                                ? Colors.red
+                                                : TColors.white,
+                                                  size: 30,
+                                              ) )
+                                      )
+                                    ]
                                   ),
                                 ),
                               ),
@@ -454,6 +510,31 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                     );
                   }),
+
+              SliverToBoxAdapter(
+                child: Padding(padding: EdgeInsets.only(top: 40,left: 30,bottom: 25),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold, color: TColors.darkGrey),
+                          children: [
+                            TextSpan(text: "Live \n"),
+                            TextSpan(text: "it up!", style: TextStyle(fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                        textHeightBehavior: TextHeightBehavior(
+                          applyHeightToFirstAscent: false, // Reduces extra spacing above the first line
+                          applyHeightToLastDescent: false, // Reduces extra spacing below the last line
+                        ),
+                      ),
+                      SizedBox(height: 5,),
+                      Text("Crafted with ❤ in Gujarat, India",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,color: TColors.darkGrey)),
+                    ],
+                  ),
+                ),
+              )
             ],
           ),
           ZestyMartPage(address: widget.address, subAddress: widget.subAddress,),
