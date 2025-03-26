@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:lottie/lottie.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
 import 'package:zesty/screens/home/item_cart/cartPayment.dart';
 import 'package:zesty/screens/home/zesty_Mart/zestyMart_payment.dart';
@@ -162,10 +163,10 @@ class _ZestymartcartState extends State<Zestymartcart> {
           ],
         ),
       ),
-      body: SingleChildScrollView(
+      body: fetchedZestyMartItem.isEmpty ? Center(child: CircularProgressIndicator(color: Colors.black,)) : SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: fetchedZestyMartItem.isEmpty ? Center(child: CircularProgressIndicator(color: Colors.black,)) : Column(
+          child: Column(
             children: [
               /// Delivery Address
               Card(

@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_avif/flutter_avif.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:hive/hive.dart';
@@ -99,6 +101,7 @@ class _HomeScreenState extends State<HomeScreen>
       if(response.statusCode == 200 ) {
           restaurantData = jsonDecode(response.body);
           setState(() {});
+          restaurantData.shuffle(Random());
       }
     } catch(e) {
       print(e);
@@ -432,7 +435,7 @@ class _HomeScreenState extends State<HomeScreen>
                                       fit: BoxFit.cover,width: double.infinity,
                                       loadingBuilder: (context, child, loadingProgress) {
                                         if (loadingProgress == null) return child;
-                                        return Center(child: CircularProgressIndicator(color: Colors.black,));
+                                        return Container(color: TColors.grey,);
                                       },
                                       errorBuilder: (context, error, stackTrace) {
                                         return Icon(Icons.image_not_supported, size: 50, color: Colors.grey);
@@ -460,6 +463,7 @@ class _HomeScreenState extends State<HomeScreen>
                                         top: 4,
                                         right: 2,  
                                           child: IconButton(onPressed: (){
+                                            HapticFeedback.lightImpact();
                                             Box likedbox = Hive.box(HiveOpenBox.storeAddress);
 
                                             List likeRestaurant = List<String>.from(
@@ -475,10 +479,7 @@ class _HomeScreenState extends State<HomeScreen>
                                             }
 
                                             likedbox.put(HiveOpenBox.likedResturants, likeRestaurant);
-
-                                            setState(() {
-
-                                            });
+                                            setState(() {});
                                           }, 
                                               icon: Icon(
                                                 Hive.box(HiveOpenBox.storeAddress).get(HiveOpenBox.likedResturants, defaultValue: []).contains(restaurantData[index]['_id'])

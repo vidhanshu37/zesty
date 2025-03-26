@@ -1,5 +1,6 @@
-import 'dart:convert';
 
+import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
@@ -31,6 +32,7 @@ class _SearchrestaurantState extends State<Searchrestaurant> {
       setState(() {
         allRestaurantData = List<Map<String, dynamic>>.from(data);
       });
+      allRestaurantData.shuffle(Random());
     } catch (e){
       print(e.toString());
     }
@@ -39,6 +41,9 @@ class _SearchrestaurantState extends State<Searchrestaurant> {
   void filterSearchResult(String query){
     if (query.isEmpty){
       filteredRestaurantDetail = allRestaurantData;
+      setState(() {
+        
+      });
     } else {
       setState(() {
         filteredRestaurantDetail = allRestaurantData.where((item) {
@@ -55,6 +60,7 @@ class _SearchrestaurantState extends State<Searchrestaurant> {
     super.initState();
     FetchRestaurantData();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,11 +68,11 @@ class _SearchrestaurantState extends State<Searchrestaurant> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context); // ✅ Safely go back
+            Navigator.pop(context); // Safely go back
           },
         ),
       ),
-      body: allRestaurantData.isEmpty ? Center(child: CircularProgressIndicator(),) : Column(
+      body: allRestaurantData.isEmpty ? Center(child: CircularProgressIndicator(color: Colors.black,),) : Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
@@ -76,87 +82,106 @@ class _SearchrestaurantState extends State<Searchrestaurant> {
               searchController: searchController,
             ),
           ),
-          Expanded(
-              child:  ListView.builder(
-                  itemCount: filteredRestaurantDetail.length,
-                  itemBuilder: (context, index) {
-                    var item = filteredRestaurantDetail[index];
-                    return Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          GestureDetector(
-                            onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantsHome(id: item["_id"],),));
-                            },
-                            child: Container(
-                              width: 120,
-                              height: 150,
-                              decoration: BoxDecoration(
-                                  color: TColors.lightGrey,
-                                  borderRadius: BorderRadius.circular(12.0)
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.network('${item['logoImg']}',
-                                  fit: BoxFit.cover,
-                                  loadingBuilder: (context, child, loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return Center(child: CircularProgressIndicator());
-                                  },
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Icon(Icons.image_not_supported, size: 50, color: Colors.grey);
-                                  },
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          SizedBox(width: 14,),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(height: 10,),
-                                item['veg'] == 'veg' ? Row(
-                                  children: [
-                                    Icon(
-                                      Icons.verified,
-                                      color: Colors.green,
-                                    ),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(
-                                      "Pure Veg",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.green),
-                                    ),
-                                  ],
-                                ) : SizedBox(height:10,),
-
-                                SizedBox(height: 5,),
-                                Text(item['restaurantName'], style: TextStyle(fontSize: 18,fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis,),
-                                Text("${ApiConstants.calculateDistance(double.parse(box.get(HiveOpenBox.storeAddressLat)) ?? 21.2049, double.parse(box.get(HiveOpenBox.storeAddressLong)) ?? 21.8411, item['latitude'] ?? 21.70, item['longitude'] ?? 71.12).toStringAsFixed(2)} km "
-                                  ,style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500,overflow: TextOverflow.ellipsis),maxLines: 2,),
-                                Text(
-                                  "Fast Food, South Indian Ramanagar",
-                                  style: TextStyle(fontSize: 12, color: TColors.darkGrey),
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    );
-                  }),
-          )
+          searchController.text.isEmpty ? searchItem(filteredRestaurantDetail: allRestaurantData, box: box) : filteredRestaurantDetail.isEmpty && searchController.text.isNotEmpty ? Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Text('No result found for "${searchController.text}"', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w600),),
+          ) : searchItem(filteredRestaurantDetail: filteredRestaurantDetail, box: box)
         ],
       ),
+    );
+  }
+}
+
+class searchItem extends StatelessWidget {
+  const searchItem({
+    super.key,
+    required this.filteredRestaurantDetail,
+    required this.box,
+  });
+
+  final List<Map<String, dynamic>> filteredRestaurantDetail;
+  final Box box;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        child:  ListView.builder(
+            itemCount: filteredRestaurantDetail.length,
+            itemBuilder: (context, index) {
+              var item = filteredRestaurantDetail[index];
+              return Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantsHome(id: item["_id"],),));
+                      },
+                      child: Container(
+                        width: 120,
+                        height: 150,
+                        decoration: BoxDecoration(
+                            color: TColors.lightGrey,
+                            borderRadius: BorderRadius.circular(12.0)
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.network('${item['logoImg']}',
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(child: CircularProgressIndicator());
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(Icons.image_not_supported, size: 50, color: Colors.grey);
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(width: 14,),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 10,),
+                          item['veg'] == 'veg' ? Row(
+                            children: [
+                              Icon(
+                                Icons.verified,
+                                color: Colors.green,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                "Pure Veg",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green),
+                              ),
+                            ],
+                          ) : SizedBox(height:10,),
+
+                          SizedBox(height: 5,),
+                          Text(item['restaurantName'], style: TextStyle(fontSize: 18,fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis,),
+                          Text("${ApiConstants.calculateDistance(double.parse(box.get(HiveOpenBox.storeAddressLat)) ?? 21.2049, double.parse(box.get(HiveOpenBox.storeAddressLong)) ?? 21.8411, item['latitude'] ?? 21.70, item['longitude'] ?? 71.12).toStringAsFixed(2)} km "
+                            ,style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500,overflow: TextOverflow.ellipsis),maxLines: 2,),
+                          Text(
+                            "Fast Food, South Indian Ramanagar",
+                            style: TextStyle(fontSize: 12, color: TColors.darkGrey),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              );
+            }),
     );
   }
 }

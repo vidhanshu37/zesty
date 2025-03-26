@@ -145,12 +145,13 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
     });
 
     return Scaffold(
+      backgroundColor: restaurantData == null ? Color(0xfffefefe) : TColors.bgLight,
       appBar: AppBar(
         backgroundColor: Colors.grey.withOpacity(0.5),
       ),
       body: restaurantData == null
           ? Center(
-        child: CircularProgressIndicator(color: Colors.black,),
+        child: Image.asset('assets/images/bike_loader.gif', height: 250, width: 250,),
       )
           : LayoutBuilder(
         builder: (context, constraints) {
@@ -391,7 +392,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
         },
       ),
 
-      floatingActionButton: Stack(
+      floatingActionButton: restaurantData == null ? SizedBox.shrink() : Stack(
         children: [
           Positioned(
             bottom: box.isNotEmpty ? 100 : 20 ,

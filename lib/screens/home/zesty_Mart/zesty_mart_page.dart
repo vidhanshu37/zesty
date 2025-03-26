@@ -258,7 +258,7 @@ class _ZestyMartPageState extends State<ZestyMartPage>
         body: Stack(
           children:[
             TabBarView(
-            physics: NeverScrollableScrollPhysics(),
+            // physics: NeverScrollableScrollPhysics(),
             controller: _tabController,
             children: [
               AllTab(),

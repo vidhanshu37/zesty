@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_avif/flutter_avif.dart';
 import 'package:http/http.dart' as http;
+import 'package:lottie/lottie.dart';
 
 import '../../../utils/constants/colors.dart';
 import '../../restaurants_side/custom_widget/mart_itemCard.dart';
@@ -51,7 +52,7 @@ class _BeautyTabState extends State<BeautyTab> {
   }
   @override
   Widget build(BuildContext context) {
-    return beautyMartItem.isEmpty ? Center(child: CircularProgressIndicator(color: TColors.black,),) : CustomScrollView(
+    return beautyMartItem.isEmpty ? Center(child: Lottie.asset('assets/lottie/zestyMart_loader.json', height: 200, width: 200)) : CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
           child: Column(

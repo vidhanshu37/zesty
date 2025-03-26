@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_avif/flutter_avif.dart';
 import 'package:http/http.dart' as http;
+import 'package:lottie/lottie.dart';
 import 'package:zesty/screens/restaurants_side/custom_widget/mart_itemCard.dart';
 
 import '../../../utils/constants/colors.dart';
@@ -49,7 +50,7 @@ class _GroceryTabState extends State<GroceryTab> {
   }
   @override
   Widget build(BuildContext context) {
-    return groceryMartItem.isEmpty ? Center(child: CircularProgressIndicator(color: TColors.black,),) : CustomScrollView(
+    return groceryMartItem.isEmpty ? Center(child: Lottie.asset('assets/lottie/zestyMart_loader.json', height: 200, width: 200),) : CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
           child: Column(

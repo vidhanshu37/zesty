@@ -149,18 +149,24 @@ class _ReorderPageState extends State<ReorderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: pastOrder.isNotEmpty ? Color(0xfffefefe) : Colors.grey[100],
       body: isLoading
           ? Center(
         child: CircularProgressIndicator(
           color: Colors.black,
         ),
       )
-          : pastOrder.isEmpty
+          : pastOrder.isNotEmpty
           ? Center(
-          child: Text(
-            "No past orders found.",
-            style: TextStyle(fontSize: 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset('assets/images/reorder_loader.gif', height: 300, width: 300,),
+              Text(
+                "No past orders found.",
+                style: TextStyle(fontSize: 16),
+              ),
+            ],
           ))
           : RefreshIndicator(
         color: Colors.black,
