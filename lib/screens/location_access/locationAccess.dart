@@ -29,7 +29,7 @@ class _LocationAccessState extends State<LocationAccess> {
           children: [
 
             Positioned(
-              top: 40,
+              top: 80,
                 left: 20,
                 right: 20,
                 child: Image.asset('assets/images/location.jpeg')
@@ -67,7 +67,7 @@ class _LocationAccessState extends State<LocationAccess> {
 
             /// title text
             Positioned(
-                bottom: 230,
+                bottom: 155,
                 right: 0,
                 left: 0,
                 child: Center(
@@ -76,7 +76,7 @@ class _LocationAccessState extends State<LocationAccess> {
 
             /// description text
             Positioned(
-                bottom: 193,
+                bottom: 120,
                 right: 0,
                 left: 0,
                 child: Center(

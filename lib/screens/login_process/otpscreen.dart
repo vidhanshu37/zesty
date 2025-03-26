@@ -164,6 +164,7 @@ class _otpverifyState extends State<otpverify> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Stack(
           children: [ Padding(
             padding: const EdgeInsets.all(15.0),

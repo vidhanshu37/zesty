@@ -57,6 +57,7 @@ class _CartPaymentState extends State<CartPayment> {
   void openCheckout(int amount) async {
     amount = amount * 100;
     var options = {
+      'image': 'assets/images/zesty-logo-main.jpg',
       'key': 'rzp_test_1DP5mmOlF5G5ag',
       'amount': amount,
       'name': 'Zesty',

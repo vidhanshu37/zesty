@@ -149,14 +149,14 @@ class _ReorderPageState extends State<ReorderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: pastOrder.isNotEmpty ? Color(0xfffefefe) : Colors.grey[100],
+      backgroundColor: pastOrder.isEmpty ? Color(0xfffefefe) : Colors.grey[100],
       body: isLoading
           ? Center(
         child: CircularProgressIndicator(
           color: Colors.black,
         ),
       )
-          : pastOrder.isNotEmpty
+          : pastOrder.isEmpty
           ? Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
