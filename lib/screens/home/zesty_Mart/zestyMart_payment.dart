@@ -305,14 +305,14 @@ class _ZestyMartPaymentState extends State<ZestyMartPayment> {
                     } else if (selectedOption == "ONLINE") {
                       openCheckout(int.parse(widget.totalPrice));
                     } else if (selectedOption == "WALLET") {
-                      double zestyWallet =
-                      double.parse(box.get(HiveOpenBox.userZestyMoney));
-                      double price = double.parse(widget.totalPrice);
+                      int zestyWallet =
+                      int.parse(box.get(HiveOpenBox.userZestyMoney));
+                      int price = int.parse(widget.totalPrice);
                       if (zestyWallet >= price) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Order Confirm")));
                         zestyWallet = zestyWallet - price;
                         box.put(HiveOpenBox.userZestyMoney,
-                            zestyWallet.toStringAsFixed(2));
+                            zestyWallet.toStringAsFixed(0));
                         int zestyMartLiteOrder = box.get(HiveOpenBox.zestyMartLiteOrder, defaultValue: 0);
                         zestyMartLiteOrder++;
                         box.put(HiveOpenBox.zestyMartLiteOrder, zestyMartLiteOrder);

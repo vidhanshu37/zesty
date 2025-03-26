@@ -52,7 +52,6 @@ void main() async {
     runApp(MyApp());
   });
 
-
   // runApp(const MyApp());
 }
 

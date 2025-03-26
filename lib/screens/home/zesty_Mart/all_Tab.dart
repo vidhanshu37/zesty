@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_avif/flutter_avif.dart';
 import 'package:http/http.dart' as http;
+import 'package:lottie/lottie.dart';
 import 'package:zesty/screens/home/Shimmer_home.dart';
 import 'package:zesty/screens/home/zesty_Mart/beauty_Tab.dart';
 import 'package:zesty/screens/home/zesty_Mart/category_Item/beautyCategory.dart';
@@ -75,7 +76,7 @@ class _AllTabState extends State<AllTab> {
 
   @override
   Widget build(BuildContext context) {
-    return allMartItem.isEmpty ? Center(child: CircularProgressIndicator(color: TColors.black,),)
+    return allMartItem.isEmpty ? Center(child: Lottie.asset('assets/lottie/zestyMart_loader.json', height: 200, width: 200),)
         : CustomScrollView(
       slivers: [
         SliverToBoxAdapter(

@@ -55,7 +55,7 @@ class _CategoryHomeState extends State<CategoryHome> {
         slivers: [
           SliverAppBar(
             pinned: true,
-            backgroundColor: TColors.white,
+            backgroundColor: TColors.grey,
             title: Text(widget.categoryName,style: TextStyle(color: TColors.black,fontWeight: FontWeight.bold,fontSize: 20),),
           ),
 

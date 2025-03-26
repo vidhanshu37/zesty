@@ -151,12 +151,13 @@ class _ShowGoogleMapState extends State<ShowGoogleMap> {
             ),
           ),
           // Address details
-          Positioned(
+          Positioned
+            (
             bottom: 0,
             left: 0,
             right: 0,
             child: Container(
-              height: ZMediaQuery(context).height * 0.26,
+              height: ZMediaQuery(context).height * 0.24,
               width: ZMediaQuery(context).width,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(
@@ -191,20 +192,20 @@ class _ShowGoogleMapState extends State<ShowGoogleMap> {
                     //    ?? "",
                     //   style: Theme.of(context).textTheme.labelLarge,
                     // ),
-                    trailing: InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                        showFloatingSheet(context);
-                      },
-                      child: Container(
-                        width: 70,
-                        height: 30,
-                        decoration: BoxDecoration(
-                            color: TColors.ligthGreen.withOpacity(0.4),
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Center(child: Text("Change")),
-                      ),
-                    ),
+                    // trailing: InkWell(
+                    //   onTap: () {
+                    //     Navigator.pop(context);
+                    //     showFloatingSheet(context);
+                    //   },
+                    //   child: Container(
+                    //     width: 70,
+                    //     height: 30,
+                    //     decoration: BoxDecoration(
+                    //         color: TColors.ligthGreen.withOpacity(0.4),
+                    //         borderRadius: BorderRadius.circular(20)),
+                    //     child: Center(child: Text("Change")),
+                    //   ),
+                    // ),
                   ),
                   const SizedBox(height: 20),
                   Padding(
