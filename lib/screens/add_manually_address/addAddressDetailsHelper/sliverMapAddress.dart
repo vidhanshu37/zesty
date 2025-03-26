@@ -35,6 +35,7 @@ class _TopMapState extends State<TopMap> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
         body: CustomScrollView(
       slivers: [
         // SliverToBoxAdapter(
@@ -81,7 +82,7 @@ class _TopMapState extends State<TopMap> {
           // Hide the back arrow
           elevation: 0,
           pinned: true,
-          backgroundColor: TColors.bgLight,
+          backgroundColor: TColors.white,
           bottom: PreferredSize(
               preferredSize: Size.fromHeight(-15.0), child: SizedBox()),
           flexibleSpace: ListTile(

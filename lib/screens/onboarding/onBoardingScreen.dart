@@ -38,7 +38,7 @@ class _onbordingState extends State<onbording> {
             buildIndicator(),
             Expanded(
               child: PageView(
-                physics: NeverScrollableScrollPhysics(),
+                // physics: NeverScrollableScrollPhysics(),
                 controller: pageController,
                 onPageChanged: (index) {
                   setState(() {

@@ -164,7 +164,7 @@ class _ShowGoogleMapState extends State<ShowGoogleMap> {
                   topLeft: Radius.circular(17),
                   topRight: Radius.circular(17),
                 ),
-                color: TColors.bgLight,
+                color: TColors.white,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
@@ -234,7 +234,7 @@ class _ShowGoogleMapState extends State<ShowGoogleMap> {
           ),
           // Current location button
           Positioned(
-              top: ZMediaQuery(context).height * 0.63,
+              bottom: ZMediaQuery(context).height * 0.26,
               left: ZMediaQuery(context).width / 4,
               child: InkWell(
                 onTap: () {

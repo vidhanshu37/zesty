@@ -85,7 +85,7 @@ class _LikedRestaurantsPageState extends State<LikedRestaurantsPage> {
               title: Text(restaurant['restaurantName'],maxLines: 2,overflow: TextOverflow.ellipsis,),
               subtitle: Text(restaurant['cuisines'] ?? "Fast Food",maxLines: 2,overflow: TextOverflow.ellipsis,),
               trailing: IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red),
+                icon: const Icon(Icons.delete, color: Colors.black),
                 onPressed: () {
                   setState(() {
                     likedRestaurantIds.remove(restaurantId);
