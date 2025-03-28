@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:zesty/screens/home/user_profile/add_new_address.dart';
 import 'package:zesty/screens/home/user_profile/editProfile.dart';
+import 'package:zesty/screens/home/user_profile/helpSupport.dart';
 import 'package:zesty/screens/home/user_profile/money_Gift_Cards.dart';
 import 'package:zesty/screens/home/user_profile/zesty1.dart';
 import 'package:zesty/screens/home/user_profile/zestyLiteActive.dart';
@@ -131,7 +132,7 @@ class _profileState extends State<profile> {
               Divider(),
               ListTile(
                 contentPadding: EdgeInsets.zero,
-                title: Text("My Account",style: Theme.of(context).textTheme.titleLarge),
+                title: Text("Favourite",style: Theme.of(context).textTheme.titleLarge),
                 subtitle: Text("Favourites Restaurants",style: Theme.of(context).textTheme.labelMedium),
                 trailing: Icon(Icons.arrow_forward_ios,color: TColors.darkGrey,size: 16,),
                 onTap: (){
@@ -146,6 +147,16 @@ class _profileState extends State<profile> {
                 trailing: Icon(Icons.arrow_forward_ios,color: TColors.darkGrey,size: 16,),
                 onTap: (){
                   Navigator.push(context, MaterialPageRoute(builder: (context) => MoneyGift(),));
+                },
+              ),
+              Divider(),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text("Help & Support",style: Theme.of(context).textTheme.titleLarge),
+                subtitle: Text("Send your query",style: Theme.of(context).textTheme.labelMedium),
+                trailing: Icon(Icons.arrow_forward_ios,color: TColors.darkGrey,size: 16,),
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => Helpsupport(),));
                 },
               ),
               // Divider(),
