@@ -192,7 +192,7 @@ class _profileState extends State<profile> {
               //   ),
               // ),
 
-              SizedBox(height: 130,),
+              SizedBox(height: 90,),
               // ListTile(
               //   title: Text("LOGOUT OPTION",style: Theme.of(context).textTheme.headlineSmall),
               //   trailing: Icon(Icons.arrow_forward_ios,color: Colors.grey,size: 16,),

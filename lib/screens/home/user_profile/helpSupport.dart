@@ -20,8 +20,8 @@ class _HelpsupportState extends State<Helpsupport> {
       "answer": "We value our customer's time and hence moved away from a single customer care number to a comprehensive chat-based support system for quick and easy resolution. You no longer have to go through the maze of an IVRS call support. Just search for your issue in the help section on this page and initiate a chat with us. A customer care executive will be assigned to you shortly."
     },
     {
-      "question": "I am unablee to place a cash on delivery order",
-      "answer": "With our 3-month Zesty Lite plan, you can enjoy 10 free deliveries on Food orders and 10 free deliveries on Instamart orders. Additionally, you get inlimited flat discounts on food delivery and Genie, as well as exclusive Dineout pre-book offers and deals, all on top of our regular offers."
+      "question": "I am unable to place a cash on delivery order",
+      "answer": "COD option may not be available due to below reasons: \n\n 1.High value order \n 2.If order is placed from a desktop application\n 3.Any recent history of canceling a COD order \n 4.New or inactive accounts \n\n To enable COD in the future, consider placing a few prepaid orders. Meanwhile, you can choose from our secure and convenient payment options. \n\n In case if your reason is not listed here, please write to us at support @zestyy377.in"
     },
     {
       "question": "I want to Provide feedback",
@@ -29,7 +29,7 @@ class _HelpsupportState extends State<Helpsupport> {
     },
     {
       "question": "Is single order from many restaurants possible?",
-      "answer": "Once you have enjoyed all your free deliveries on either Food or Zestymart, do not worry! You will get the option to either upgrade to Zesty One or renew Zesty Lite. This way you continue to enjoy free deliveries. Note, that on renewing or upgrading to a new plan, previous plan benefits do not carry forward."
+      "answer": "We currently do not support this functionality. However, you can place orders for individual items from different restaurants."
     },
   ];
   
@@ -61,7 +61,7 @@ class _HelpsupportState extends State<Helpsupport> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
