@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:zesty/screens/home/user_profile/add_balance.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:zesty/utils/constants/zesty_money.dart';
@@ -47,10 +48,15 @@ class _MoneyGiftState extends State<MoneyGift> {
                     SizedBox(height: 20,),
                     Text("Available Balance",style: TextStyle(fontSize: 16,color: Colors.white),),
                     SizedBox(height: 1,),
-                    SizedBox(
-                      width: 120,
-                        height: 40,
-                        child: Text("₹${box.get(HiveOpenBox.userZestyMoney)}",style: TextStyle(fontSize: 28,color: Colors.white,fontWeight: FontWeight.bold),)),
+                    ValueListenableBuilder(
+                      valueListenable: Hive.box(HiveOpenBox.storeAddress).listenable(),
+                      builder: (ctx, Box box, _) {
+                        return SizedBox(
+                            width: 120,
+                            height: 40,
+                            child: Text("₹${box.get(HiveOpenBox.userZestyMoney)}",style: TextStyle(fontSize: 28,color: Colors.white,fontWeight: FontWeight.bold),));
+                      },
+                    ),
                     Divider(),
                     SizedBox(height: 12,),
                     Text("Zesty money can be used for all your orders across categories ( Food, Zestymart & more )",style: TextStyle(color: Colors.white70,fontSize: 12),),
@@ -79,7 +85,7 @@ class _MoneyGiftState extends State<MoneyGift> {
                     width: double.infinity,
                     height: 53,
                     child: ElevatedButton(onPressed: (){
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AddBalance(),));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => AddBalance(),));
                     },
                         style: ElevatedButton.styleFrom(
                           side: BorderSide.none,
