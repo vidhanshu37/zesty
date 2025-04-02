@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -53,8 +54,25 @@ class _ZestyMartPaymentState extends State<ZestyMartPayment> {
     int zestyMartLiteOrder = box.get(HiveOpenBox.zestyMartLiteOrder, defaultValue: 0);
     zestyMartLiteOrder++;
     box.put(HiveOpenBox.zestyMartLiteOrder, zestyMartLiteOrder);
-    Navigator.popUntil(context, (route) => route.isFirst);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Order Confirm")));
+    AwesomeDialog(
+      context: context,
+      animType: AnimType.scale,
+      headerAnimationLoop: false,
+      dialogType: DialogType.success,
+      showCloseIcon: false,
+      title: 'Order confirm',
+      desc:
+      'You will get your order in 15-20 minutes',
+      btnOkOnPress: () {
+        debugPrint('OnClcik');
+        Navigator.popUntil(context, (route) => route.isFirst);
+      },
+      btnOkIcon: Icons.check_circle,
+      dismissOnTouchOutside: false,
+      dismissOnBackKeyPress: true,
+    ).show();
+    // Navigator.popUntil(context, (route) => route.isFirst);
+    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Order Confirm")));
 
     // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => TrackDeliveryOrder(ResLongitude: ResLongitude, ResLatitude: ResLatitude, restaurantId: restaurantId, totalCartValue: totalCartValue)), (route) => route.isFirst);
     // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ZestyMoney.walletAmount.toString())));
@@ -295,13 +313,31 @@ class _ZestyMartPaymentState extends State<ZestyMartPayment> {
                   title: "Pay Now",
                   onPress: () {
                     if (selectedOption == "COD") {
+                      AwesomeDialog(
+                        context: context,
+                        animType: AnimType.scale,
+                        headerAnimationLoop: false,
+                        dialogType: DialogType.success,
+                        showCloseIcon: false,
+                        title: 'Order confirm',
+                        desc:
+                        'You will get your order in 15-20 minutes',
+                        btnOkOnPress: () {
+                          debugPrint('OnClcik');
+                          Navigator.popUntil(context, (route) => route.isFirst);
+                        },
+                        btnOkIcon: Icons.check_circle,
+                        dismissOnTouchOutside: false,
+                        dismissOnBackKeyPress: true,
+                      ).show();
                       // storeOrderData();
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Order Confirm")));
+                      boxZesty.clear();
+                      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Order Confirm")));
                       int zestyMartLiteOrder = box.get(HiveOpenBox.zestyMartLiteOrder, defaultValue: 0);
                       zestyMartLiteOrder++;
                       box.put(HiveOpenBox.zestyMartLiteOrder, zestyMartLiteOrder);
                       // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Order done via cash")));
-                      Navigator.popUntil(context, (route) => route.isFirst);
+                      // Navigator.popUntil(context, (route) => route.isFirst);
                     } else if (selectedOption == "ONLINE") {
                       openCheckout(int.parse(widget.totalPrice));
                     } else if (selectedOption == "WALLET") {
@@ -309,14 +345,31 @@ class _ZestyMartPaymentState extends State<ZestyMartPayment> {
                       int.parse(box.get(HiveOpenBox.userZestyMoney));
                       int price = int.parse(widget.totalPrice);
                       if (zestyWallet >= price) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Order Confirm")));
+                        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Order Confirm")));
                         zestyWallet = zestyWallet - price;
                         box.put(HiveOpenBox.userZestyMoney,
                             zestyWallet.toStringAsFixed(0));
                         int zestyMartLiteOrder = box.get(HiveOpenBox.zestyMartLiteOrder, defaultValue: 0);
                         zestyMartLiteOrder++;
                         box.put(HiveOpenBox.zestyMartLiteOrder, zestyMartLiteOrder);
-                        Navigator.popUntil(context, (route) => route.isFirst);
+                        boxZesty.clear();
+                        AwesomeDialog(
+                          context: context,
+                          animType: AnimType.scale,
+                          headerAnimationLoop: false,
+                          dialogType: DialogType.success,
+                          showCloseIcon: false,
+                          title: 'Order confirm',
+                          desc:
+                          'You will get your order in 15-20 minutes',
+                          btnOkOnPress: () {
+                            debugPrint('OnClcik');
+                            Navigator.popUntil(context, (route) => route.isFirst);
+                          },
+                          btnOkIcon: Icons.check_circle,
+                          dismissOnTouchOutside: false,
+                          dismissOnBackKeyPress: true,
+                        ).show();
                         // storeOrderData();
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
