@@ -408,11 +408,11 @@ class _CartPaymentState extends State<CartPayment> {
                         padding: const EdgeInsets.all(5.0),
                         child: ListTile(
                           title: Text(
-                            "Wallet",
+                            "Zesty Wallet",
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           subtitle: Text(
-                            "Pay via zesty wallet",
+                            "Current balance: ₹${Hive.box(HiveOpenBox.storeAddress).get(HiveOpenBox.userZestyMoney)}",
                             style: Theme.of(context).textTheme.labelMedium,
                           ),
                           trailing: Radio(

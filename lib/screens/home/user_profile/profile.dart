@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:zesty/screens/home/user_profile/add_new_address.dart';
 import 'package:zesty/screens/home/user_profile/editProfile.dart';
 import 'package:zesty/screens/home/user_profile/helpSupport.dart';
@@ -23,23 +25,40 @@ class _profileState extends State<profile> {
   var box = Hive.box(HiveOpenBox.storeAddress);
 
   void showLogoutDialog() {
-    showDialog(context: context, builder: (builder) => AlertDialog(
-      title: Text("Are you sure want to logout?"),
-      content: Text("You will be logged out of your account. You can log in again anytime."),
-      actions: [
-        TextButton(onPressed: (){
-          Navigator.pop(context);
-          box.clear(); // storeAddress
-          Hive.box(HiveOpenBox.zestyFoodCart).clear();
-          Hive.box(HiveOpenBox.storeZestyMartItem).clear();
-          Hive.box(HiveOpenBox.storeLatLongTable).clear();
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => signin()), (_) =>  false);
-        }, child: Text("Logout", style: TextStyle(color: TColors.error),)),
-        TextButton(onPressed: (){
-          Navigator.pop(context);
-        }, child: Text("Cancel", style: TextStyle(color: Colors.black),))
-      ],
-    ));
+    // showDialog(context: context, builder: (builder) => AlertDialog(
+    //   title: Text("Are you sure want to logout?"),
+    //   content: Text("You will be logged out of your account. You can log in again anytime."),
+    //   actions: [
+    //     TextButton(onPressed: (){
+    //       Navigator.pop(context);
+    //       box.clear(); // storeAddress
+    //       Hive.box(HiveOpenBox.zestyFoodCart).clear();
+    //       Hive.box(HiveOpenBox.storeZestyMartItem).clear();
+    //       Hive.box(HiveOpenBox.storeLatLongTable).clear();
+    //       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => signin()), (_) =>  false);
+    //     }, child: Text("Logout", style: TextStyle(color: TColors.error),)),
+    //     TextButton(onPressed: (){
+    //       Navigator.pop(context);
+    //     }, child: Text("Cancel", style: TextStyle(color: Colors.black),))
+    //   ],
+    // ));
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.warning,  // Use 'confirm' type for a two-button dialog
+      title: 'Are you sure?',
+      text: 'Do you really want to logout!',
+      confirmBtnText: 'OK',
+      confirmBtnColor: Colors.black, // Set color for "OK" button
+      onConfirmBtnTap: () {
+        Navigator.pop(context);
+              box.clear(); // storeAddress
+              Hive.box(HiveOpenBox.zestyFoodCart).clear();
+              Hive.box(HiveOpenBox.storeZestyMartItem).clear();
+              Hive.box(HiveOpenBox.storeLatLongTable).clear();
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => signin()), (_) =>  false);
+      },
+    );
+
   }
 
   @override

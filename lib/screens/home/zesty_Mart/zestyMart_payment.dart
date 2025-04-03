@@ -2,6 +2,8 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:zesty/screens/home/item_cart/trackDeliveryOrder.dart';
 import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
@@ -54,23 +56,19 @@ class _ZestyMartPaymentState extends State<ZestyMartPayment> {
     int zestyMartLiteOrder = box.get(HiveOpenBox.zestyMartLiteOrder, defaultValue: 0);
     zestyMartLiteOrder++;
     box.put(HiveOpenBox.zestyMartLiteOrder, zestyMartLiteOrder);
-    AwesomeDialog(
-      context: context,
-      animType: AnimType.scale,
-      headerAnimationLoop: false,
-      dialogType: DialogType.success,
-      showCloseIcon: false,
-      title: 'Order confirm',
-      desc:
-      'You will get your order in 15-20 minutes',
-      btnOkOnPress: () {
-        debugPrint('OnClcik');
-        Navigator.popUntil(context, (route) => route.isFirst);
-      },
-      btnOkIcon: Icons.check_circle,
-      dismissOnTouchOutside: false,
-      dismissOnBackKeyPress: true,
-    ).show();
+
+    QuickAlert.show(
+        barrierDismissible: false,
+        context: context,
+        type: QuickAlertType.success,
+        title: 'Order confirm',
+        text: 'You will get your order in 15-20 minutes',
+        onConfirmBtnTap: () {
+          Navigator.popUntil(context, (route) => route.isFirst);
+        },
+      confirmBtnColor: Colors.black,
+
+    );
     // Navigator.popUntil(context, (route) => route.isFirst);
     // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Order Confirm")));
 
@@ -313,23 +311,17 @@ class _ZestyMartPaymentState extends State<ZestyMartPayment> {
                   title: "Pay Now",
                   onPress: () {
                     if (selectedOption == "COD") {
-                      AwesomeDialog(
-                        context: context,
-                        animType: AnimType.scale,
-                        headerAnimationLoop: false,
-                        dialogType: DialogType.success,
-                        showCloseIcon: false,
-                        title: 'Order confirm',
-                        desc:
-                        'You will get your order in 15-20 minutes',
-                        btnOkOnPress: () {
-                          debugPrint('OnClcik');
-                          Navigator.popUntil(context, (route) => route.isFirst);
-                        },
-                        btnOkIcon: Icons.check_circle,
-                        dismissOnTouchOutside: false,
-                        dismissOnBackKeyPress: true,
-                      ).show();
+                      QuickAlert.show(
+                          barrierDismissible: false,
+                          context: context,
+                          type: QuickAlertType.success,
+                          title: 'Order confirm',
+                          text: 'You will get your order in 15-20 minutes',
+                          onConfirmBtnTap: () {
+                            Navigator.popUntil(context, (route) => route.isFirst);
+                          },
+                          confirmBtnColor: Colors.black,
+                      );
                       // storeOrderData();
                       boxZesty.clear();
                       // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Order Confirm")));
@@ -353,23 +345,18 @@ class _ZestyMartPaymentState extends State<ZestyMartPayment> {
                         zestyMartLiteOrder++;
                         box.put(HiveOpenBox.zestyMartLiteOrder, zestyMartLiteOrder);
                         boxZesty.clear();
-                        AwesomeDialog(
-                          context: context,
-                          animType: AnimType.scale,
-                          headerAnimationLoop: false,
-                          dialogType: DialogType.success,
-                          showCloseIcon: false,
-                          title: 'Order confirm',
-                          desc:
-                          'You will get your order in 15-20 minutes',
-                          btnOkOnPress: () {
-                            debugPrint('OnClcik');
-                            Navigator.popUntil(context, (route) => route.isFirst);
-                          },
-                          btnOkIcon: Icons.check_circle,
-                          dismissOnTouchOutside: false,
-                          dismissOnBackKeyPress: true,
-                        ).show();
+                        QuickAlert.show(
+                            barrierDismissible: false,
+                            context: context,
+                            type: QuickAlertType.success,
+                            title: 'Order confirm',
+                            text: 'You will get your order in 15-20 minutes',
+                            onConfirmBtnTap: () {
+                              Navigator.popUntil(context, (route) => route.isFirst);
+                            },
+                          confirmBtnColor: Colors.black,
+
+                        );
                         // storeOrderData();
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
