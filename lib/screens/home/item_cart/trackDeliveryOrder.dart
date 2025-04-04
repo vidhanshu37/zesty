@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:zesty/custom_widget/elevatedButton_cust.dart';
@@ -114,9 +116,25 @@ class _TrackDeliveryOrderState extends State<TrackDeliveryOrder>{
         if(display == 'Delivered') {
           _startSourceMarkerMovement();
         }
+
+        if(display == "Rejected") {
+          QuickAlert.show(
+            context: context,
+            type: QuickAlertType.error,
+            title: 'Oops...',
+            text: 'Sorry, your order is rejected by restaurant!',
+            onConfirmBtnTap: () {
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => HomeScreen(address: box.get(HiveOpenBox.storeAddressTitle, defaultValue: "Surat"), subAddress: "")), (predicate) => false);
+            },
+            barrierDismissible: false
+          );
+        }
       });
     });
   }
+
+
+  /// rejected pop-up
 
   @override
   void dispose() {
@@ -214,7 +232,18 @@ class _TrackDeliveryOrderState extends State<TrackDeliveryOrder>{
       }
       else {
         timer.cancel(); // Stop the timer when the source marker reaches the user
-        showDeliveredDialog();
+        // showDeliveredDialog();
+        QuickAlert.show(
+            barrierDismissible: false,
+            context: context,
+            type: QuickAlertType.success,
+            title: 'Order Delivered',
+            text: 'Your order has been successfully delivered!',
+            onConfirmBtnTap: () {
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (builder) => HomeScreen(address: box.get(HiveOpenBox.storeAddressTitle, defaultValue: "Surat"), subAddress: "")), (predicate) => false);
+            },
+          confirmBtnColor: Colors.black,
+        );
       }
     });
   }
@@ -340,8 +369,12 @@ class _TrackDeliveryOrderState extends State<TrackDeliveryOrder>{
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        display != "Delivered" ? Text("Order Status: $display", style: Theme.of(context).textTheme.bodyLarge) :
-                        Text("Order Status: Rider pick your order!", style: Theme.of(context).textTheme.bodyLarge),
+                        display == "Rejected"
+                            ? Text("Order Status: $display", style: Theme.of(context).textTheme.bodyLarge)
+                            : display != "Delivered"
+                                ? Text("Order Status: $display", style: Theme.of(context).textTheme.bodyLarge)
+                                : Text("Order Status: Rider pick your order!", style: Theme.of(context).textTheme.bodyLarge),
+
                         SizedBox(height: 5,),
                         Text("Total cart value: ₹${widget.totalCartValue}")
                       ],

@@ -151,7 +151,13 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
       ),
       body: restaurantData == null
           ? Center(
-        child: Image.asset('assets/images/bike_loader.gif', height: 250, width: 250,),
+        child: Card(
+          color: Color(0xfffefefe),
+          elevation: 2,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset('assets/images/bike_loader.gif', height: 120, width: 120, fit: BoxFit.cover,),
+            )),
       )
           : LayoutBuilder(
         builder: (context, constraints) {
