@@ -209,6 +209,7 @@ class _AppBarHomeState extends State<AppBarHome> {
                 child: SearchBarHome(
                     searchController: widget.searchController,
                   readOnly: true,
+                  searchSuggestion: ['search for "Radhe Dhokla"', 'search for "BackHub"', 'search for "Maha laxmi"'],
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => Searchrestaurant(),));
                   },

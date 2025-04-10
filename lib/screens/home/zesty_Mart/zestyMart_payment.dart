@@ -1,4 +1,3 @@
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -310,6 +309,7 @@ class _ZestyMartPaymentState extends State<ZestyMartPayment> {
               child: ZElevatedButton(
                   title: "Pay Now",
                   onPress: () {
+                    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(box.values as String)));
                     if (selectedOption == "COD") {
                       QuickAlert.show(
                           barrierDismissible: false,

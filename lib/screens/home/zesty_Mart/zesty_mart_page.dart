@@ -196,6 +196,7 @@ class _ZestyMartPageState extends State<ZestyMartPage>
                         color: appBarColorTab(),
                         child: Center(
                             child: SearchBarHome(
+                              searchSuggestion: ['search for "Teddy"', 'search for "Perfume"', 'search for "Rice"', 'search for "Iron"', 'search for "Coffee"'],
                                 searchController: searchController,
                               readOnly: true,
                               onTap: () {

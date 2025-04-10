@@ -1,11 +1,9 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:zesty/utils/constants/colors.dart';
 import 'package:zesty/utils/local_storage/HiveOpenBox.dart';
 import 'package:http/http.dart' as http;
-
 
 class EditAccountScreen extends StatefulWidget {
   const EditAccountScreen({super.key});
@@ -32,7 +30,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     super.initState();
     savedName = box.get(HiveOpenBox.userName, defaultValue: "Zesty");
     savedPhone = box.get(HiveOpenBox.userMobile);
-    if(box.get(HiveOpenBox.userEmail) != "abc") {
+    if (box.get(HiveOpenBox.userEmail) != "abc") {
       savedEmail = box.get(HiveOpenBox.userEmail, defaultValue: "Please register your email");
     } else {
       savedEmail = "Register your email";
@@ -49,35 +47,41 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     });
   }
 
+  bool isValidEmail(String email) {
+    final RegExp regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    return regex.hasMatch(email);
+  }
+
   void checkIfUpdated() {
     setState(() {
       bool isPhoneValid = phoneController.text.length == 10;
+      bool isEmailValid = isValidEmail(emailController.text);
+
       isUpdateEnabled = (editingField == "Name" && nameController.text != savedName) ||
-          (editingField == "Email" && emailController.text != savedEmail) ||
+          (editingField == "Email" && emailController.text != savedEmail && isEmailValid) ||
           (editingField == "Phone" && phoneController.text != savedPhone && isPhoneValid);
     });
   }
 
-  /// Update user data
   Future<void> updateAddress(context) async {
     var box = Hive.box(HiveOpenBox.storeAddress);
     final url = Uri.parse('https://zesty-backend.onrender.com/user/update-user');
 
     try {
       final response = await http.post(
-          url,
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: jsonEncode({
-            "name": savedName,
-            "email": savedEmail,
-            "mobile": savedPhone,
-            "id": box.get(HiveOpenBox.userId),
-          }));
+        url,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({
+          "name": savedName,
+          "email": savedEmail,
+          "mobile": savedPhone,
+          "id": box.get(HiveOpenBox.userId),
+        }),
+      );
 
-
-      if(response.statusCode == 200) {
+      if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Updated!")));
         box.put(HiveOpenBox.userName, savedName);
         box.put(HiveOpenBox.userMobile, savedPhone);
@@ -85,15 +89,21 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.statusCode.toString())));
       }
-    } catch(e) {
+    } catch (e) {
       print("error");
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("e.toString()")));
     }
   }
 
-
   void updateValues() {
-    if(nameController.text.trim().isNotEmpty && emailController.text.trim().isNotEmpty && phoneController.text.trim().isNotEmpty) {
+    if (nameController.text.trim().isNotEmpty &&
+        emailController.text.trim().isNotEmpty &&
+        phoneController.text.trim().isNotEmpty) {
+      if (editingField == "Email" && !isValidEmail(emailController.text)) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Invalid email format")));
+        return;
+      }
+
       updateAddress(context);
       setState(() {
         if (editingField == "Name") savedName = nameController.text;
@@ -106,7 +116,6 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Not Valid!")));
     }
-
   }
 
   void cancelEditing() {
@@ -146,19 +155,21 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
             const SizedBox(height: 16),
             buildPhoneField(),
             const Spacer(),
-            if (editingField != null) // Show buttons only when editing
+            if (editingField != null)
               Row(
                 children: [
                   Expanded(
                     child: ElevatedButton(
                       onPressed: isUpdateEnabled ? updateValues : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isUpdateEnabled ? const Color(0xFF70B943) : Colors.grey.shade400,
+                        backgroundColor:
+                        isUpdateEnabled ? const Color(0xFF70B943) : Colors.grey.shade400,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          side: BorderSide.none,
+                        side: BorderSide.none,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: const Text("Update", style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500)),
+                      child: const Text("Update",
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -166,12 +177,12 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                     child: ElevatedButton(
                       onPressed: cancelEditing,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: TColors.Green.withOpacity(0.4),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        side: BorderSide.none
-                      ),
-                      child: const Text("Cancel", style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500)),
+                          backgroundColor: TColors.Green.withOpacity(0.4),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          side: BorderSide.none),
+                      child: const Text("Cancel",
+                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
                     ),
                   ),
                 ],
@@ -186,14 +197,15 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(color: Colors.grey, fontSize: 14, fontWeight: FontWeight.bold)),
+        Text(label,
+            style: const TextStyle(color: Colors.grey, fontSize: 14, fontWeight: FontWeight.bold)),
         const SizedBox(height: 6),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: editingField == label ? TColors.darkGreen : Colors.transparent, // Orange border when editing
+              color: editingField == label ? TColors.darkGreen : Colors.transparent,
               width: 2,
             ),
           ),
@@ -217,7 +229,8 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
               if (editingField != label)
                 TextButton(
                   onPressed: () => startEditing(label),
-                  child: const Text("EDIT", style: TextStyle(color: TColors.darkGreen, fontWeight: FontWeight.bold)),
+                  child: const Text("EDIT",
+                      style: TextStyle(color: TColors.darkGreen, fontWeight: FontWeight.bold)),
                 ),
             ],
           ),
@@ -230,14 +243,15 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Phone Number", style: TextStyle(color: Colors.grey, fontSize: 14, fontWeight: FontWeight.bold)),
+        const Text("Phone Number",
+            style: TextStyle(color: Colors.grey, fontSize: 14, fontWeight: FontWeight.bold)),
         const SizedBox(height: 6),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: editingField == "Phone" ? TColors.darkGreen : Colors.transparent, // Orange border when editing
+              color: editingField == "Phone" ? TColors.darkGreen : Colors.transparent,
               width: 2,
             ),
           ),
@@ -254,7 +268,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                   keyboardType: TextInputType.number,
                   onChanged: (value) {
                     if (value.length > 10) {
-                      phoneController.text = value.substring(0, 10); // Trim to 10 digits
+                      phoneController.text = value.substring(0, 10);
                       phoneController.selection = TextSelection.fromPosition(
                           TextPosition(offset: phoneController.text.length));
                     }
@@ -270,11 +284,12 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                   style: const TextStyle(fontSize: 16, color: Colors.black),
                 ),
               ),
-              if (editingField != "Phone")
-                TextButton(
-                  onPressed: () => startEditing("Phone"),
-                  child: const Text("EDIT", style: TextStyle(color: TColors.darkGreen, fontWeight: FontWeight.bold)),
-                ),
+              // if (editingField != "Phone")
+                // TextButton(
+                //   onPressed: () => startEditing("Phone"),
+                //   child: const Text("EDIT",
+                //       style: TextStyle(color: TColors.darkGreen, fontWeight: FontWeight.bold)),
+                // ),
             ],
           ),
         ),

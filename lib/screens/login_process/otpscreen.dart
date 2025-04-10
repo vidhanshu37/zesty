@@ -110,12 +110,12 @@ class _otpverifyState extends State<otpverify> {
         "?countryCode=91"
         "&mobileNumber=$phnNumber"
         "&verificationId=$verificationId"
-        "&customerId=C-5B7E17DA1EBF403"
+        "&customerId=C-FFEEE70F02E0486"
         "&code=$userOtp";
 
     Map<String, String> headers = {
       "authToken":
-      "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJDLTVCN0UxN0RBMUVCRjQwMyIsImlhdCI6MTczODQxMDk3NSwiZXhwIjoxODk2MDkwOTc1fQ.P5dM1uCoon3VEmnz0jvngUdyGiJoZYRM574VPyiKLQxwJZJctRCoQDOtG0UgIoI9SKMhht5l2rMT0ecg-iBpBQ",
+      "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJDLUZGRUVFNzBGMDJFMDQ4NiIsImlhdCI6MTc0NDI4NTEwOSwiZXhwIjoxOTAxOTY1MTA5fQ.Plp4E339P0w1XpvRbrPCLnm7SS_VhvzL297szITxV6yTLhWJgVpJdvEY1GtJ3X0U95IElmKXL2QNingV0zVhMw",
       "Content-Type": "text/plain",
     };
 
