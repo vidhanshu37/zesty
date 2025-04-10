@@ -35,8 +35,8 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
   List filteredItemDetails = [];
 
   double distanceRestaurantKm = 0;
-  double lat = 0;
-  double long = 0;
+  double lat = 21.2049;
+  double long = 72.8411;
 
   var box = Hive.box(HiveOpenBox.zestyFoodCart);
 
@@ -112,11 +112,13 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
     var hiveBox = Hive.box(HiveOpenBox.storeAddress);
     lat = double.parse(hiveBox.get(HiveOpenBox.storeAddressLat, defaultValue: "21.2049"));
     long = double.parse(hiveBox.get(HiveOpenBox.storeAddressLong, defaultValue: "72.8411"));
+    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(lat.toString())));
+    print(lat.toString());
   }
 
 
   String countDeliveryTime(){
-    double distance = ApiConstants.calculateDistance(lat, long, restaurantData?['latitude'] ?? 21.70, restaurantData?['longitude'] ?? 71.12);
+    double distance = ApiConstants.calculateDistance(lat ?? 21.2049, long ?? 72.8411, restaurantData?['latitude'] ?? 21.70, restaurantData?['longitude'] ?? 71.12);
     if (distance < 3) {
       return "15-20 mins";
     } else if (distance >= 3 && distance < 5) {
@@ -407,8 +409,8 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
               height: 75,
               width: 75,
               child: FloatingActionButton(onPressed: (){
-                _showFloatingMenu(context);
-                // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(nameSelectCategory)));
+                // _showFloatingMenu(context);
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("helo ${restaurantData?['latitude']} $lat")));
               },
               elevation: 5.0,
                 shape: CircleBorder(),

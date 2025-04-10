@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -328,23 +329,17 @@ class _HomeScreenState extends State<HomeScreen>
                             },
                             child: Column(
                               children: [
-                                Image.network(
-                                  '${category[index]['image']}',
-                                  // 'https://zesty-backend.onrender.com/category/get-category-image/${category[index]['_id']}',
+                                CachedNetworkImage(imageUrl: '${category[index]['image']}',
                                   fit: BoxFit.cover,
                                   height: 90,
                                   width: 90,
-                                  loadingBuilder: (context, child, loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return Container(
-                                      height: 90,
-                                      width: 90,
-                                      color: TColors.grey,
-                                    );
-                                  },
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Icon(Icons.image_not_supported, size: 50, color: Colors.grey);
-                                  },
+                                  placeholder: (context, url) => Container(
+                                    height: 90,
+                                    width: 90,
+                                    color: TColors.grey,
+                                  ),
+
+                                  errorWidget: (context, url, error) => Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
                                 ),
                                 Text(
                                   category[index]['name'],
@@ -431,16 +426,22 @@ class _HomeScreenState extends State<HomeScreen>
                                   ),
                                   child: Stack(
                                     children: [
-                                      Image.network('${restaurantData[index]['logoImg']}',
-                                      fit: BoxFit.cover,width: double.infinity,
-                                      loadingBuilder: (context, child, loadingProgress) {
-                                        if (loadingProgress == null) return child;
-                                        return Container(color: TColors.grey,);
-                                      },
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return Icon(Icons.image_not_supported, size: 50, color: Colors.grey);
-                                      },
-                                    ),
+                                    //   Image.network('${restaurantData[index]['logoImg']}',
+                                    //   fit: BoxFit.cover,width: double.infinity,
+                                    //   loadingBuilder: (context, child, loadingProgress) {
+                                    //     if (loadingProgress == null) return child;
+                                    //     return Container(color: TColors.grey,);
+                                    //   },
+                                    //   errorBuilder: (context, error, stackTrace) {
+                                    //     return Icon(Icons.image_not_supported, size: 50, color: Colors.grey);
+                                    //   },
+                                    // ),
+
+                                      CachedNetworkImage(imageUrl: '${restaurantData[index]['logoImg']}',
+                                        fit: BoxFit.cover,width: double.infinity,
+                                        placeholder: (context, url) => Container(color: TColors.grey,),
+                                        errorWidget: (context, url, error) => Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+                                        ),
 
                                       Positioned.fill(
                                         child: Container(

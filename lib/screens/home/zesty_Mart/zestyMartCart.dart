@@ -515,7 +515,7 @@ class _ZestymartcartState extends State<Zestymartcart> {
               SizedBox(height: 20,),
 
               ZElevatedButton(title: "Make Payment", onPress: () {
-                // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(box.values.toString())));
+                // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(box.keys.toString())));
                 boxAddress.get(HiveOpenBox.userZestyLite) == "true" && distanceKm < 7 ?
                 Navigator.push(context, MaterialPageRoute(builder: (builder) => ZestyMartPayment(totalPrice: (calculateCartTotal() + (calculateCartTotal() * 0.05)).round().toString())))
                : Navigator.push(context, MaterialPageRoute(builder: (builder) => ZestyMartPayment(totalPrice: (calculateCartTotal() + double.parse(countDeliveryCharge()) + (calculateCartTotal() * 0.05)).round().toString())))

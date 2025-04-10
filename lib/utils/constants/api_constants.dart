@@ -17,6 +17,7 @@ class ApiConstants {
   static String getCouponData = "https://zesty-backend.onrender.com/coupon/get-all-coupons";
 
   static double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    print("+++++++++++++++++++++++++++++++++++++$lat1");
     const double R = 6371; // Earth's radius in km
     double dLat = (lat2 - lat1) * pi / 180;
     double dLon = (lon2 - lon1) * pi / 180;
