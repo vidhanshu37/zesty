@@ -20,7 +20,7 @@ class _KidsTabState extends State<KidsTab> {
   int _currentIndex = 0;
 
   final List<String> imageList = [
-    'assets/images/adv1.avif',
+    'assets/images/kid.jpg',
     'assets/images/adv2.avif',
     'assets/images/adv3.avif',
   ];
