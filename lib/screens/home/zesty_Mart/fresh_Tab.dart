@@ -23,8 +23,8 @@ class _FreshTabState extends State<FreshTab> {
   int _currentIndex = 0;
 
   final List<String> imageList = [
-    'assets/images/adv1.avif',
-    'assets/images/adv2.avif',
+    'assets/images/IMG-20250411-WA0006.jpg',
+    'assets/images/IMG-20250411-WA0007.jpg',
     'assets/images/adv3.avif',
   ];
 

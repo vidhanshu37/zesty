@@ -20,7 +20,7 @@ class _ElectronicsTabState extends State<ElectronicsTab> {
   int _currentIndex = 0;
 
   final List<String> imageList = [
-    'assets/images/adv1.avif',
+    'assets/images/elec.jpg',
     'assets/images/adv2.avif',
     'assets/images/adv3.avif',
   ];

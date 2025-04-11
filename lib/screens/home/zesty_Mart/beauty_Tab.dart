@@ -20,8 +20,8 @@ class _BeautyTabState extends State<BeautyTab> {
   int _currentIndex = 0;
 
   final List<String> imageList = [
-    'assets/images/adv1.avif',
-    'assets/images/adv2.avif',
+    'assets/images/IMG-20250411-WA0008.jpg',
+    'assets/images/IMG-20250411-WA0009.jpg',
     'assets/images/adv3.avif',
   ];
 

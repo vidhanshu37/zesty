@@ -409,8 +409,8 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
               height: 75,
               width: 75,
               child: FloatingActionButton(onPressed: (){
-                // _showFloatingMenu(context);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("helo ${restaurantData?['latitude']} $lat")));
+                _showFloatingMenu(context);
+                // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("helo ${restaurantData?['latitude']} $lat")));
               },
               elevation: 5.0,
                 shape: CircleBorder(),
